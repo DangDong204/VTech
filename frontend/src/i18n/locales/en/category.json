@@ -1,0 +1,115 @@
+{
+  "table": {
+    "columns": {
+      "category": "Category",
+      "parent": "Parent Category",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No results found"
+  },
+  "titles": {
+    "list": "Category list",
+    "create": "Create category",
+    "edit": "Edit category",
+    "view": "Category information",
+    "delete": "Delete category"
+  },
+  "filters": {
+    "search": "Search category",
+    "category": "All category",
+    "status": {
+      "label": "Status",
+      "all": "All status",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "reset": "Reset"
+  },
+  "actions": {
+    "create": "Create category",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Create User",
+    "cancel": "Cancel",
+    "confirm": "Comfirm"
+  },
+  "schema": {
+    "categoryName": {
+      "required": "Category name is required"
+    },
+    "slug": {
+      "required": "Slug is required"
+    },
+    "thumbnail": {
+      "invalid": "Invalid thumbnail URL",
+      "invalidType": "Only JPG, PNG, WEBP images are allowed",
+      "maxSize": "Maximum image size is 5MB"
+    },
+    "displayOrder": {
+      "invalid": "Display order must be an integer",
+      "min": "Display order must be greater than or equal to 0"
+    },
+    "status": {
+      "invalid": "Invalid status"
+    }
+  },
+  "fields": {
+    "categoryName": {
+      "label": "Category name",
+      "placeholder": "Enter category name"
+    },
+    "slug": {
+      "label": "Slug",
+      "placeholder": "Enter slug"
+    },
+    "categoryDesc": {
+      "label": "Description",
+      "placeholder": "Enter category description"
+    },
+    "thumbnailUrl": {
+      "label": "Thumbnail",
+      "placeholder": "Click to add image"
+    },
+    "parent": {
+      "label": "Parent category",
+      "placeholder": "Select parent category",
+      "none": "None"
+    },
+    "displayOrder": {
+      "label": "Display order",
+      "placeholder": "Enter display order"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      }
+    },
+    "createdAt": "Created at",
+    "updatedAt": "Updated at"
+  },
+  "sections": {
+    "basicInfo": "Basic information",
+    "classification": "Classification & Display"
+  },
+  "message": {
+    "success": {
+      "create": "Category created successfully!",
+      "update": "Category updated successfully!",
+      "delete": "Category deleted successfully!",
+      "deleteConfirm": "Are you sure you want to delete category '{{categoryName}}' ? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create category!",
+      "update": "Failed to update category!",
+      "delete": "Failed to delete category!",
+      "fetch": "Failed to fetch category list!",
+      "fetchDetail": "Failed to fetch category details!"
+    }
+  }
+}

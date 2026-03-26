@@ -1,0 +1,115 @@
+{
+  "table": {
+    "columns": {
+      "category": "Danh mục",
+      "parent": "Danh mục cha",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách danh mục",
+    "create": "Tạo danh mục",
+    "edit": "Chỉnh sửa danh mục",
+    "view": "Thông tin danh mục",
+    "delete": "Xoá danh mục"
+  },
+  "filters": {
+    "search": "Tìm kiếm danh mục",
+    "category": "Tất cả danh mục",
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả trạng thái",
+      "ACTIVE": "Hoạt động",
+      "INACTIVE": "Ngừng hoạt động"
+    },
+    "reset": "Đặt lại"
+  },
+  "actions": {
+    "create": "Tạo danh mục",
+    "view": "Xem",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "submit": "Tạo người dùng",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận"
+  },
+  "schema": {
+    "categoryName": {
+      "required": "Tên danh mục không được để trống"
+    },
+    "slug": {
+      "required": "Slug không được để trống"
+    },
+    "thumbnail": {
+      "invalid": "Thumbnail không hợp lệ",
+      "invalidType": "Chỉ cho phép ảnh JPG, PNG, WEBP",
+      "maxSize": "Dung lượng ảnh tối đa 5MB"
+    },
+    "displayOrder": {
+      "invalid": "Thứ tự hiển thị phải là số nguyên",
+      "min": "Thứ tự hiển thị phải lớn hơn hoặc bằng 0"
+    },
+    "status": {
+      "invalid": "Trạng thái không hợp lệ"
+    }
+  },
+  "fields": {
+    "categoryName": {
+      "label": "Tên danh mục",
+      "placeholder": "Nhập tên danh mục"
+    },
+    "slug": {
+      "label": "Slug",
+      "placeholder": "Nhập slug"
+    },
+    "categoryDesc": {
+      "label": "Mô tả",
+      "placeholder": "Nhập mô tả danh mục"
+    },
+    "thumbnailUrl": {
+      "label": "Hình ảnh",
+      "placeholder": "Click để thêm ảnh"
+    },
+    "parent": {
+      "label": "Danh mục cha",
+      "placeholder": "Chọn danh mục cha",
+      "none": "Không có"
+    },
+    "displayOrder": {
+      "label": "Thứ tự hiển thị",
+      "placeholder": "Nhập thứ tự hiển thị"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái",
+      "options": {
+        "ACTIVE": "Hoạt động",
+        "INACTIVE": "Ngừng hoạt động"
+      }
+    },
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật"
+  },
+  "sections": {
+    "basicInfo": "Thông tin cơ bản",
+    "classification": "Phân loại & hiển thị"
+  },
+  "message": {
+    "success": {
+      "create": "Tạo danh mục thành công!",
+      "update": "Cập nhật danh mục thành công!",
+      "delete": "Xóa danh mục thành công!",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa danh mục '{{categoryName}}' không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo danh mục thất bại!",
+      "update": "Cập nhật danh mục thất bại!",
+      "delete": "Xóa danh mục thất bại!",
+      "fetch": "Lấy danh sách danh mục thất bại!",
+      "fetchDetail": "Lấy thông tin danh mục thất bại!"
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "table": {
+    "columns": {
+      "brand": "Thương hiệu",
+      "brandDesc": "Mô tả",
+      "displayOrder": "Thứ tự hiện thị",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách thương hiệu",
+    "create": "Tạo thương hiệu",
+    "edit": "Chỉnh sửa thương hiệu",
+    "view": "Thông tin thương hiệu",
+    "delete": "Xoá thương hiệu",
+    "trash": "Thùng rác"
+  },
+  "filters": {
+    "search": "Tìm kiếm thương hiệu"
+  },
+  "actions": {
+    "create": "Tạo thương hiệu",
+    "view": "Xem",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "submit": "Tạo mới",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận"
+  },
+  "schema": {
+    "brandName": {
+      "required": "Tên thương hiệu không được để trống"
+    },
+    "slug": {
+      "required": "Slug không được để trống"
+    },
+    "thumbnail": {
+      "invalid": "Thumbnail không hợp lệ",
+      "invalidType": "Chỉ cho phép ảnh JPG, PNG, WEBP",
+      "maxSize": "Dung lượng ảnh tối đa 5MB"
+    },
+    "displayOrder": {
+      "invalid": "Thứ tự hiển thị phải là số nguyên",
+      "min": "Thứ tự hiển thị phải lớn hơn hoặc bằng 0"
+    },
+    "status": {
+      "invalid": "Trạng thái không hợp lệ"
+    }
+  },
+  "fields": {
+    "brandName": {
+      "label": "Tên thương hiệu",
+      "placeholder": "Nhập tên thương hiệu"
+    },
+    "slug": {
+      "label": "Slug",
+      "placeholder": "Nhập slug"
+    },
+    "brandDesc": {
+      "label": "Mô tả",
+      "placeholder": "Nhập mô tả thương hiệu"
+    },
+    "brandLogo": {
+      "label": "Hình ảnh",
+      "placeholder": "Click để thêm ảnh"
+    },
+    "displayOrder": {
+      "label": "Thứ tự hiển thị",
+      "placeholder": "Nhập thứ tự hiển thị"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái",
+      "options": {
+        "ACTIVE": "Hoạt động",
+        "INACTIVE": "Ngừng hoạt động"
+      }
+    },
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật",
+    "deletedAt": "Ngày xoá"
+  },
+  "trash": {
+    "trashEmpty": "Thùng rác trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
+  },
+  "message": {
+    "success": {
+      "create": "Tạo thương hiệu thành công!",
+      "update": "Cập nhật thương hiệu thành công!",
+      "delete": "Xóa thương hiệu thành công!",
+      "restore": "Khôi phục thương hiệu thành công!"
+    },
+    "confirm": {
+      "softDelete": "Bạn có chắc chắn muốn xóa thương hiệu '{{brandName}}' không? Sau khi xoá hãy kiểm tra thùng rác.",
+      "hardDelete": "Bạn có chắc chắn muốn xóa thương hiệu '{{brandName}}' không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo thương hiệu thất bại!",
+      "update": "Cập nhật thương hiệu thất bại!",
+      "delete": "Xóa thương hiệu thất bại!",
+      "fetch": "Lấy danh sách thương hiệu thất bại!",
+      "fetchDetail": "Lấy thông tin thương hiệu thất bại!",
+      "restore": "Khôi phục thương hiệu thất bại!"
+    }
+  }
+}

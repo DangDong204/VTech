@@ -1,0 +1,137 @@
+{
+  "create": {
+    "button": "Create user",
+    "cardTitle": "Create New User",
+    "description": "Fill in the details below to create a new user account.",
+
+    "sections": {
+      "personal": "Personal Information",
+      "account": "Account Settings"
+    }
+  },
+
+  "dialogTitle": {
+    "create": "Create new user",
+    "update": "Update user",
+    "view": "User details",
+    "delete": "Delete user"
+  },
+
+  "fields": {
+    "username": {
+      "label": "Username",
+      "placeholder": "Enter username"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Enter email"
+    },
+    "fullName": {
+      "label": "Full Name",
+      "placeholder": "John Doe"
+    },
+    "phone": {
+      "label": "Phone Number",
+      "placeholder": "0123456789"
+    },
+    "password": {
+      "label": "Password"
+    },
+    "avatar": {
+      "label": "Avatar",
+      "placeholder": "Select avatar",
+      "upload": "Upload Image",
+      "change": "Change Image",
+      "remove": "Remove Image",
+      "preview": "Preview",
+      "requirements": "Formats: JPG, PNG, GIF. Max size: 5MB",
+      "error": {
+        "size": "Image too large! Maximum size is 5MB",
+        "format": "Invalid image format!",
+        "upload": "Failed to upload image!"
+      }
+    },
+    "role": {
+      "label": "Role",
+      "placeholder": "Select a role",
+      "options": {
+        "ADMIN": "Admin",
+        "USER": "User",
+        "STAFF": "Staff"
+      }
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive",
+        "BLOCKED": "Blocked"
+      }
+    },
+    "createdAt": "Created at",
+    "updatedAt": "Updated at"
+  },
+
+  "table": {
+    "columns": {
+      "user": "User",
+      "fullName": "Full name",
+      "phone": "Phone",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No results found"
+  },
+
+  "filters": {
+    "search": "Search user",
+    "role": {
+      "label": "Role",
+      "all": "All roles",
+      "ADMIN": "Admin",
+      "USER": "User",
+      "STAFF": "Staff"
+    },
+    "status": {
+      "label": "Status",
+      "all": "All status",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "BLOCKED": "Blocked"
+    },
+    "reset": "Reset"
+  },
+
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Create User",
+    "cancel": "Cancel",
+    "confirm": "Comfirm"
+  },
+
+  "list": "All users",
+  "message": {
+    "success": {
+      "create": "User created successfully!",
+      "update": "User updated successfully!",
+      "delete": "User deleted successfully!",
+      "deleteConfirm": "Are you sure you want to delete user {{email}}? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create user!",
+      "update": "Failed to update user!",
+      "delete": "Failed to delete user!",
+      "fetch": "Failed to fetch user list!",
+      "fetchDetail": "Failed to fetch user details!",
+      "required": "Please fill in all required information!",
+      "emailInvalid": "Invalid email address!",
+      "phoneInvalid": "Invalid phone number!",
+      "roleRequired": "Please select a role for the user"
+    }
+  }
+}

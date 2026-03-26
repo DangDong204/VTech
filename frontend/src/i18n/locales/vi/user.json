@@ -1,0 +1,137 @@
+{
+  "create": {
+    "button": "Tạo người dùng",
+    "cardTitle": "Tạo người dùng mới",
+    "description": "Vui lòng nhập thông tin bên dưới để tạo tài khoản người dùng.",
+
+    "sections": {
+      "personal": "Thông tin cá nhân",
+      "account": "Thiết lập tài khoản"
+    }
+  },
+
+  "dialogTitle": {
+    "create": "Tạo người dùng mới",
+    "update": "Cập nhật người dùng",
+    "view": "Thông tin chi tiết người dùng",
+    "delete": "Xoá người dùng"
+  },
+
+  "fields": {
+    "username": {
+      "label": "Tên đăng nhập",
+      "placeholder": "Nhập tên đăng nhập"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Nhập email"
+    },
+    "fullName": {
+      "label": "Họ và tên",
+      "placeholder": "Nguyễn Văn A"
+    },
+    "phone": {
+      "label": "Số điện thoại",
+      "placeholder": "0123456789"
+    },
+    "password": {
+      "label": "Mật khẩu"
+    },
+    "avatar": {
+      "label": "Ảnh đại diện",
+      "placeholder": "Chọn ảnh đại diện",
+      "upload": "Tải ảnh lên",
+      "change": "Thay đổi ảnh",
+      "remove": "Xóa ảnh",
+      "preview": "Xem trước",
+      "requirements": "Định dạng: JPG, PNG, GIF. Kích thước tối đa: 5MB",
+      "error": {
+        "size": "Ảnh quá lớn! Kích thước tối đa là 5MB",
+        "format": "Định dạng ảnh không hợp lệ!",
+        "upload": "Tải ảnh lên thất bại!"
+      }
+    },
+    "role": {
+      "label": "Vai trò",
+      "placeholder": "Chọn vai trò",
+      "options": {
+        "ADMIN": "Quản trị viên",
+        "USER": "Người dùng",
+        "STAFF": "Nhân viên"
+      }
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái",
+      "options": {
+        "ACTIVE": "Hoạt động",
+        "INACTIVE": "Ngừng hoạt động",
+        "BLOCKED": "Bị khoá"
+      }
+    },
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật"
+  },
+
+  "table": {
+    "columns": {
+      "user": "Người dùng",
+      "fullName": "Họ và tên",
+      "phone": "Số điện thoại",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+
+  "filters": {
+    "search": "Tìm kiếm người dùng",
+    "role": {
+      "label": "Vai trò",
+      "all": "Tất cả vai trò",
+      "ADMIN": "Quản trị viên",
+      "USER": "Người dùng",
+      "STAFF": "Nhân viên"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả trạng thái",
+      "ACTIVE": "Hoạt động",
+      "INACTIVE": "Ngừng hoạt động",
+      "BLOCKED": "Bị khoá"
+    },
+    "reset": "Đặt lại"
+  },
+
+  "actions": {
+    "view": "Xem",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "submit": "Tạo người dùng",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận"
+  },
+
+  "list": "Danh sách người dùng",
+  "message": {
+    "success": {
+      "create": "Tạo người dùng thành công!",
+      "update": "Cập nhật người dùng thành công!",
+      "delete": "Xóa người dùng thành công!",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa người dùng {{email}} không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo người dùng thất bại!",
+      "update": "Cập nhật người dùng thất bại!",
+      "delete": "Xóa người dùng thất bại!",
+      "fetch": "Lấy danh sách người dùng thất bại!",
+      "fetchDetail": "Lấy thông tin người dùng thất bại!",
+      "required": "Vui lòng điền đầy đủ thông tin bắt buộc!",
+      "emailInvalid": "Email không hợp lệ!",
+      "phoneInvalid": "Số điện thoại không hợp lệ!",
+      "roleRequired": "Vui lòng chọn một vai trò cho người dùng"
+    }
+  }
+}

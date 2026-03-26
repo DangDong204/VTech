@@ -1,0 +1,109 @@
+{
+  "table": {
+    "columns": {
+      "brand": "Brand",
+      "brandDesc": "Brand Description",
+      "displayOrder": "Display order",
+      "actions": "Actions"
+    },
+    "noResults": "No data available"
+  },
+  "titles": {
+    "list": "Brand List",
+    "create": "Create Brand",
+    "edit": "Edit Brand",
+    "view": "Brand Details",
+    "delete": "Delete Brand",
+    "trash": "Trash"
+  },
+  "filters": {
+    "search": "Search brand"
+  },
+  "actions": {
+    "create": "Create Brand",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Create",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "schema": {
+    "brandName": {
+      "required": "Brand name is required"
+    },
+    "slug": {
+      "required": "Slug is required"
+    },
+    "thumbnail": {
+      "invalid": "Invalid thumbnail",
+      "invalidType": "Only JPG, PNG, WEBP images are allowed",
+      "maxSize": "Maximum image size is 5MB"
+    },
+    "displayOrder": {
+      "invalid": "Display order must be an integer",
+      "min": "Display order must be greater than or equal to 0"
+    },
+    "status": {
+      "invalid": "Invalid status"
+    }
+  },
+  "fields": {
+    "brandName": {
+      "label": "Brand name",
+      "placeholder": "Enter brand name"
+    },
+    "slug": {
+      "label": "Slug",
+      "placeholder": "Enter slug"
+    },
+    "brandDesc": {
+      "label": "Description",
+      "placeholder": "Enter brand description"
+    },
+    "brandLogo": {
+      "label": "Logo",
+      "placeholder": "Click to add image"
+    },
+    "displayOrder": {
+      "label": "Display order",
+      "placeholder": "Enter display order"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      }
+    },
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "deletedAt": "Deleted at"
+  },
+  "trash": {
+    "trashEmpty": "Trash is empty",
+    "remainingDays": "{{days}} days left before permanent deletion"
+  },
+  "message": {
+    "success": {
+      "create": "Brand created successfully!",
+      "update": "Brand updated successfully!",
+      "delete": "Brand deleted successfully!",
+      "restore": "Brand restored successfully!"
+    },
+    "confirm": {
+      "softDelete": "Are you sure you want to delete the brand '{{brandName}}'? After deletion, please check the trash.",
+      "hardDelete": "Are you sure you want to delete brand '{{brandName}}' ? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create brand!",
+      "update": "Failed to update brand!",
+      "delete": "Failed to delete brand!",
+      "fetch": "Failed to fetch brand list!",
+      "fetchDetail": "Failed to fetch brand details!",
+      "restore": "Failed to restore brand!"
+    }
+  }
+}
