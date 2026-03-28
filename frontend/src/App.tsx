@@ -1,8 +1,8 @@
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import DashboardHome from '@/pages/admin/dashboard/content/DashBoardHome'
 import LayoutAdmin from '@/pages/admin/LayoutAdmin'
-import SignUpPage from '@/pages/auth/LoginPage'
-import LoginPage from '@/pages/auth/SignUpPage'
+import LoginPage from '@/pages/auth/LoginPage'
+import SignupPage from '@/pages/auth/SignUpPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
@@ -22,7 +22,7 @@ function App() {
           {/* <Route path='*' element={<NotFound404 />} /> */}
           {/* TODO: tạo các public route */}
           <Route path='/login' element={<LoginPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/signup' element={<SignupPage />} />
 
           {/* TODO: tạo protected route */}
           <Route element={<ProtectedRoute />}>
