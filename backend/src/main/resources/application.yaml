@@ -8,10 +8,10 @@ spring:
     password: mysqlDangDong2004@
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#  servlet:
-#    multipart:
-#      max-file-size: 5MB
-#      max-request-size: 5MB
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -32,12 +32,12 @@ spring:
 #  valid-duration: 3600
 #  refreshable-duration: 36000
 
-#aws:
-#  s3:
-#    region: ${AWS_REGION}
-#    bucket: ${AWS_S3_BUCKET}
-#    access-key: ${AWS_ACCESS_KEY}
-#    secret-key: ${AWS_SECRET_KEY}
+aws:
+  s3:
+    region: ${AWS_REGION}
+    bucket: ${AWS_S3_BUCKET}
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
 
 cleanup-data:
 #  expire-minutes: 1
