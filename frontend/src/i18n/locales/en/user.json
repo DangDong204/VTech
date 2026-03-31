@@ -115,21 +115,30 @@
     "confirm": "Comfirm"
   },
 
-  "list": "All users",
+  "list": "User list",
+  "trash": {
+    "trashEmpty": "Trash is empty",
+    "remainingDays": "{{days}} days remaining before permanent deletion"
+  },
   "message": {
     "success": {
       "create": "User created successfully!",
       "update": "User updated successfully!",
       "delete": "User deleted successfully!",
-      "deleteConfirm": "Are you sure you want to delete user {{email}}? This action cannot be undone."
+      "restore": "User restored successfully!"
+    },
+    "confirm": {
+      "softDelete": "Are you sure you want to delete the user with email '{{email}}'? Please check the trash after deleting.",
+      "hardDelete": "Are you sure you want to delete the user with email '{{email}}'? This action cannot be undone."
     },
     "error": {
       "create": "Failed to create user!",
       "update": "Failed to update user!",
       "delete": "Failed to delete user!",
+      "restore": "Failed to restore user!",
       "fetch": "Failed to fetch user list!",
       "fetchDetail": "Failed to fetch user details!",
-      "required": "Please fill in all required information!",
+      "required": "Please fill in all required fields!",
       "emailInvalid": "Invalid email address!",
       "phoneInvalid": "Invalid phone number!",
       "roleRequired": "Please select a role for the user"

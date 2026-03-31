@@ -20,6 +20,11 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     List<UserEntity> findByStatus(UserStatus status);
 
+    List<UserEntity> findAllByStatusAndDeletedAtBefore(
+            UserStatus status,
+            LocalDateTime time
+    );
+
     @Modifying
     @Query("""
         update UserEntity u

@@ -39,11 +39,12 @@ spring:
 #    access-key: ${AWS_ACCESS_KEY}
 #    secret-key: ${AWS_SECRET_KEY}
 
-#cleanup-data:
-#  #  expire-minutes: 1
-#  expire-minutes: 43200
-#  cleanup-rate-ms: 60000
-#
+cleanup-data:
+#  expire-minutes: 1
+#  cleanup-rate-ms: 5000
+  expire-minutes: 43200
+  cleanup-rate-ms: 3600000
+
 #security:
 #  public:
 #    post-endpoints:

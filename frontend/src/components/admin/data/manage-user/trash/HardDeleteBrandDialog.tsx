@@ -24,7 +24,7 @@ interface HardDeleteUserDialogProps {
 }
 
 export function HardDeleteUserDialog({ open, onOpenChange, user }: HardDeleteUserDialogProps) {
-  const { t } = useTranslation('brand')
+  const { t } = useTranslation('user')
 
   const mutation = useAppMutation(
     () => deleteHardUserApi(user.id),
@@ -37,10 +37,10 @@ export function HardDeleteUserDialog({ open, onOpenChange, user }: HardDeleteUse
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t('titles.delete')}</AlertDialogTitle>
+          <AlertDialogTitle>{t('dialogTitle.delete')}</AlertDialogTitle>
           <AlertDialogDescription>
             {t('message.confirm.hardDelete', {
-              brandName: user.username
+              email: user.email
             })}
           </AlertDialogDescription>
         </AlertDialogHeader>

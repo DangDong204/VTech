@@ -116,17 +116,26 @@
   },
 
   "list": "Danh sách người dùng",
+  "trash": {
+    "trashEmpty": "Thùng rác trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
+  },
   "message": {
     "success": {
       "create": "Tạo người dùng thành công!",
       "update": "Cập nhật người dùng thành công!",
       "delete": "Xóa người dùng thành công!",
-      "deleteConfirm": "Bạn có chắc chắn muốn xóa người dùng {{email}} không? Hành động này không thể hoàn tác."
+      "restore": "Khôi phục người dùng thành công!"
+    },
+    "confirm": {
+      "softDelete": "Bạn có chắc chắn muốn xóa người dùng có email '{{email}}' không? Sau khi xoá hãy kiểm tra thùng rác.",
+      "hardDelete": "Bạn có chắc chắn muốn xóa người dùng có email '{{email}}' không? Hành động này không thể hoàn tác."
     },
     "error": {
       "create": "Tạo người dùng thất bại!",
       "update": "Cập nhật người dùng thất bại!",
       "delete": "Xóa người dùng thất bại!",
+      "restore": "Khôi phục người dùng thất bại!",
       "fetch": "Lấy danh sách người dùng thất bại!",
       "fetchDetail": "Lấy thông tin người dùng thất bại!",
       "required": "Vui lòng điền đầy đủ thông tin bắt buộc!",

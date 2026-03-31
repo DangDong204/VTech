@@ -17,7 +17,7 @@ import { useState } from 'react'
 import { HardDeleteUserDialog } from '@/components/admin/data/manage-user/trash/HardDeleteBrandDialog'
 
 export function TrashUserDialog() {
-  const { t } = useTranslation('brand')
+  const { t } = useTranslation('user')
 
   const { data = [] } = useFetchData('users-trash', getAllUserInTrashApi)
 
@@ -42,14 +42,14 @@ export function TrashUserDialog() {
 
         <DialogContent className='max-w-4xl'>
           <DialogHeader>
-            <DialogTitle>{t('titles.trash')}</DialogTitle>
+            <DialogTitle>{t('trash.trashEmpty')}</DialogTitle>
           </DialogHeader>
 
           <div className='mt-4 border rounded-md overflow-hidden'>
             <table className='w-full text-sm'>
               <thead className='bg-muted'>
                 <tr>
-                  <th className='text-left p-3 w-1/3'>{t('table.columns.brand')}</th>
+                  <th className='text-left p-3 w-1/3'>{t('table.columns.user')}</th>
                   <th className='text-left p-3 w-1/3'>{t('fields.deletedAt')}</th>
                   <th className='text-center p-3 w-1/4'>{t('table.columns.actions')}</th>
                 </tr>

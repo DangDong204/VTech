@@ -50,7 +50,7 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
         <AlertDialogHeader>
           <AlertDialogTitle>{t('dialogTitle.delete')}</AlertDialogTitle>
           <AlertDialogDescription>
-            {t('message.success.deleteConfirm', { email: user.email })}
+            {t('message.confirm.softDelete', { email: user.email })}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
