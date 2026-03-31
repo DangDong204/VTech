@@ -70,7 +70,8 @@
       }
     },
     "createdAt": "Created at",
-    "updatedAt": "Updated at"
+    "updatedAt": "Updated at",
+    "deletedAt": "Deleted at"
   },
 
   "table": {

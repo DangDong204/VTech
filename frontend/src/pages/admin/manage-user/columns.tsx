@@ -18,6 +18,7 @@ export type User = {
   roles: string[]
   createdAt: string
   updatedAt: string
+  deletedAt?: string | null
 }
 
 export const columns: ColumnDef<User>[] = [

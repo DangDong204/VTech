@@ -12,7 +12,22 @@ export const updateUserApi = async (userId: string, payload: UpdateUserRequest) 
   return res.data.data
 }
 
-export const deleteUserApi = async (userId: string) => {
+export const deleteSoftUserApi = async (userId: string) => {
   const res = await api.delete<ApiResponse<void>>(`/users/${userId}`)
+  return res.data
+}
+
+export const getAllUserInTrashApi = async () => {
+  const res = await api.get<ApiResponse<UserResponse[]>>(`/users/trash`)
+  return res.data.data
+}
+
+export const restoreUserApi = async (userId: string) => {
+  const res = await api.patch<ApiResponse<void>>(`/users/trash/${userId}`)
+  return res.data
+}
+
+export const deleteHardUserApi = async (userId: string) => {
+  const res = await api.delete<ApiResponse<void>>(`/users/trash/${userId}`)
   return res.data
 }

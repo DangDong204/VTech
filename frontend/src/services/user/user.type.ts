@@ -11,6 +11,7 @@ export interface UserResponse {
   roles: string[]
   createdAt: string
   updatedAt: string
+  deletedAt?: string | null
 }
 
 export type UpdateUserRequest = {

@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Edit, Eye, Trash2 } from 'lucide-react'
 import type { User } from '@/pages/admin/manage-user/columns'
-// import { EditUserDialog } from '@/components/admin/data/manage-user/EditUserDialog'
-// import { ViewUserDialog } from '@/components/admin/data/manage-user/ViewUserDialog'
-// import { DeleteUserDialog } from '@/components/admin/data/manage-user/DeleteUserDialog'
+import { EditUserDialog } from '@/components/admin/data/manage-user/update/EditUserDialog'
+import { ViewUserDialog } from '@/components/admin/data/manage-user/read/ViewUserDialog'
+import { DeleteUserDialog } from '@/components/admin/data/manage-user/delete/DeleteUserDialog'
 
 interface UserActionsCellProps {
   user: User
@@ -51,10 +51,10 @@ export function UserActionsCell({ user }: UserActionsCellProps) {
           <Trash2 className='h-4 w-4' />
         </Button>
       </div>
-      {/* 
-      <EditUserDialog open={openEdit} onOpenChange={setOpenEdit} user={user} />
+
       <ViewUserDialog open={openView} onOpenChange={setOpenView} user={user} />
-      <DeleteUserDialog open={openDelete} onOpenChange={setOpenDelete} user={user} /> */}
+      <EditUserDialog open={openEdit} onOpenChange={setOpenEdit} user={user} />
+      <DeleteUserDialog open={openDelete} onOpenChange={setOpenDelete} user={user} />
     </>
   )
 }

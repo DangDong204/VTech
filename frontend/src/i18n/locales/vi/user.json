@@ -70,7 +70,8 @@
       }
     },
     "createdAt": "Ngày tạo",
-    "updatedAt": "Ngày cập nhật"
+    "updatedAt": "Ngày cập nhật",
+    "deletedAt": "Ngày xoá"
   },
 
   "table": {
