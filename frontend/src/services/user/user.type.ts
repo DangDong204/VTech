@@ -32,3 +32,9 @@ export type UpdateUserResponse = {
   avatar?: string | null
   status: UserStatus
 }
+
+export type SignUpRequest = {
+  username: string
+  email: string
+  password: string
+}
