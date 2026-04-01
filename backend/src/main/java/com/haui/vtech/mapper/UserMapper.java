@@ -1,12 +1,15 @@
 package com.haui.vtech.mapper;
 
 
+import com.haui.vtech.dto.user.ProfileUpdateRequest;
+import com.haui.vtech.dto.user.ProfileUpdateResponse;
 import com.haui.vtech.dto.user.UserCreationRequest;
 import com.haui.vtech.dto.user.UserResponse;
 import com.haui.vtech.entity.RoleEntity;
 import com.haui.vtech.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,12 +23,12 @@ public interface UserMapper {
             expression = "java(mapRoleNames(userEntity))")
     UserResponse toUserResponse(UserEntity userEntity);
 
-//    ProfileUpdateResponse toProfileUpdateResponse(UserEntity userEntity);
+    ProfileUpdateResponse toProfileUpdateResponse(UserEntity userEntity);
 
-//    @Mapping(target = "password", ignore = true)
-//    @Mapping(target = "email", ignore = true)
-//    @Mapping(target = "roles", ignore = true)
-//    void updateUser(@MappingTarget UserEntity userEntity, ProfileUpdateRequest request);
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    void updateUser(@MappingTarget UserEntity userEntity, ProfileUpdateRequest request);
 
     default Set<String> mapRoleNames(UserEntity userEntity) {
         return (userEntity.getRoles() == null)

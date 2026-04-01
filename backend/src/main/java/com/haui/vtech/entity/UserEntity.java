@@ -52,4 +52,12 @@ public class UserEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<RoleEntity> roles;
+
+    @PrePersist
+    public void prePersist() {
+        super.prePersist();
+        if (status == null) {
+            status = UserStatus.ACTIVE;
+        }
+    }
 }

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="006-seed-users" author="dongdang" context="dev,test">
+
+        <!-- USER 1 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000101"/>
+            <column name="username" value="user1"/>
+            <column name="email" value="user1@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="User One"/>
+
+        </insert>
+
+        <!-- USER 2 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000102"/>
+            <column name="username" value="user2"/>
+            <column name="email" value="user2@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="User Two"/>
+
+        </insert>
+
+        <!-- USER 3 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000103"/>
+            <column name="username" value="user3"/>
+            <column name="email" value="user3@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="User Three"/>
+
+        </insert>
+
+        <!-- USER 4 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000104"/>
+            <column name="username" value="staff1"/>
+            <column name="email" value="staff1@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="Staff One"/>
+        </insert>
+
+        <!-- USER 5 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000105"/>
+            <column name="username" value="staff2"/>
+            <column name="email" value="staff2@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="Staff Two"/>
+
+        </insert>
+
+        <!-- USER 6 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000106"/>
+            <column name="username" value="user6"/>
+            <column name="email" value="user6@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="User Six"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <!-- USER 7 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000107"/>
+            <column name="username" value="user7"/>
+            <column name="email" value="user7@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="User Seven"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <!-- USER 8 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000108"/>
+            <column name="username" value="user8"/>
+            <column name="email" value="user8@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="User Eight"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <!-- STAFF 3 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000109"/>
+            <column name="username" value="staff3"/>
+            <column name="email" value="staff3@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="Staff Three"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <!-- STAFF 4 -->
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-7000-0000-000000000110"/>
+            <column name="username" value="staff4"/>
+            <column name="email" value="staff4@gmail.com"/>
+            <column name="password"
+                    value="$2a$10$5uYsUIgxKkz59pOMorEHFOKtkCBRmKRXYTw945uB.Y/B8FnmU6GQ."/>
+            <column name="full_name" value="Staff Four"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+    </changeSet>
+
+
+    <!-- GÁN ROLE -->
+    <changeSet id="007-seed-user-roles" author="dongdang" context="dev,test">
+
+        <!-- USER ROLE -->
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000101"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000002"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000102"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000002"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000103"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000002"/>
+        </insert>
+
+        <!-- STAFF ROLE -->
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000104"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000003"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000105"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000003"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000106"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000002"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000107"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000002"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000108"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000002"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000109"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000003"/>
+        </insert>
+
+        <insert tableName="user_roles">
+            <column name="user_id" value="00000000-0000-7000-0000-000000000110"/>
+            <column name="role_id" value="00000000-0000-7000-0000-000000000003"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
