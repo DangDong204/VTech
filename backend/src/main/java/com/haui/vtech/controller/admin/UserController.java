@@ -10,6 +10,7 @@ import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -44,9 +45,11 @@ public class UserController {
     @PutMapping("/{userId}")
     public ApiResponse<ProfileUpdateResponse>  updateUser(
             @PathVariable String userId,
-            @Valid @RequestBody ProfileUpdateRequest request) {
+            @Valid @ModelAttribute ProfileUpdateRequest request,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
         return ApiResponse.<ProfileUpdateResponse>builder()
-                .data(userService.updateProfile(userId, request))
+                .data(userService.updateProfile(userId, request, file))
                 .message(messageUtil.getMessage("updated.success"))
                 .build();
     }

@@ -4,6 +4,7 @@ import com.haui.vtech.dto.user.ProfileUpdateRequest;
 import com.haui.vtech.dto.user.ProfileUpdateResponse;
 import com.haui.vtech.dto.user.UserCreationRequest;
 import com.haui.vtech.dto.user.UserResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface UserService {
 
     UserResponse getById(String id);
 
-    ProfileUpdateResponse updateProfile(String id,ProfileUpdateRequest request);
+    ProfileUpdateResponse updateProfile(String id,ProfileUpdateRequest request, MultipartFile file);
 
     void delete(String id);
 

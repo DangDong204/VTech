@@ -8,7 +8,23 @@ export const getAllUsersApi = async () => {
 }
 
 export const updateUserApi = async (userId: string, payload: UpdateUserRequest) => {
-  const res = await api.put<ApiResponse<UpdateUserResponse>>(`/users/${userId}`, payload)
+  const formData = new FormData()
+
+  formData.append('username', payload.username)
+
+  if (payload.fullName) formData.append('fullName', payload.fullName)
+  if (payload.phone) formData.append('phone', payload.phone)
+
+  formData.append('status', payload.status)
+
+  payload.roles?.forEach((role) => formData.append('roles', role))
+
+  if (payload.avatar) formData.append('file', payload.avatar)
+
+  const res = await api.put<ApiResponse<UpdateUserResponse>>(`/users/${userId}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+
   return res.data.data
 }
 

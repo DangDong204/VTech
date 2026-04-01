@@ -18,7 +18,7 @@ export type UpdateUserRequest = {
   username: string
   fullName?: string | null
   phone?: string | null
-  avatar?: string | null
+  avatar?: File | null
   status: UserStatus
   roles?: string[]
 }

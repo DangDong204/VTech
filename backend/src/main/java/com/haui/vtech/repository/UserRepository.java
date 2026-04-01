@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     Optional<UserEntity> findByEmail(String email);
 
-    List<UserEntity> findByStatus(UserStatus status);
+    List<UserEntity> findByStatusNot(UserStatus status);
 
     List<UserEntity> findAllByStatusAndDeletedAtBefore(
             UserStatus status,
@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Modifying
     @Query("""
         update UserEntity u
-        set u.status = INACTIVE,
+        set u.status = DELETED,
             u.deletedAt = :deletedAt
         where u.id = :id
           and u.deletedAt is null

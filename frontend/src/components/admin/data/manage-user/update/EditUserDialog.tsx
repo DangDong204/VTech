@@ -14,7 +14,7 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-[700px] p-0'>
+      <DialogContent className='sm:max-w-[800px] p-0'>
         <DialogHeader className='px-6 pt-6'>
           <DialogTitle>{t('dialogTitle.update')}</DialogTitle>
         </DialogHeader>

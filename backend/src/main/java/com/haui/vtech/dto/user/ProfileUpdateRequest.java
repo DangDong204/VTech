@@ -12,7 +12,6 @@ public class ProfileUpdateRequest {
     private String username;
     private String fullName;
     private String phone;
-    private String avatar;
     private UserStatus status;
     private Set<String> roles;
 }
