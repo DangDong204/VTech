@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import i18n from '@/i18n/i18n'
-import { UserRole, UserStatus } from '@/defines/user.enum'
+import { UserRole, UserStatus } from '@/defines/enum/user.enum'
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/defines/upload-image'
 
 export const createUserSchema = z.object({

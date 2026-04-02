@@ -1,5 +1,5 @@
 import { colorMap } from '@/defines/colorMap'
-import type { UserStatus } from '@/defines/user.enum'
+import type { UserStatus } from '@/defines/enum/user.enum'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 

@@ -1,4 +1,4 @@
-import type { UserStatus } from '@/defines/user.enum'
+import type { UserStatus } from '@/defines/enum/user.enum'
 
 export interface UserResponse {
   id: string

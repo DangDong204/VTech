@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="009-seed-brands" author="dongdang" context="dev,test">
+
+        <!-- APPLE -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000001"/>
+            <column name="brand_name" value="Apple"/>
+            <column name="slug" value="apple"/>
+            <column name="brand_desc" value="Thương hiệu công nghệ nổi tiếng của Mỹ"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/apple_logo.png"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+
+        <!-- SAMSUNG -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000002"/>
+            <column name="brand_name" value="Samsung"/>
+            <column name="slug" value="samsung"/>
+            <column name="brand_desc" value="Tập đoàn công nghệ Hàn Quốc"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/samsung_logo.png"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+
+        <!-- XIAOMI -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000003"/>
+            <column name="brand_name" value="Xiaomi"/>
+            <column name="slug" value="xiaomi"/>
+            <column name="brand_desc" value="Thương hiệu điện tử giá tốt từ Trung Quốc"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/xioami_logo.png"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+
+        <!-- OPPO -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000004"/>
+            <column name="brand_name" value="Oppo"/>
+            <column name="slug" value="oppo"/>
+            <column name="brand_desc" value="Thương hiệu smartphone nổi bật về camera"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/oppo_logo.png"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+
+        <!-- VIVO -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000005"/>
+            <column name="brand_name" value="Vivo"/>
+            <column name="slug" value="vivo"/>
+            <column name="brand_desc" value="Hãng điện thoại tập trung vào trải nghiệm người dùng"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/vivo_logo.png"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+
+        <!-- ASUS -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000006"/>
+            <column name="brand_name" value="Asus"/>
+            <column name="slug" value="asus"/>
+            <column name="brand_desc" value="Hãng laptop và linh kiện máy tính nổi tiếng"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/asus_logo.png"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+
+        <!-- DELL -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000007"/>
+            <column name="brand_name" value="Dell"/>
+            <column name="slug" value="dell"/>
+            <column name="brand_desc" value="Thương hiệu máy tính doanh nghiệp hàng đầu"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/dell_logo.png"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+
+        <!-- HP -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000008"/>
+            <column name="brand_name" value="HP"/>
+            <column name="slug" value="hp"/>
+            <column name="brand_desc" value="Hãng máy tính và máy in phổ biến"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/hp_logo.png"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+
+        <!-- LENOVO -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000009"/>
+            <column name="brand_name" value="Lenovo"/>
+            <column name="slug" value="lenovo"/>
+            <column name="brand_desc" value="Nhà sản xuất laptop lớn nhất thế giới"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/lenovo_logo.png"/>
+            <column name="display_order" valueNumeric="9"/>
+        </insert>
+
+        <!-- SONY -->
+        <insert tableName="brands">
+            <column name="id" value="00000000-0000-8000-0000-000000000010"/>
+            <column name="brand_name" value="Sony"/>
+            <column name="slug" value="sony"/>
+            <column name="brand_desc" value="Tập đoàn điện tử và giải trí Nhật Bản"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/sony_logo.png"/>
+            <column name="display_order" valueNumeric="10"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
