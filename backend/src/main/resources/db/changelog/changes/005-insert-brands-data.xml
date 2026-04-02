@@ -44,7 +44,7 @@
             <column name="brand_name" value="Oppo"/>
             <column name="slug" value="oppo"/>
             <column name="brand_desc" value="Thương hiệu smartphone nổi bật về camera"/>
-            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/oppo__logo.png"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/oppo_logo.png"/>
             <column name="display_order" valueNumeric="4"/>
         </insert>
 
@@ -54,7 +54,7 @@
             <column name="brand_name" value="Vivo"/>
             <column name="slug" value="vivo"/>
             <column name="brand_desc" value="Hãng điện thoại tập trung vào trải nghiệm người dùng"/>
-            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/vivo__logo.png"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/vivo_logo.png"/>
             <column name="display_order" valueNumeric="5"/>
         </insert>
 
@@ -74,7 +74,7 @@
             <column name="brand_name" value="Dell"/>
             <column name="slug" value="dell"/>
             <column name="brand_desc" value="Thương hiệu máy tính doanh nghiệp hàng đầu"/>
-            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/dell__logo.png"/>
+            <column name="brand_logo" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/brand/dell_logo.png"/>
             <column name="display_order" valueNumeric="7"/>
         </insert>
 

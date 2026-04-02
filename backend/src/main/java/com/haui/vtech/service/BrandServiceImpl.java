@@ -82,8 +82,9 @@ public class BrandServiceImpl implements BrandService {
         BrandEntity brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND, id));
 
-        // TODO: delete image in S3
+        s3Service.deleteImage(brand.getBrandLogo());
         // TODO: logic to check if the brand is used by any product
+
         brandRepository.delete(brand);
     }
 

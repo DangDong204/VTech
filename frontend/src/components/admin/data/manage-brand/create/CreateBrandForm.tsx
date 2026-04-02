@@ -103,7 +103,7 @@ export function CreateBrandForm({ onSuccess }: CreateBrandFormProps) {
 
                 <label
                   htmlFor='brandLogo'
-                  className={`block w-full aspect-video rounded-md border bg-muted overflow-hidden cursor-pointer relative group
+                  className={`block w-full aspect-square rounded-md border bg-muted overflow-hidden cursor-pointer relative group
                     ${errors.brandLogo ? 'border-destructive' : ''}`}
                 >
                   {preview ? (
