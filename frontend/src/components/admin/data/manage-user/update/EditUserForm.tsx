@@ -14,7 +14,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { ACCEPTED_IMAGE_TYPES } from '@/defines/upload-image'
-import { UserRole, UserStatus } from '@/defines/user.enum'
+import { UserRole, UserStatus } from '@/defines/enum/user.enum'
 import type { User } from '@/pages/admin/manage-user/columns'
 import { updateUserApi } from '@/services/user/user.api'
 import { zodResolver } from '@hookform/resolvers/zod'

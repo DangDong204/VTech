@@ -7,7 +7,7 @@ import type { User } from '@/pages/admin/manage-user/columns'
 import { useTranslation } from 'react-i18next'
 import { UserRoleBadges } from '@/components/admin/data/manage-user/UserRoleBadges'
 import { UserStatusBadge } from '@/components/admin/data/manage-user/UserStatusBadges'
-import type { UserRole } from '@/defines/user.enum'
+import type { UserRole } from '@/defines/enum/user.enum'
 
 interface ViewUserDialogProps {
   open: boolean

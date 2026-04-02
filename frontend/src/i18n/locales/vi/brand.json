@@ -91,6 +91,7 @@
       "create": "Tạo thương hiệu thành công!",
       "update": "Cập nhật thương hiệu thành công!",
       "delete": "Xóa thương hiệu thành công!",
+      "softDelete": "Xóa mềm thương hiệu thành công! Hãy kiểm tra lại thùng rác",
       "restore": "Khôi phục thương hiệu thành công!"
     },
     "confirm": {
@@ -101,6 +102,7 @@
       "create": "Tạo thương hiệu thất bại!",
       "update": "Cập nhật thương hiệu thất bại!",
       "delete": "Xóa thương hiệu thất bại!",
+      "softDelete": "Xóa mềm thương hiệu thất bại!",
       "fetch": "Lấy danh sách thương hiệu thất bại!",
       "fetchDetail": "Lấy thông tin thương hiệu thất bại!",
       "restore": "Khôi phục thương hiệu thất bại!"

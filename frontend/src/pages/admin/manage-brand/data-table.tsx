@@ -1,16 +1,8 @@
-// import { CreateUserDialog } from '@/components/admin/data/manage-user/CreateUserDialog'
-import { TrashUserDialog } from '@/components/admin/data/manage-user/trash/TrashUserDialog'
+import { CreateBrandDialog } from '@/components/admin/data/manage-brand/create/CreateBrandDialog'
+import { TrashBrandDialog } from '@/components/admin/data/manage-brand/trash/TrashBrandDialog'
 import { DataTablePagination } from '@/components/admin/datatable/DataTablePagination'
 import { DataTableViewOptions } from '@/components/admin/datatable/DataTableViewOptions'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -19,7 +11,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { UserRole, UserStatus } from '@/defines/enum/user.enum'
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -31,7 +22,6 @@ import {
   type SortingState,
   useReactTable
 } from '@tanstack/react-table'
-import { X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -62,73 +52,21 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
       rowSelection
     }
   })
-
-  const isFiltered = table.getState().columnFilters.length > 0
-
-  const handleResetFilters = () => {
-    table.resetColumnFilters()
-    table.resetSorting()
-  }
-
-  const { t } = useTranslation('user')
+  const { t } = useTranslation('brand')
 
   return (
     <>
       <div className='flex items-center gap-2 py-4'>
         <Input
           placeholder={t('filters.search')}
-          value={(table.getColumn('user')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('user')?.setFilterValue(event.target.value)}
+          value={(table.getColumn('brand')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('brand')?.setFilterValue(event.target.value)}
           className='max-w-sm'
         />
-        <Select
-          value={(table.getColumn('roles')?.getFilterValue() as string) ?? 'all'}
-          onValueChange={(value) =>
-            table.getColumn('roles')?.setFilterValue(value === 'all' ? undefined : value)
-          }
-        >
-          <SelectTrigger className='w-[150px]'>
-            <SelectValue placeholder={t('filters.role.label')} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>{t('filters.role.all')}</SelectItem>
-
-            {Object.values(UserRole).map((role) => (
-              <SelectItem key={role} value={role}>
-                {t(`filters.role.${role}` as const)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={(table.getColumn('status')?.getFilterValue() as string) ?? 'all'}
-          onValueChange={(value) =>
-            table.getColumn('status')?.setFilterValue(value === 'all' ? undefined : value)
-          }
-        >
-          <SelectTrigger className='w-[160px]'>
-            <SelectValue placeholder={t('filters.status.label')} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>{t('filters.status.all')}</SelectItem>
-
-            {Object.values(UserStatus).map((status) => (
-              <SelectItem key={status} value={status}>
-                {t(`filters.status.${status}` as const)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {isFiltered && (
-          <Button size='default' className='h-8' onClick={handleResetFilters}>
-            {t('filters.reset')}
-            <X />
-          </Button>
-        )}
 
         <DataTableViewOptions table={table} />
-        {/* <CreateUserDialog /> */}
-        <TrashUserDialog />
+        <CreateBrandDialog />
+        <TrashBrandDialog />
       </div>
 
       <div className='overflow-hidden rounded-md border mb-5'>

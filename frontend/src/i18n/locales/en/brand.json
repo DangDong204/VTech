@@ -91,6 +91,7 @@
       "create": "Brand created successfully!",
       "update": "Brand updated successfully!",
       "delete": "Brand deleted successfully!",
+      "softDelete": "Brand soft deletion successful! Please check the trash bin.",
       "restore": "Brand restored successfully!"
     },
     "confirm": {
@@ -101,6 +102,7 @@
       "create": "Failed to create brand!",
       "update": "Failed to update brand!",
       "delete": "Failed to delete brand!",
+      "softDelete": "Failed to soft delete the brand!",
       "fetch": "Failed to fetch brand list!",
       "fetchDetail": "Failed to fetch brand details!",
       "restore": "Failed to restore brand!"
