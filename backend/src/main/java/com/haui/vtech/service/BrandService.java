@@ -17,13 +17,13 @@ public interface BrandService {
 
     BrandResponse update(String id, BrandUpdateRequest request, MultipartFile brandLogo);
 
-    void delete(String id);
+    String delete(String id);
 
-    void deleteSoft(String id);
+    String deleteSoft(String id);
 
     List<BrandResponse> getAllInTrash();
 
-    void restore(String id);
+    String restore(String id);
 
     // TODO: getBySlug - chưa thấy cần thiết
 

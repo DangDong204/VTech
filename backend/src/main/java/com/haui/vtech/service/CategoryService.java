@@ -2,6 +2,7 @@ package com.haui.vtech.service;
 
 import com.haui.vtech.dto.category.CategoryCreationRequest;
 import com.haui.vtech.dto.category.CategoryResponse;
+import com.haui.vtech.dto.category.CategoryTreeResponse;
 import com.haui.vtech.dto.category.CategoryUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,12 +18,14 @@ public interface CategoryService {
 
     CategoryResponse update(String id, CategoryUpdateRequest request, MultipartFile thumbnailUrl);
 
-    void  delete(String id);
+    String  delete(String id);
 
-    void deleteSoft(String id);
+    String deleteSoft(String id);
 
     List<CategoryResponse> getAllInTrash();
 
-    void restore(String id);
+    String restore(String id);
+
+    List<CategoryTreeResponse> getCategoryTree();
 
 }

@@ -39,7 +39,7 @@ export const createCategoryApi = async (payload: CreateCategoryPayload) => {
     }
   })
 
-  return res.data.data
+  return res.data
 }
 
 export const updateCategoryApi = async (categoryId: string, payload: UpdateCategoryPayload) => {
@@ -62,7 +62,7 @@ export const updateCategoryApi = async (categoryId: string, payload: UpdateCateg
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 
-  return res.data.data
+  return res.data
 }
 
 export const deleteSoftCategoryApi = async (categoryId: string) => {

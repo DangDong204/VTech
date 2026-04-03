@@ -2,9 +2,10 @@ import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-quer
 import { toast } from 'sonner'
 import type { AxiosError } from 'axios'
 import type { ApiErrorResponse } from '@/defines/error.type'
+import type { ApiResponse } from '@/defines/apiResponse'
 
-export function useAppMutation<TData = unknown, TVariables = void>(
-  mutationFn: (variables: TVariables) => Promise<TData>,
+export function useAppMutation<TData, TVariables = void>(
+  mutationFn: (variables: TVariables) => Promise<ApiResponse<TData>>,
   keys: string | QueryKey | (string | QueryKey)[],
   successMessage: string,
   errorMessage?: string,
@@ -16,10 +17,11 @@ export function useAppMutation<TData = unknown, TVariables = void>(
 
   const queryKeys = Array.isArray(keys) ? keys : [keys]
 
-  return useMutation<TData, AxiosError<ApiErrorResponse>, TVariables>({
+  return useMutation<ApiResponse<TData>, AxiosError<ApiErrorResponse>, TVariables>({
     mutationFn,
-    onSuccess: () => {
-      toast.success(successMessage)
+    onSuccess: (response) => {
+      const message = response.message ?? successMessage
+      toast.success(message)
 
       queryKeys.forEach((key) => {
         queryClient.invalidateQueries({

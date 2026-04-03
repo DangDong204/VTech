@@ -2,6 +2,7 @@ package com.haui.vtech.service;
 
 import com.haui.vtech.dto.category.CategoryCreationRequest;
 import com.haui.vtech.dto.category.CategoryResponse;
+import com.haui.vtech.dto.category.CategoryTreeResponse;
 import com.haui.vtech.dto.category.CategoryUpdateRequest;
 import com.haui.vtech.entity.CategoryEntity;
 import com.haui.vtech.enums.CategoryStatus;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -109,7 +111,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public void delete(String id) {
+    public String delete(String id) {
         CategoryEntity category =  categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, id));
 
@@ -121,11 +123,13 @@ public class CategoryServiceImpl implements CategoryService{
         // TODO: logic to check if the category is used by any product
 
         categoryRepository.delete(category);
+
+        return category.getCategoryName();
     }
 
     @Override
     @Transactional
-    public void deleteSoft(String id) {
+    public String deleteSoft(String id) {
         CategoryEntity category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, id));
 
@@ -138,6 +142,8 @@ public class CategoryServiceImpl implements CategoryService{
         if (affectedRows  == 0) {
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND, id);
         }
+
+        return category.getCategoryName();
     }
 
     @Override
@@ -148,11 +154,43 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     @Transactional
-    public void restore(String id) {
+    public String restore(String id) {
+        CategoryEntity category = categoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND, id));
+
         int affectedRows = categoryRepository.restore(id);
 
         if (affectedRows == 0) {
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND, id);
         }
+
+        return category.getCategoryName();
+    }
+
+    @Override
+    public List<CategoryTreeResponse> getCategoryTree() {
+
+        List<CategoryEntity> categories = categoryRepository.findAll();
+
+        Map<String, CategoryTreeResponse> map = categories.stream()
+                .collect(Collectors.toMap(
+                        CategoryEntity::getId,
+                        categoryMapper::toTreeResponse
+                ));
+
+        List<CategoryTreeResponse> roots = new ArrayList<>();
+
+        for (CategoryEntity category : categories) {
+            if (category.getParentId() == null) {
+                roots.add(map.get(category.getId()));
+            } else {
+                CategoryTreeResponse parent = map.get(category.getParentId());
+                if (parent != null) {
+                    parent.getChildren().add(map.get(category.getId()));
+                }
+            }
+        }
+
+        return roots;
     }
 }

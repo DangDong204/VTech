@@ -5,6 +5,7 @@ import com.haui.vtech.dto.brand.BrandCreationRequest;
 import com.haui.vtech.dto.brand.BrandResponse;
 import com.haui.vtech.dto.category.CategoryCreationRequest;
 import com.haui.vtech.dto.category.CategoryResponse;
+import com.haui.vtech.dto.category.CategoryTreeResponse;
 import com.haui.vtech.dto.category.CategoryUpdateRequest;
 import com.haui.vtech.service.CategoryService;
 import com.haui.vtech.util.MessageUtil;
@@ -28,9 +29,10 @@ public class CategoryController {
             @Valid @ModelAttribute CategoryCreationRequest request,
             @RequestPart(required = false) MultipartFile thumbnailUrl
     ) {
+        CategoryResponse response = categoryService.create(request, thumbnailUrl);
         return ApiResponse.<CategoryResponse>builder()
-                .data(categoryService.create(request, thumbnailUrl))
-                .message(messageUtil.getMessage("created.success"))
+                .data(response)
+                .message(messageUtil.getMessage("category.created.success", response.getCategoryName()))
                 .build();
     }
 
@@ -54,25 +56,28 @@ public class CategoryController {
             @Valid @ModelAttribute CategoryUpdateRequest request,
             @RequestPart(required = false) MultipartFile thumbnailUrl
     ) {
+        CategoryResponse response = categoryService.update(categoryId, request, thumbnailUrl);
         return ApiResponse.<CategoryResponse>builder()
-                .data(categoryService.update(categoryId, request, thumbnailUrl))
-                .message(messageUtil.getMessage("updated.success"))
+                .data(response)
+                .message(messageUtil.getMessage("category.updated.success", response.getCategoryName()))
                 .build();
     }
 
     @DeleteMapping("/trash/{categoryId}")
     public ApiResponse<Void> deleteCategory(@PathVariable String categoryId) {
-        categoryService.delete(categoryId);
         return ApiResponse.<Void>builder()
-                .message(messageUtil.getMessage("deleted.success"))
+                .message(messageUtil.getMessage(
+                        "category.deleted.success",
+                        categoryService.delete(categoryId)))
                 .build();
     }
 
     @DeleteMapping("/{categoryId}")
     public ApiResponse<Void> deleteSoftCategory(@PathVariable String categoryId) {
-        categoryService.deleteSoft(categoryId);
         return ApiResponse.<Void>builder()
-                .message(messageUtil.getMessage("deleted.soft.success"))
+                .message(messageUtil.getMessage(
+                        "category.deleted.soft.success",
+                        categoryService.deleteSoft(categoryId)))
                 .build();
     }
 
@@ -85,9 +90,18 @@ public class CategoryController {
 
     @PatchMapping("/trash/{categoryId}")
     public ApiResponse<Void> restoreCategory(@PathVariable String categoryId) {
-        categoryService.restore(categoryId);
         return ApiResponse.<Void>builder()
-                .message(messageUtil.getMessage("restored.success"))
+                .message(messageUtil.getMessage(
+                        "category.restored.success",
+                        categoryService.restore(categoryId)))
+                .build();
+    }
+
+    // TODO: Frontend chưa gọi API này - update sau khi có giao diện client
+    @GetMapping("/tree")
+    public ApiResponse<List<CategoryTreeResponse>> getTree() {
+        return ApiResponse.<List<CategoryTreeResponse>>builder()
+                .data(categoryService.getCategoryTree())
                 .build();
     }
 }
