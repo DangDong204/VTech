@@ -25,12 +25,11 @@
     "noUncheckedSideEffectImports": true,
 
     // shadcn
-    "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"],
-      "@components/*": ["components/*"],
-      "@defines/*": ["defines/*"],
-      "@pages/*": ["pages/*"]
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@defines/*": ["./src/defines/*"],
+      "@pages/*": ["./src/pages/*"]
     }
   },
   "include": ["src"]

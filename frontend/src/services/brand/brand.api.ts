@@ -31,7 +31,7 @@ export const createBrandApi = async (payload: BrandPayload) => {
     }
   })
 
-  return res.data.data
+  return res.data
 }
 
 export const updateBrandApi = async (brandId: string, payload: BrandPayload) => {
@@ -51,7 +51,7 @@ export const updateBrandApi = async (brandId: string, payload: BrandPayload) => 
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 
-  return res.data.data
+  return res.data
 }
 
 // TODO: api delete soft

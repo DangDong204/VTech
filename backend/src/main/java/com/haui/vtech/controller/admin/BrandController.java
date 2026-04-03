@@ -26,9 +26,10 @@ public class BrandController {
             @Valid @ModelAttribute BrandCreationRequest request,
             @RequestPart(required = false) MultipartFile brandLogo
     ) {
+        BrandResponse response = brandService.create(request, brandLogo);
         return ApiResponse.<BrandResponse>builder()
-                .data(brandService.create(request, brandLogo))
-                .message(messageUtil.getMessage("created.success"))
+                .data(response)
+                .message(messageUtil.getMessage("brand.created.success", response.getBrandName()))
                 .build();
     }
 
@@ -52,25 +53,24 @@ public class BrandController {
             @Valid @ModelAttribute BrandUpdateRequest request,
             @RequestPart(required = false) MultipartFile brandLogo
     ) {
+        BrandResponse response = brandService.update(brandId, request, brandLogo);
         return ApiResponse.<BrandResponse>builder()
-                .data(brandService.update(brandId, request, brandLogo))
-                .message(messageUtil.getMessage("updated.success"))
+                .data(response)
+                .message(messageUtil.getMessage("brand.updated.success", response.getBrandName()))
                 .build();
     }
 
     @DeleteMapping("/trash/{brandId}")
     public ApiResponse<Void> deleteBrand(@PathVariable String brandId) {
-        brandService.delete(brandId);
         return ApiResponse.<Void>builder()
-                .message(messageUtil.getMessage("deleted.success"))
+                .message(messageUtil.getMessage("brand.deleted.success", brandService.delete(brandId)))
                 .build();
     }
 
     @DeleteMapping("/{brandId}")
     public ApiResponse<Void> deleteSoftBrand(@PathVariable String brandId) {
-        brandService.deleteSoft(brandId);
         return ApiResponse.<Void>builder()
-                .message(messageUtil.getMessage("deleted.soft.success"))
+                .message(messageUtil.getMessage("brand.deleted.soft.success", brandService.deleteSoft(brandId)))
                 .build();
     }
 
@@ -83,9 +83,8 @@ public class BrandController {
 
     @PatchMapping("/trash/{brandId}")
     public ApiResponse<Void> restoreBrand(@PathVariable String brandId) {
-        brandService.restore(brandId);
         return ApiResponse.<Void>builder()
-                .message(messageUtil.getMessage("restored.success"))
+                .message(messageUtil.getMessage("brand.restored.success", brandService.restore(brandId)))
                 .build();
     }
 

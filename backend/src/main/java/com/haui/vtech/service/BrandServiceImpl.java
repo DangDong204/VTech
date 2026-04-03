@@ -54,7 +54,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandResponse getById(String id) {
         return brandRepository.findById(id).map(brandMapper::toBrandResponse)
-                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND, id));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public void delete(String id) {
+    public String delete(String id) {
         BrandEntity brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND, id));
 
@@ -86,16 +86,22 @@ public class BrandServiceImpl implements BrandService {
         // TODO: logic to check if the brand is used by any product
 
         brandRepository.delete(brand);
+        return brand.getBrandName();
     }
 
     @Override
     @Transactional
-    public void deleteSoft(String id) {
+    public String deleteSoft(String id) {
+        BrandEntity brand = brandRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND, id));
+
         int affectedRows  = brandRepository.softDelete(id, LocalDateTime.now());
 
         if (affectedRows  == 0) {
             throw new AppException(ErrorCode.BRAND_NOT_FOUND, id);
         }
+
+        return brand.getBrandName();
     }
 
     @Override
@@ -106,11 +112,16 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
-    public void restore(String id) {
+    public String restore(String id) {
+        BrandEntity brand = brandRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND, id));
+
         int affectedRows = brandRepository.restore(id);
 
         if (affectedRows == 0) {
             throw new AppException(ErrorCode.BRAND_NOT_FOUND, id);
         }
+
+        return brand.getBrandName();
     }
 }

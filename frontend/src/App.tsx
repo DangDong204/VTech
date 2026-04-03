@@ -2,6 +2,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import DashboardHome from '@/pages/admin/dashboard/content/DashBoardHome'
 import LayoutAdmin from '@/pages/admin/LayoutAdmin'
 import BrandPage from '@/pages/admin/manage-brand/page'
+import CategoryPage from '@/pages/admin/manage-category/page'
 import UserPage from '@/pages/admin/manage-user/page'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
@@ -32,7 +33,7 @@ function App() {
             <Route path='/dashboard' element={<LayoutAdmin />}>
               <Route index element={<DashboardHome />} />
               <Route path='users' element={<UserPage />} />
-              {/* <Route path='categories' element={<CategoryPage />} /> */}
+              <Route path='categories' element={<CategoryPage />} />
               <Route path='brands' element={<BrandPage />} />
             </Route>
           </Route>

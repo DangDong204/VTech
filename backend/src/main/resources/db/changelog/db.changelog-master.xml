@@ -10,5 +10,7 @@
     <include file="classpath:db/changelog/changes/003-insert-data-users.xml"/>
     <include file="classpath:db/changelog/changes/004-create-brands-table.xml"/>
     <include file="classpath:db/changelog/changes/005-insert-brands-data.xml"/>
+    <include file="classpath:db/changelog/changes/006-create-categories-table.xml"/>
+    <include file="classpath:db/changelog/changes/007-insert-categories-data.xml"/>
 
 </databaseChangeLog>

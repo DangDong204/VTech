@@ -3,6 +3,7 @@
     "columns": {
       "category": "Category",
       "parent": "Parent Category",
+      "displayOrder": "Display order",
       "status": "Status",
       "actions": "Actions"
     },
@@ -13,7 +14,8 @@
     "create": "Create category",
     "edit": "Edit category",
     "view": "Category information",
-    "delete": "Delete category"
+    "delete": "Delete category",
+    "trash": "Trash"
   },
   "filters": {
     "search": "Search category",
@@ -91,25 +93,37 @@
       }
     },
     "createdAt": "Created at",
-    "updatedAt": "Updated at"
+    "updatedAt": "Updated at",
+    "deletedAt": "Deleted at"
   },
   "sections": {
     "basicInfo": "Basic information",
     "classification": "Classification & Display"
+  },
+  "trash": {
+    "trashEmpty": "Trash is empty",
+    "remainingDays": "{{days}} days left before permanent deletion"
   },
   "message": {
     "success": {
       "create": "Category created successfully!",
       "update": "Category updated successfully!",
       "delete": "Category deleted successfully!",
-      "deleteConfirm": "Are you sure you want to delete category '{{categoryName}}' ? This action cannot be undone."
+      "softDelete": "Category moved to trash successfully! Please check the trash.",
+      "restore": "Category restored successfully!"
+    },
+    "confirm": {
+      "softDelete": "Are you sure you want to delete the category '{{categoryName}}'? Please check the trash after deletion.",
+      "hardDelete": "Are you sure you want to delete the category '{{categoryName}}'? This action cannot be undone."
     },
     "error": {
       "create": "Failed to create category!",
       "update": "Failed to update category!",
       "delete": "Failed to delete category!",
+      "softDelete": "Failed to move category to trash!",
       "fetch": "Failed to fetch category list!",
-      "fetchDetail": "Failed to fetch category details!"
+      "fetchDetail": "Failed to fetch category details!",
+      "restore": "Failed to restore category!"
     }
   }
 }
