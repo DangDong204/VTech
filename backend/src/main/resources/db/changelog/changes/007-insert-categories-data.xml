@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="011-seed-categories" author="dongdang" context="dev,test">
+        <!-- ==================== CẤP 1  ==================== -->
+        <!-- Laptop -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001001"/>
+            <column name="category_name" value="Laptop"/>
+            <column name="slug" value="laptop"/>
+            <column name="category_desc" value="Danh mục laptop các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/laptop.png"/>
+            <column name="display_order" value="1"/>
+        </insert>
+
+        <!-- Điện thoại -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001002"/>
+            <column name="category_name" value="Điện thoại"/>
+            <column name="slug" value="dien-thoai"/>
+            <column name="category_desc" value="Danh mục điện thoại các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/dien_thoai.png"/>
+            <column name="display_order" value="2"/>
+        </insert>
+
+        <!-- PC -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001003"/>
+            <column name="category_name" value="PC"/>
+            <column name="slug" value="pc"/>
+            <column name="category_desc" value="Danh mục máy tính để bàn"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/pc.png"/>
+            <column name="display_order" value="3"/>
+        </insert>
+
+        <!-- Đồng hồ -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001004"/>
+            <column name="category_name" value="Đồng hồ"/>
+            <column name="slug" value="dong-ho"/>
+            <column name="category_desc" value="Danh mục đồng hồ các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/dong_ho.png"/>
+            <column name="display_order" value="4"/>
+        </insert>
+
+        <!-- Camera -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001005"/>
+            <column name="category_name" value="Camera"/>
+            <column name="slug" value="camera"/>
+            <column name="category_desc" value="Danh mục camera các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/camera.png"/>
+            <column name="display_order" value="5"/>
+        </insert>
+
+        <!-- Thiết bị gia đình -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001006"/>
+            <column name="category_name" value="Thiết bị gia đình"/>
+            <column name="slug" value="thiet-bi-gia-dinh"/>
+            <column name="category_desc" value="Danh mục thiết bị gia đình"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/thiet_b%E1%BB%8B_gia_dinh.png"/>
+            <column name="display_order" value="6"/>
+        </insert>
+
+        <!-- Phụ kiện -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001007"/>
+            <column name="category_name" value="Phụ kiện"/>
+            <column name="slug" value="phu-kien"/>
+            <column name="category_desc" value="Danh mục phụ kiện các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/phu_kien.png"/>
+            <column name="display_order" value="7"/>
+        </insert>
+
+        <!-- ==================== CẤP 2  ==================== -->
+
+        <!-- Bàn phím (con của Phụ kiện) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000002001"/>
+            <column name="category_name" value="Bàn phím"/>
+            <column name="slug" value="ban-phim"/>
+            <column name="category_desc" value="Bàn phím máy tính các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/ban_phim.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001007"/>
+            <column name="display_order" value="1"/>
+        </insert>
+
+        <!-- Chuột (con của Phụ kiện) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000002002"/>
+            <column name="category_name" value="Chuột"/>
+            <column name="slug" value="chuot"/>
+            <column name="category_desc" value="Chuột máy tính các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/chuot.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001007"/>
+            <column name="display_order" value="2"/>
+        </insert>
+
+        <!-- Tai nghe (con của Phụ kiện) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000002003"/>
+            <column name="category_name" value="Tai nghe"/>
+            <column name="slug" value="tai-nghe"/>
+            <column name="category_desc" value="Tai nghe các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/tai_nghe.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001007"/>
+            <column name="display_order" value="3"/>
+        </insert>
+
+        <!-- Loa (con của Phụ kiện) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000002004"/>
+            <column name="category_name" value="Loa"/>
+            <column name="slug" value="loa"/>
+            <column name="category_desc" value="Loa các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/loa.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001007"/>
+            <column name="display_order" value="4"/>
+        </insert>
+
+        <!-- Mic (con của Phụ kiện) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000002005"/>
+            <column name="category_name" value="Mic"/>
+            <column name="slug" value="mic"/>
+            <column name="category_desc" value="Micro thu âm các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/mic.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001007"/>
+            <column name="display_order" value="5"/>
+        </insert>
+
+        <!-- Máy chiếu (con của Phụ kiện) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000002006"/>
+            <column name="category_name" value="Máy chiếu"/>
+            <column name="slug" value="may-chieu"/>
+            <column name="category_desc" value="Máy chiếu các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/may_chieu.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001007"/>
+            <column name="display_order" value="6"/>
+        </insert>
+
+        <!-- ==================== CẤP 2 (con của Thiết bị gia đình) ==================== -->
+
+        <!-- Quạt (con của Thiết bị gia đình) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000003001"/>
+            <column name="category_name" value="Quạt"/>
+            <column name="slug" value="quat"/>
+            <column name="category_desc" value="Quạt điện các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/quat_dien.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001006"/>
+            <column name="display_order" value="1"/>
+        </insert>
+
+        <!-- Tivi (con của Thiết bị gia đình) -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000003002"/>
+            <column name="category_name" value="Tivi"/>
+            <column name="slug" value="tivi"/>
+            <column name="category_desc" value="Tivi các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/tivi.png"/>
+            <column name="parent_id" value="00000000-0000-7000-0000-000000001006"/>
+            <column name="display_order" value="2"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
