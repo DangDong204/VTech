@@ -25,7 +25,6 @@ export function ViewCategoryDialog({ open, onOpenChange, category }: ViewCategor
 
         <div className='max-h-[80vh] overflow-y-auto px-6 pb-6'>
           <div className='space-y-4'>
-            {/* IMAGE giống edit */}
             <div className='space-y-2'>
               <Label>{t('fields.thumbnailUrl.label')}</Label>
               <div className='w-full aspect-video rounded-md border bg-muted overflow-hidden'>
@@ -37,7 +36,6 @@ export function ViewCategoryDialog({ open, onOpenChange, category }: ViewCategor
               </div>
             </div>
 
-            {/* GRID giống edit */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div className='space-y-2'>
                 <Label>{t('fields.categoryName.label')}</Label>
@@ -72,7 +70,6 @@ export function ViewCategoryDialog({ open, onOpenChange, category }: ViewCategor
               </div>
             </div>
 
-            {/* created/updated */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm pt-2'>
               <div className='space-y-1'>
                 <Label className='text-muted-foreground text-xs'>{t('fields.createdAt')}</Label>
@@ -85,7 +82,6 @@ export function ViewCategoryDialog({ open, onOpenChange, category }: ViewCategor
               </div>
             </div>
 
-            {/* ACTION */}
             <div className='flex justify-end pt-4'>
               <Button variant='outline' onClick={() => onOpenChange(false)}>
                 {t('actions.close')}

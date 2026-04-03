@@ -1,4 +1,5 @@
 import { CreateCategoryDialog } from '@/components/admin/data/manage-category/create/CreateCategoryDialog'
+import { TrashCategoryDialog } from '@/components/admin/data/manage-category/trash/TrashCategoryDialog'
 import { DataTablePagination } from '@/components/admin/datatable/DataTablePagination'
 import { DataTableViewOptions } from '@/components/admin/datatable/DataTableViewOptions'
 import { Button } from '@/components/ui/button'
@@ -132,6 +133,7 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
 
         <DataTableViewOptions table={table} />
         <CreateCategoryDialog />
+        <TrashCategoryDialog />
       </div>
 
       <div className='overflow-hidden rounded-md border mb-5'>

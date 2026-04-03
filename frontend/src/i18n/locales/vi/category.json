@@ -14,7 +14,8 @@
     "create": "Tạo danh mục",
     "edit": "Chỉnh sửa danh mục",
     "view": "Thông tin danh mục",
-    "delete": "Xoá danh mục"
+    "delete": "Xoá danh mục",
+    "trash": "Thùng rác"
   },
   "filters": {
     "search": "Tìm kiếm danh mục",
@@ -92,25 +93,37 @@
       }
     },
     "createdAt": "Ngày tạo",
-    "updatedAt": "Ngày cập nhật"
+    "updatedAt": "Ngày cập nhật",
+    "deletedAt": "Ngày xoá"
   },
   "sections": {
     "basicInfo": "Thông tin cơ bản",
     "classification": "Phân loại & hiển thị"
+  },
+  "trash": {
+    "trashEmpty": "Thùng rác trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
   },
   "message": {
     "success": {
       "create": "Tạo danh mục thành công!",
       "update": "Cập nhật danh mục thành công!",
       "delete": "Xóa danh mục thành công!",
-      "deleteConfirm": "Bạn có chắc chắn muốn xóa danh mục '{{categoryName}}' không? Hành động này không thể hoàn tác."
+      "softDelete": "Xóa mềm danh mục thành công! Hãy kiểm tra lại thùng rác",
+      "restore": "Khôi phục danh mục thành công!"
+    },
+    "confirm": {
+      "softDelete": "Bạn có chắc chắn muốn xóa danh mục '{{categoryName}}' không? Sau khi xoá hãy kiểm tra thùng rác.",
+      "hardDelete": "Bạn có chắc chắn muốn xóa danh mục '{{categoryName}}' không? Hành động này không thể hoàn tác."
     },
     "error": {
       "create": "Tạo danh mục thất bại!",
       "update": "Cập nhật danh mục thất bại!",
       "delete": "Xóa danh mục thất bại!",
+      "softDelete": "Xóa mềm danh mục thất bại!",
       "fetch": "Lấy danh sách danh mục thất bại!",
-      "fetchDetail": "Lấy thông tin danh mục thất bại!"
+      "fetchDetail": "Lấy thông tin danh mục thất bại!",
+      "restore": "Khôi phục danh mục thất bại!"
     }
   }
 }

@@ -4,7 +4,7 @@ import { Edit, Eye, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { ViewCategoryDialog } from '@/components/admin/data/manage-category/read/ViewCategoryDialog'
 import { EditCategoryDialog } from '@/components/admin/data/manage-category/update/EditCategoryDialog'
-// import { DeleteCategoryDialog } from '@/components/admin/data/manage-category/DeleteCategoryDialog'
+import { DeleteCategoryDialog } from '@/components/admin/data/manage-category/delete/DeleteCategoryDialog'
 
 interface CategoryActionsCellProps {
   category: Category
@@ -52,7 +52,7 @@ export function CategoryActionsCell({ category }: CategoryActionsCellProps) {
 
       <ViewCategoryDialog open={openView} onOpenChange={setOpenView} category={category} />
       <EditCategoryDialog open={openEdit} onOpenChange={setOpenEdit} category={category} />
-      {/* <DeleteCategoryDialog open={openDelete} onOpenChange={setOpenDelete} category={category} /> */}
+      <DeleteCategoryDialog open={openDelete} onOpenChange={setOpenDelete} category={category} />
     </>
   )
 }

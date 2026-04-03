@@ -64,3 +64,23 @@ export const updateCategoryApi = async (categoryId: string, payload: UpdateCateg
 
   return res.data.data
 }
+
+export const deleteSoftCategoryApi = async (categoryId: string) => {
+  const res = await api.delete<ApiResponse<void>>(`/categories/${categoryId}`)
+  return res.data
+}
+
+export const getAllCategoryInTrashApi = async () => {
+  const res = await api.get<ApiResponse<CategoryResponse[]>>('/categories/trash')
+  return res.data.data
+}
+
+export const restoreCategoryApi = async (categoryId: string) => {
+  const res = await api.patch<ApiResponse<void>>(`/categories/trash/${categoryId}`)
+  return res.data
+}
+
+export const deleteHardCategoryApi = async (categoryId: string) => {
+  const res = await api.delete<ApiResponse<void>>(`/categories/trash/${categoryId}`)
+  return res.data
+}
