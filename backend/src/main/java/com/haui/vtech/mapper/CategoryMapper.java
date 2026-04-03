@@ -13,6 +13,7 @@ public interface CategoryMapper {
     CategoryResponse toResponse(CategoryEntity entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "parentId", ignore = true)
     void updateEntity(@MappingTarget CategoryEntity entity, CategoryUpdateRequest request);
 
 //    @Mapping(target = "children", expression = "java(new java.util.ArrayList<>())")

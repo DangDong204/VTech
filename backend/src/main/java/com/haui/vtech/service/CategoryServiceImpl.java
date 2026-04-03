@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +52,19 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public List<CategoryResponse> getAllCategories() {
-        return categoryRepository.findByStatusNot(CategoryStatus.DELETED).stream().map(categoryMapper::toResponse).toList();
+
+        List<CategoryEntity> categories = categoryRepository.findByStatusNot(CategoryStatus.DELETED);
+
+        Map<String, String> categoryNameMap = categories.stream()
+                .collect(Collectors.toMap(CategoryEntity::getId, CategoryEntity::getCategoryName));
+
+        return categories.stream().map(category -> {
+            CategoryResponse response = categoryMapper.toResponse(category);
+            if (category.getParentId() != null) {
+                response.setParentName(categoryNameMap.get(category.getParentId()));
+            }
+            return response;
+        }).toList();
     }
 
     @Override
@@ -72,7 +86,7 @@ public class CategoryServiceImpl implements CategoryService{
 
         if (request.getParentId() != null) {
             if (!categoryRepository.existsById(request.getParentId())) {
-                throw new AppException(ErrorCode.CATEGORY_PARENT_NOT_FOUND);
+                throw new AppException(ErrorCode.CATEGORY_PARENT_NOT_FOUND, request.getParentId());
             }
 
             if (request.getParentId().equals(id)) {
@@ -80,6 +94,8 @@ public class CategoryServiceImpl implements CategoryService{
             }
 
             category.setParentId(request.getParentId());
+        } else {
+            category.setParentId(null);
         }
 
         if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {

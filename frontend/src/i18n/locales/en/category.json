@@ -3,6 +3,7 @@
     "columns": {
       "category": "Category",
       "parent": "Parent Category",
+      "displayOrder": "Display order",
       "status": "Status",
       "actions": "Actions"
     },

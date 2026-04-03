@@ -3,6 +3,7 @@
     "columns": {
       "category": "Danh mục",
       "parent": "Danh mục cha",
+      "displayOrder": "Thứ tự hiện thị",
       "status": "Trạng thái",
       "actions": "Thao tác"
     },
