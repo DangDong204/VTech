@@ -55,6 +55,11 @@ public enum ErrorCode {
     TAG_NAME_MAX(6013, "tag.name.max", HttpStatus.BAD_REQUEST),
     TAG_DESC_MAX(6014, "tag.desc.max", HttpStatus.BAD_REQUEST),
 
+    PRODUCT_NOT_FOUND(7000, "product.not.found", HttpStatus.NOT_FOUND),
+    PRODUCT_NAME_NOTBLANK(7001, "product.name.not.blank", HttpStatus.BAD_REQUEST),
+    PRODUCT_NAME_EXISTED(7002, "product.name.exists", HttpStatus.BAD_REQUEST),
+    PRODUCT_SLUG_NOTBLANK(7002, "product.slug.not.blank", HttpStatus.BAD_REQUEST),
+    PRODUCT_SLUG_EXISTED(7003, "product.slug.exists", HttpStatus.BAD_REQUEST)
 
     ;
 
