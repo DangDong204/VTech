@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="015-create-specification-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="specifications"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="specifications" remarks="Bảng thông số kỹ thuật">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- FK 1-1 với product -->
+            <column name="product_id" type="VARCHAR(36)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <!-- Thông số -->
+            <column name="screen_size" type="VARCHAR(50)"/>
+            <column name="screen_tech" type="VARCHAR(100)"/>
+            <column name="resolution" type="VARCHAR(100)"/>
+            <column name="operating_system" type="VARCHAR(100)"/>
+            <column name="chip" type="VARCHAR(100)"/>
+            <column name="cpu" type="VARCHAR(100)"/>
+            <column name="gpu" type="VARCHAR(100)"/>
+            <column name="ram" type="VARCHAR(50)"/>
+            <column name="capacity_gb" type="INT"/>
+            <column name="battery_capacity" type="VARCHAR(50)"/>
+            <column name="charging_tech" type="VARCHAR(100)"/>
+            <column name="back_camera" type="VARCHAR(255)"/>
+            <column name="front_camera" type="VARCHAR(255)"/>
+            <column name="connectivity" type="VARCHAR(255)"/>
+            <column name="special_feature" type="TEXT"/>
+            <column name="weight" type="VARCHAR(50)"/>
+            <column name="release_date" type="DATE"/>
+
+            <!-- Audit -->
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <!-- FK constraint -->
+        <addForeignKeyConstraint
+                baseTableName="specifications"
+                baseColumnNames="product_id"
+                constraintName="fk_specification_product"
+                referencedTableName="products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <!-- Index -->
+        <createIndex tableName="specifications" indexName="idx_spec_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="specifications" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

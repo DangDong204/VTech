@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="013-create-products-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="products"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="products" remarks="Bảng sản phẩm">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="product_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="product_desc" type="TEXT"/>
+
+            <column name="warranty_months" type="INT"/>
+
+            <!-- Thống kê -->
+            <column name="total_views" type="INT" defaultValue="0"/>
+            <column name="total_purchases" type="INT" defaultValue="0"/>
+            <column name="rating_avg" type="DECIMAL(3,2)" defaultValue="0"/>
+            <column name="total_reviews" type="INT" defaultValue="0"/>
+
+            <!-- Quan hệ -->
+            <column name="category_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="brand_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Audit -->
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <!-- Index -->
+        <createIndex tableName="products" indexName="idx_product_name">
+            <column name="product_name"/>
+        </createIndex>
+
+        <createIndex tableName="products" indexName="idx_product_category">
+            <column name="category_id"/>
+        </createIndex>
+
+        <createIndex tableName="products" indexName="idx_product_brand">
+            <column name="brand_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="products" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
