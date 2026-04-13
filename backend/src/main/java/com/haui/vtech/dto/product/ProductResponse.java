@@ -36,6 +36,8 @@ public class ProductResponse {
     Set<String> tags;
     ProductStatus status;
 
+    SpecificationResponse specification;
+
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     LocalDateTime createdAt;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")

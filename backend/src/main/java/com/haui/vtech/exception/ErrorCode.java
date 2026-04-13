@@ -59,8 +59,10 @@ public enum ErrorCode {
     PRODUCT_NAME_NOTBLANK(7001, "product.name.not.blank", HttpStatus.BAD_REQUEST),
     PRODUCT_NAME_EXISTED(7002, "product.name.exists", HttpStatus.BAD_REQUEST),
     PRODUCT_SLUG_NOTBLANK(7002, "product.slug.not.blank", HttpStatus.BAD_REQUEST),
-    PRODUCT_SLUG_EXISTED(7003, "product.slug.exists", HttpStatus.BAD_REQUEST)
+    PRODUCT_SLUG_EXISTED(7003, "product.slug.exists", HttpStatus.BAD_REQUEST),
 
+    SPEC_EXISTS(8000, "specification.exists", HttpStatus.BAD_REQUEST),
+    SPEC_NOT_FOUND(8001, "specification.not.found", HttpStatus.NOT_FOUND)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

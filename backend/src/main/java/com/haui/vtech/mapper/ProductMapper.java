@@ -10,7 +10,7 @@ import org.mapstruct.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {SpecificationMapper.class})
 public interface ProductMapper {
 
     ProductEntity toEntity(ProductCreationRequest request);
@@ -18,6 +18,7 @@ public interface ProductMapper {
     @Mapping(target = "categoryName", source = "category.categoryName")
     @Mapping(target = "brandName", source = "brand.brandName")
     @Mapping(target = "tags", expression = "java(mapTags(entity.getTags()))")
+    @Mapping(target = "specification", source = "specification")
     ProductResponse toResponse(ProductEntity entity);
 
     default Set<String> mapTags(Set<TagEntity> tags) {

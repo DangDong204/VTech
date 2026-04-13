@@ -32,7 +32,7 @@
             <column name="cpu" type="VARCHAR(100)"/>
             <column name="gpu" type="VARCHAR(100)"/>
             <column name="ram" type="VARCHAR(50)"/>
-            <column name="capacity_gb" type="INT"/>
+            <column name="storage_capacity" type="VARCHAR(50)"/>
             <column name="battery_capacity" type="VARCHAR(50)"/>
             <column name="charging_tech" type="VARCHAR(100)"/>
             <column name="back_camera" type="VARCHAR(255)"/>

@@ -82,6 +82,9 @@ public class ProductEntity extends BaseEntity{
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductImageEntity> images = new HashSet<>();
 
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private SpecificationEntity specification;
+
 //    helper method để thêm tag vào product
 
     public void addTag(TagEntity tag) {
