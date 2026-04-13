@@ -41,7 +41,7 @@ public class ProductImageServiceImpl implements ProductImageService {
                 productImageRepository.delete(oldThumbnail);
             }
 
-            String thumbnailUrl = s3Service.uploadImage(thumbnail, ImageFolder.PRODUCT);
+            String thumbnailUrl = s3Service.uploadImage(thumbnail, ImageFolder.PRODUCT, product.getSlug());
 
             ProductImageEntity thumbnailEntity = ProductImageEntity.builder()
                     .product(product)
@@ -59,7 +59,7 @@ public class ProductImageServiceImpl implements ProductImageService {
             int order = 1;
 
             for (MultipartFile file : images) {
-                String url = s3Service.uploadImage(file, ImageFolder.PRODUCT);
+                String url = s3Service.uploadImage(file, ImageFolder.PRODUCT, product.getSlug());
 
                 ProductImageEntity image = ProductImageEntity.builder()
                         .product(product)

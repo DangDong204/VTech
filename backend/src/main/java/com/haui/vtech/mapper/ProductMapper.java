@@ -2,10 +2,10 @@ package com.haui.vtech.mapper;
 
 import com.haui.vtech.dto.product.ProductCreationRequest;
 import com.haui.vtech.dto.product.ProductResponse;
+import com.haui.vtech.dto.product.ProductUpdateRequest;
 import com.haui.vtech.entity.ProductEntity;
 import com.haui.vtech.entity.TagEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,4 +26,7 @@ public interface ProductMapper {
                 .map(TagEntity::getTagName)
                 .collect(Collectors.toSet());
     }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(@MappingTarget ProductEntity entity, ProductUpdateRequest request);
 }

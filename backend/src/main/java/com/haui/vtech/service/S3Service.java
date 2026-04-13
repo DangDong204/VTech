@@ -65,4 +65,30 @@ public class S3Service {
     private String extractKeyFromUrl(String imageUrl) {
         return imageUrl.substring(imageUrl.indexOf(".com/") + 5);
     }
+
+    public String uploadImage(MultipartFile file, ImageFolder folder, String subFolder) {
+        try {
+            FileValidator.validateImage(file);
+
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+            String key = folder.getFolder()
+                    + "/" + subFolder
+                    + "/" + fileName;
+
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .contentType(file.getContentType())
+                    .build();
+
+            s3Client.putObject(request,
+                    RequestBody.fromBytes(file.getBytes()));
+
+            return "https://" + bucketName + ".s3.amazonaws.com/" + key;
+
+        } catch (IOException e) {
+            throw new AppException(ErrorCode.UPLOAD_IMAGE_FAILED);
+        }
+    }
 }

@@ -24,6 +24,4 @@ public interface TagService {
 
     String restore(String id);
 
-    // TODO: getProductsByTag
-
 }
