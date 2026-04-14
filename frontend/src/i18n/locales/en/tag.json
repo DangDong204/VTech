@@ -1,0 +1,88 @@
+{
+  "table": {
+    "columns": {
+      "tag": "Tag",
+      "tagDesc": "Description",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No data available"
+  },
+  "titles": {
+    "list": "Tag List",
+    "create": "Create Tag",
+    "edit": "Edit Tag",
+    "view": "Tag Information",
+    "delete": "Delete Tag",
+    "trash": "Trash"
+  },
+  "filters": {
+    "search": "Search tags"
+  },
+  "actions": {
+    "create": "Create Tag",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Create New",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "schema": {
+    "tagName": {
+      "required": "Tag name is required",
+      "max": "Tag name must be at most 50 characters"
+    },
+    "tagDesc": {
+      "max": "Tag description must be at most 255 characters"
+    }
+  },
+  "fields": {
+    "tagName": {
+      "label": "Tag Name",
+      "placeholder": "Enter tag name"
+    },
+    "tagDesc": {
+      "label": "Description",
+      "placeholder": "Enter tag description"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      }
+    },
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "deletedAt": "Deleted At"
+  },
+  "trash": {
+    "trashEmpty": "Trash is empty",
+    "remainingDays": "{{days}} days remaining before permanent deletion"
+  },
+  "message": {
+    "success": {
+      "create": "Tag created successfully!",
+      "update": "Tag updated successfully!",
+      "delete": "Tag deleted successfully!",
+      "softDelete": "Tag moved to trash successfully! Please check the trash.",
+      "restore": "Tag restored successfully!"
+    },
+    "confirm": {
+      "softDelete": "Are you sure you want to delete the tag '{{tagName}}'? You can find it in the trash after deletion.",
+      "hardDelete": "Are you sure you want to delete the tag '{{tagName}}'? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create tag!",
+      "update": "Failed to update tag!",
+      "delete": "Failed to delete tag!",
+      "softDelete": "Failed to move tag to trash!",
+      "fetch": "Failed to fetch tag list!",
+      "fetchDetail": "Failed to fetch tag details!",
+      "restore": "Failed to restore tag!"
+    }
+  }
+}

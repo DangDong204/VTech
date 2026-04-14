@@ -9,6 +9,7 @@ import com.haui.vtech.enums.TagStatus;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.TagMapper;
+import com.haui.vtech.repository.ProductRepository;
 import com.haui.vtech.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
+    private final ProductRepository productRepository;
 
     @Override
     public TagResponse create(TagCreationRequest request) {
@@ -73,6 +75,9 @@ public class TagServiceImpl implements TagService {
         TagEntity tag = tagRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TAG_NOT_FOUND, id));
 
+        if (productRepository.existsByTags_Id(id)) {
+            throw new AppException(ErrorCode.TAG_IN_USE, tag.getTagName());
+        }
         tagRepository.delete(tag);
         return tag.getTagName();
     }
@@ -82,6 +87,10 @@ public class TagServiceImpl implements TagService {
     public String deleteSoft(String id) {
         TagEntity tag = tagRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TAG_NOT_FOUND, id));
+
+        if (productRepository.existsByTags_Id(id)) {
+            throw new AppException(ErrorCode.TAG_IN_USE, tag.getTagName());
+        }
 
         int affectedRows = tagRepository.softDelete(id, LocalDateTime.now());
 

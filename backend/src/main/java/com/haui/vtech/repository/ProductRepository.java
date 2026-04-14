@@ -18,6 +18,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, String> 
 
     boolean existsByProductName(String productName);
 
+    boolean existsByTags_Id(String tagId);
+
     List<ProductEntity> findByStatusNot(ProductStatus productStatus);
 
     List<ProductEntity> findByTags_IdAndStatus(String tagId, ProductStatus status);
