@@ -59,6 +59,16 @@ public class ProductController {
                 .build();
     }
 
+    @DeleteMapping("/{productId}/images/detail")
+    public ApiResponse<Void> deleteProductImage(
+            @PathVariable String productId,
+            @RequestParam String imageUrl) {
+        productImageService.deleteProductImage(productId, imageUrl);
+        return ApiResponse.<Void>builder()
+                .message(messageUtil.getMessage("product.image.deleted.success"))
+                .build();
+    }
+
     @GetMapping("/{productId}")
     public ApiResponse<ProductResponse> getProductById(@PathVariable String productId) {
         return ApiResponse.<ProductResponse>builder()

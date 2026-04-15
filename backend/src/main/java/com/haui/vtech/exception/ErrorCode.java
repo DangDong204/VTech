@@ -48,6 +48,7 @@ public enum ErrorCode {
     FILE_TOO_LARGE(6001, "file.too.large", HttpStatus.BAD_REQUEST),
     UPLOAD_IMAGE_FAILED(6002, "upload.image.failed", HttpStatus.INTERNAL_SERVER_ERROR),
     DELETE_IMAGE_FAILED(6003, "delete.image.failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    IMAGE_NOT_FOUND(6004, "image.not.found", HttpStatus.NOT_FOUND),
 
     TAG_NOT_FOUND(6010, "tag.not.found", HttpStatus.NOT_FOUND),
     TAG_NAME_NOTBLANK(6011, "tag.name.not.blank", HttpStatus.BAD_REQUEST),

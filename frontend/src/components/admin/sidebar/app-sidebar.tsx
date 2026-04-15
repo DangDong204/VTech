@@ -60,7 +60,7 @@ const data = {
       items: [
         {
           title: 'List Products',
-          url: '#'
+          url: '/dashboard/products'
         },
         {
           title: 'Product Variant',

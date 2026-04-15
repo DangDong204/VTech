@@ -30,12 +30,15 @@ public class ProductResponse {
     BigDecimal ratingAvg;
     Integer totalReviews;
 
+    String categoryId;
     String categoryName;
+    String brandId;
     String brandName;
 
     Set<String> tags;
     ProductStatus status;
 
+    ProductImageResponse images;
     SpecificationResponse specification;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")

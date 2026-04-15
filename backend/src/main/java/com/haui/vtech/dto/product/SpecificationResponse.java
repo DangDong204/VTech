@@ -28,6 +28,6 @@ public class SpecificationResponse {
     private String connectivity;
     private String specialFeature;
     private String weight;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+//    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate releaseDate;
 }

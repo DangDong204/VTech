@@ -12,6 +12,8 @@ import com.haui.vtech.repository.SpecificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SpecificationServiceImpl implements SpecificationService {
@@ -45,10 +47,20 @@ public class SpecificationServiceImpl implements SpecificationService {
 
     @Override
     public SpecificationResponse update(String productId, SpecificationRequest request) {
-        SpecificationEntity spec = specificationRepository.findByProductId(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.SPEC_NOT_FOUND));
+        Optional<SpecificationEntity> specOpt = specificationRepository.findByProductId(productId);
 
-        specificationMapper.update(spec, request);
+        SpecificationEntity spec;
+
+        if (specOpt.isPresent()) {
+            spec = specOpt.get();
+            specificationMapper.update(spec, request);
+        } else {
+            ProductEntity product = productRepository.findById(productId)
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, productId));
+
+            spec = specificationMapper.toEntity(request);
+            spec.setProduct(product);
+        }
 
         return specificationMapper.toResponse(specificationRepository.save(spec));
     }

@@ -2,6 +2,7 @@ package com.haui.vtech.repository;
 
 import com.haui.vtech.entity.ProductEntity;
 import com.haui.vtech.enums.ProductStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, String> 
 
     boolean existsByTags_Id(String tagId);
 
+    @EntityGraph(attributePaths = {"images", "tags"})
     List<ProductEntity> findByStatusNot(ProductStatus productStatus);
 
     List<ProductEntity> findByTags_IdAndStatus(String tagId, ProductStatus status);

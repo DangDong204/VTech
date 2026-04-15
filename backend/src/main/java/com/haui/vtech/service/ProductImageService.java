@@ -13,4 +13,5 @@ public interface ProductImageService {
 
     ProductImageResponse getProductImages(String productId);
 
+    void deleteProductImage(String productId, String imageUrl);
 }

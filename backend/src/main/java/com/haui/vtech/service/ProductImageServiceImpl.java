@@ -56,7 +56,14 @@ public class ProductImageServiceImpl implements ProductImageService {
         // 🔥 2. xử lý gallery
         if (images != null && !images.isEmpty()) {
 
-            int order = 1;
+            List<ProductImageEntity> existingImages =
+                    productImageRepository.findByProductIdOrderByDisplayOrderAsc(productId);
+
+            int maxOrder = existingImages.stream()
+                    .filter(img -> !Boolean.TRUE.equals(img.getIsThumbnail()))
+                    .mapToInt(ProductImageEntity::getDisplayOrder).max().orElse(0);
+
+            int order = maxOrder + 1;
 
             for (MultipartFile file : images) {
                 String url = s3Service.uploadImage(file, ImageFolder.PRODUCT, product.getSlug());
@@ -101,5 +108,18 @@ public class ProductImageServiceImpl implements ProductImageService {
                 .thumbnail(thumbnail)
                 .images(gallery)
                 .build();
+    }
+
+    @Override
+    public void deleteProductImage(String productId, String imageUrl) {
+        List<ProductImageEntity> images = productImageRepository.findByProductIdOrderByDisplayOrderAsc(productId);
+
+        ProductImageEntity targetImage = images.stream()
+                .filter(img -> img.getImageUrl().equals(imageUrl))
+                .findFirst().orElseThrow(() -> new AppException(ErrorCode.IMAGE_NOT_FOUND, imageUrl));
+
+        s3Service.deleteImage(targetImage.getImageUrl());
+
+        productImageRepository.delete(targetImage);
     }
 }
