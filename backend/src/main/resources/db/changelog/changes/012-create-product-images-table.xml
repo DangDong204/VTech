@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="016-create-product-images-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_images"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="product_images" remarks="Bảng ảnh sản phẩm">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- FK tới product -->
+            <column name="product_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="image_url" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Ảnh đại diện -->
+            <column name="is_thumbnail" type="BOOLEAN"
+                    defaultValueBoolean="false"/>
+
+            <!-- Thứ tự hiển thị -->
+            <column name="display_order" type="INT"
+                    defaultValueNumeric="0"/>
+
+            <!-- Audit -->
+            <column name="created_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <!-- FK constraint -->
+        <addForeignKeyConstraint
+                baseTableName="product_images"
+                baseColumnNames="product_id"
+                constraintName="fk_product_image_product"
+                referencedTableName="products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <!-- Index -->
+        <createIndex tableName="product_images" indexName="idx_product_images_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="product_images" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

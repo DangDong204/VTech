@@ -1,4 +1,181 @@
 {
-  "order": "Đặt hàng",
-  "addtocart": "Thêm vào giỏ hàng"
+  "table": {
+    "columns": {
+      "product": "Sản phẩm",
+      "category": "Danh mục",
+      "brand": "Thương hiệu",
+      "purchases": "Lượt mua",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách sản phẩm",
+    "create": "Tạo sản phẩm",
+    "edit": "Chỉnh sửa sản phẩm",
+    "view": "Thông tin sản phẩm",
+    "delete": "Xoá sản phẩm",
+    "trash": "Thùng rác"
+  },
+  "filters": {
+    "search": "Tìm kiếm sản phẩm",
+    "category": "Tất cả danh mục",
+    "brand": "Tất cả thương hiệu",
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả trạng thái",
+      "ACTIVE": "Hoạt động",
+      "INACTIVE": "Ngừng hoạt động"
+    },
+    "reset": "Đặt lại"
+  },
+  "actions": {
+    "create": "Tạo sản phẩm",
+    "view": "Xem",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "submit": "Lưu sản phẩm",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận",
+    "upload": "Tải lên",
+    "addImage": "Thêm ảnh",
+    "saving": "Đang lưu..."
+  },
+  "schema": {
+    "productName": {
+      "required": "Tên sản phẩm không được để trống"
+    },
+    "slug": {
+      "required": "Slug không được để trống"
+    },
+    "categoryId": {
+      "required": "Vui lòng chọn danh mục"
+    },
+    "brandId": {
+      "required": "Vui lòng chọn thương hiệu"
+    },
+    "thumbnail": {
+      "invalid": "Ảnh đại diện không hợp lệ",
+      "invalidType": "Chỉ cho phép ảnh JPG, PNG, WEBP",
+      "maxSize": "Dung lượng ảnh tối đa 5MB"
+    },
+    "images": {
+      "invalid": "Ảnh chi tiết không hợp lệ",
+      "invalidType": "Chỉ cho phép ảnh JPG, PNG, WEBP",
+      "maxSize": "Dung lượng mỗi ảnh tối đa 5MB"
+    },
+    "warrantyMonths": {
+      "invalid": "Thời gian bảo hành phải là số",
+      "min": "Thời gian bảo hành không được nhỏ hơn 0"
+    },
+    "status": {
+      "invalid": "Trạng thái không hợp lệ"
+    }
+  },
+  "fields": {
+    "productName": {
+      "label": "Tên sản phẩm",
+      "placeholder": "Nhập tên sản phẩm"
+    },
+    "slug": {
+      "label": "Slug",
+      "placeholder": "Nhập slug"
+    },
+    "productDesc": {
+      "label": "Mô tả sản phẩm",
+      "placeholder": "Nhập mô tả sản phẩm"
+    },
+    "thumbnail": {
+      "label": "Ảnh đại diện",
+      "placeholder": "Click để thêm ảnh đại diện"
+    },
+    "images": {
+      "label": "Ảnh chi tiết",
+      "placeholder": "Click để thêm các ảnh chi tiết"
+    },
+    "categoryId": {
+      "label": "Danh mục",
+      "placeholder": "Chọn danh mục"
+    },
+    "brandId": {
+      "label": "Thương hiệu",
+      "placeholder": "Chọn thương hiệu"
+    },
+    "tagIds": {
+      "label": "Nhãn (Tags)",
+      "placeholder": "Chọn nhãn sản phẩm"
+    },
+    "warrantyMonths": {
+      "label": "Bảo hành (tháng)",
+      "placeholder": "Nhập số tháng bảo hành"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái",
+      "options": {
+        "ACTIVE": "Hoạt động",
+        "INACTIVE": "Ngừng hoạt động",
+        "OUT_OF_STOCK": "Hết hàng",
+        "DISCONTINUED": "Ngừng kinh doanh"
+      }
+    },
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật",
+    "deletedAt": "Ngày xoá",
+    "specification": {
+      "screenSize": "Kích thước màn hình",
+      "screenTech": "Công nghệ màn hình",
+      "resolution": "Độ phân giải",
+      "operatingSystem": "Hệ điều hành",
+      "chip": "Chip xử lý (CPU)",
+      "cpu": "Tốc độ CPU",
+      "gpu": "Chip đồ họa (GPU)",
+      "ram": "Dung lượng RAM",
+      "storageCapacity": "Dung lượng lưu trữ (ROM)",
+      "batteryCapacity": "Dung lượng pin",
+      "chargingTech": "Công nghệ sạc",
+      "backCamera": "Camera sau",
+      "frontCamera": "Camera trước",
+      "connectivity": "Kết nối",
+      "specialFeature": "Tính năng đặc biệt",
+      "weight": "Trọng lượng",
+      "releaseDate": "Ngày ra mắt"
+    }
+  },
+  "sections": {
+    "basicInfo": "Thông tin cơ bản",
+    "classification": "Phân loại & trạng thái",
+    "images": "Hình ảnh sản phẩm",
+    "specification": "Thông số kỹ thuật"
+  },
+  "trash": {
+    "trashEmpty": "Thùng rác trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
+  },
+  "message": {
+    "success": {
+      "create": "Tạo sản phẩm thành công!",
+      "update": "Cập nhật sản phẩm thành công!",
+      "delete": "Xóa sản phẩm thành công!",
+      "softDelete": "Xóa mềm sản phẩm thành công! Hãy kiểm tra lại thùng rác",
+      "restore": "Khôi phục sản phẩm thành công!",
+      "uploadImages": "Tải ảnh sản phẩm thành công!"
+    },
+    "confirm": {
+      "softDelete": "Bạn có chắc chắn muốn xóa sản phẩm '{{productName}}' không? Sau khi xoá hãy kiểm tra thùng rác.",
+      "hardDelete": "Bạn có chắc chắn muốn xóa sản phẩm '{{productName}}' không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo sản phẩm thất bại!",
+      "update": "Cập nhật sản phẩm thất bại!",
+      "delete": "Xóa sản phẩm thất bại!",
+      "softDelete": "Xóa mềm sản phẩm thất bại!",
+      "fetch": "Lấy danh sách sản phẩm thất bại!",
+      "fetchDetail": "Lấy thông tin sản phẩm thất bại!",
+      "restore": "Khôi phục sản phẩm thất bại!",
+      "uploadImages": "Tải ảnh sản phẩm thất bại!"
+    }
+  }
 }

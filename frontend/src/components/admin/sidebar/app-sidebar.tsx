@@ -60,7 +60,7 @@ const data = {
       items: [
         {
           title: 'List Products',
-          url: '#'
+          url: '/dashboard/products'
         },
         {
           title: 'Product Variant',
@@ -117,7 +117,7 @@ const data = {
     },
     {
       name: 'Blog',
-      url: '#',
+      url: '/dashboard/blogs',
       icon: StickyNote
     },
     {
@@ -127,17 +127,17 @@ const data = {
     },
     {
       name: 'Vouchers',
-      url: '#',
+      url: '/dashboard/vouchers',
       icon: TicketPercent
     },
     {
       name: 'Tags',
-      url: '#',
+      url: '/dashboard/tags',
       icon: Tags
     },
     {
       name: 'Reviews',
-      url: '#',
+      url: '/dashboard/reviews',
       icon: MessageCircleMore
     },
     {

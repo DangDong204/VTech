@@ -12,5 +12,12 @@
     <include file="classpath:db/changelog/changes/005-insert-brands-data.xml"/>
     <include file="classpath:db/changelog/changes/006-create-categories-table.xml"/>
     <include file="classpath:db/changelog/changes/007-insert-categories-data.xml"/>
+    <include file="classpath:db/changelog/changes/008-create-tags-table.xml"/>
+    <include file="classpath:db/changelog/changes/009-create-products-table.xml"/>
+    <include file="classpath:db/changelog/changes/010-create-product-tags-table.xml"/>
+    <include file="classpath:db/changelog/changes/011-create-specification-table.xml"/>
+    <include file="classpath:db/changelog/changes/012-create-product-images-table.xml"/>
+    <include file="classpath:db/changelog/changes/013-insert-tags-data.xml"/>
+    <include file="classpath:db/changelog/changes/014-insert-products-data.xml"/>
 
 </databaseChangeLog>

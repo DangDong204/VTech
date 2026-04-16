@@ -1,0 +1,88 @@
+{
+  "table": {
+    "columns": {
+      "tag": "Nhãn",
+      "tagDesc": "Mô tả",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách nhãn",
+    "create": "Tạo nhãn",
+    "edit": "Chỉnh sửa nhãn",
+    "view": "Thông tin nhãn",
+    "delete": "Xoá nhãn",
+    "trash": "Thùng rác"
+  },
+  "filters": {
+    "search": "Tìm kiếm nhãn"
+  },
+  "actions": {
+    "create": "Tạo nhãn",
+    "view": "Xem",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "submit": "Tạo mới",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận"
+  },
+  "schema": {
+    "tagName": {
+      "required": "Tên nhãn không được để trống",
+      "max": "Tên nhãn chứa tối đa 50 ký tự"
+    },
+    "tagDesc": {
+      "max": "Mô tả nhãn chứa tối đa 255 ký tự"
+    }
+  },
+  "fields": {
+    "tagName": {
+      "label": "Tên nhãn",
+      "placeholder": "Nhập tên nhãn"
+    },
+    "tagDesc": {
+      "label": "Mô tả",
+      "placeholder": "Nhập mô tả nhãn"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái",
+      "options": {
+        "ACTIVE": "Hoạt động",
+        "INACTIVE": "Ngừng hoạt động"
+      }
+    },
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật",
+    "deletedAt": "Ngày xoá"
+  },
+  "trash": {
+    "trashEmpty": "Thùng rác trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
+  },
+  "message": {
+    "success": {
+      "create": "Tạo nhãn thành công!",
+      "update": "Cập nhật nhãn thành công!",
+      "delete": "Xóa nhãn thành công!",
+      "softDelete": "Xóa mềm nhãn thành công! Hãy kiểm tra lại thùng rác",
+      "restore": "Khôi phục nhãn thành công!"
+    },
+    "confirm": {
+      "softDelete": "Bạn có chắc chắn muốn xóa nhãn '{{tagName}}' không? Sau khi xoá hãy kiểm tra thùng rác.",
+      "hardDelete": "Bạn có chắc chắn muốn xóa nhãn '{{tagName}}' không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo nhãn thất bại!",
+      "update": "Cập nhật nhãn thất bại!",
+      "delete": "Xóa nhãn thất bại!",
+      "softDelete": "Xóa mềm nhãn thất bại!",
+      "fetch": "Lấy danh sách nhãn thất bại!",
+      "fetchDetail": "Lấy thông tin nhãn thất bại!",
+      "restore": "Khôi phục nhãn thất bại!"
+    }
+  }
+}

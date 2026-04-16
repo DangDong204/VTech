@@ -38,16 +38,35 @@ public enum ErrorCode {
     CATEGORY_PARENT_NOT_FOUND(5004, "category.parent.not.found", HttpStatus.BAD_REQUEST),
     CATEGORY_PARENT_INVALID(5005, "category.parent.invalid", HttpStatus.BAD_REQUEST),
     CATEGORY_HAS_CHILD(5006, "category.has.child", HttpStatus.BAD_REQUEST),
+    CATEGORY_USED_BY_PRODUCT(5007, "category.used.by.product", HttpStatus.BAD_REQUEST),
 
     BRAND_NOT_FOUND(5007, "brand.not.found", HttpStatus.NOT_FOUND),
     BRAND_NAME_NOTBLANK(5008, "brand.name.not.blank", HttpStatus.BAD_REQUEST),
     BRAND_SLUG_NOTBLANK(5009, "brand.slug.not.blank", HttpStatus.BAD_REQUEST),
     BRAND_SLUG_EXISTED(5010, "brand.slug.exists", HttpStatus.BAD_REQUEST),
+    BRAND_USED_BY_PRODUCT(5011, "brand.used.by.product", HttpStatus.BAD_REQUEST),
 
     FILE_TYPE_INVALID(6000, "file.type.invalid", HttpStatus.BAD_REQUEST),
     FILE_TOO_LARGE(6001, "file.too.large", HttpStatus.BAD_REQUEST),
     UPLOAD_IMAGE_FAILED(6002, "upload.image.failed", HttpStatus.INTERNAL_SERVER_ERROR),
-    DELETE_IMAGE_FAILED(6003, "delete.image.failed", HttpStatus.INTERNAL_SERVER_ERROR)
+    DELETE_IMAGE_FAILED(6003, "delete.image.failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    IMAGE_NOT_FOUND(6004, "image.not.found", HttpStatus.NOT_FOUND),
+
+    TAG_NOT_FOUND(6010, "tag.not.found", HttpStatus.NOT_FOUND),
+    TAG_NAME_NOTBLANK(6011, "tag.name.not.blank", HttpStatus.BAD_REQUEST),
+    TAG_NAME_EXISTS(6012, "tag.name.exists", HttpStatus.BAD_REQUEST),
+    TAG_NAME_MAX(6013, "tag.name.max", HttpStatus.BAD_REQUEST),
+    TAG_DESC_MAX(6014, "tag.desc.max", HttpStatus.BAD_REQUEST),
+    TAG_IN_USE(6015, "tag.in.use", HttpStatus.BAD_REQUEST),
+
+    PRODUCT_NOT_FOUND(7000, "product.not.found", HttpStatus.NOT_FOUND),
+    PRODUCT_NAME_NOTBLANK(7001, "product.name.not.blank", HttpStatus.BAD_REQUEST),
+    PRODUCT_NAME_EXISTED(7002, "product.name.exists", HttpStatus.BAD_REQUEST),
+    PRODUCT_SLUG_NOTBLANK(7002, "product.slug.not.blank", HttpStatus.BAD_REQUEST),
+    PRODUCT_SLUG_EXISTED(7003, "product.slug.exists", HttpStatus.BAD_REQUEST),
+
+    SPEC_EXISTS(8000, "specification.exists", HttpStatus.BAD_REQUEST),
+    SPEC_NOT_FOUND(8001, "specification.not.found", HttpStatus.NOT_FOUND)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

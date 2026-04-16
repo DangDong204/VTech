@@ -10,6 +10,7 @@ import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.BrandMapper;
 import com.haui.vtech.repository.BrandRepository;
+import com.haui.vtech.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
     private final S3Service s3Service;
+    private final ProductRepository productRepository;
 
     @Override
     public BrandResponse create(BrandCreationRequest request, MultipartFile brandLogo) {
@@ -82,6 +84,10 @@ public class BrandServiceImpl implements BrandService {
         BrandEntity brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND, id));
 
+        if(productRepository.existsByBrandId(id)) {
+            throw new AppException(ErrorCode.BRAND_USED_BY_PRODUCT, brand.getBrandName());
+        }
+
         s3Service.deleteImage(brand.getBrandLogo());
         // TODO: logic to check if the brand is used by any product
 
@@ -94,6 +100,10 @@ public class BrandServiceImpl implements BrandService {
     public String deleteSoft(String id) {
         BrandEntity brand = brandRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND, id));
+
+        if(productRepository.existsByBrandId(id)) {
+            throw new AppException(ErrorCode.BRAND_USED_BY_PRODUCT, brand.getBrandName());
+        }
 
         int affectedRows  = brandRepository.softDelete(id, LocalDateTime.now());
 

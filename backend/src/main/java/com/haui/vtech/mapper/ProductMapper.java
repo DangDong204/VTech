@@ -1,0 +1,68 @@
+package com.haui.vtech.mapper;
+
+import com.haui.vtech.dto.product.ProductCreationRequest;
+import com.haui.vtech.dto.product.ProductImageResponse;
+import com.haui.vtech.dto.product.ProductResponse;
+import com.haui.vtech.dto.product.ProductUpdateRequest;
+import com.haui.vtech.entity.ProductEntity;
+import com.haui.vtech.entity.ProductImageEntity;
+import com.haui.vtech.entity.TagEntity;
+import org.mapstruct.*;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Mapper(componentModel = "spring", uses = {SpecificationMapper.class})
+public interface ProductMapper {
+
+    ProductEntity toEntity(ProductCreationRequest request);
+
+    @Mapping(target = "categoryId", source = "category.id")
+    @Mapping(target = "categoryName", source = "category.categoryName")
+    @Mapping(target = "brandId", source = "brand.id")
+    @Mapping(target = "brandName", source = "brand.brandName")
+    @Mapping(target = "tags", expression = "java(mapTags(entity.getTags()))")
+    @Mapping(target = "specification", source = "specification")
+    @Mapping(target = "images", expression = "java(mapImages(entity.getImages()))")
+    ProductResponse toResponse(ProductEntity entity);
+
+    default Set<String> mapTags(Set<TagEntity> tags) {
+        if (tags == null) return null;
+        return tags.stream()
+                .map(TagEntity::getTagName)
+                .collect(Collectors.toSet());
+    }
+
+    default ProductImageResponse mapImages(Set<ProductImageEntity> images) {
+        if (images == null || images.isEmpty()) {
+            return ProductImageResponse.builder().build();
+        }
+
+        String thumbnail = null;
+        List<String> gallery = new ArrayList<>();
+
+        // Sort lại theo displayOrder để hiển thị đúng thứ tự trên frontend (như ReactJS)
+        List<ProductImageEntity> sortedImages = images.stream()
+                .sorted(Comparator.comparing(img -> img.getDisplayOrder() == null ? 0 : img.getDisplayOrder()))
+                .toList();
+
+        for (ProductImageEntity img : sortedImages) {
+            if (Boolean.TRUE.equals(img.getIsThumbnail())) {
+                thumbnail = img.getImageUrl();
+            } else {
+                gallery.add(img.getImageUrl());
+            }
+        }
+
+        return ProductImageResponse.builder()
+                .thumbnail(thumbnail)
+                .images(gallery)
+                .build();
+    }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(@MappingTarget ProductEntity entity, ProductUpdateRequest request);
+}

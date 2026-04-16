@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="014-create-product-tags-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_tags"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="product_tags" remarks="Bảng liên kết product - tag">
+
+            <column name="product_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tag_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <!-- PK -->
+        <addPrimaryKey
+                tableName="product_tags"
+                columnNames="product_id, tag_id"
+                constraintName="pk_product_tags"/>
+
+        <!-- FK -->
+        <addForeignKeyConstraint
+                baseTableName="product_tags"
+                baseColumnNames="product_id"
+                referencedTableName="products"
+                referencedColumnNames="id"
+                constraintName="fk_product_tags_product"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="product_tags"
+                baseColumnNames="tag_id"
+                referencedTableName="tags"
+                referencedColumnNames="id"
+                constraintName="fk_product_tags_tag"
+                onDelete="CASCADE"/>
+
+        <!-- Index -->
+        <createIndex tableName="product_tags" indexName="idx_product_tags_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="product_tags" indexName="idx_product_tags_tag">
+            <column name="tag_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="product_tags"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

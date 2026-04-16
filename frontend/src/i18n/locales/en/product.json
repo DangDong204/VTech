@@ -1,4 +1,181 @@
 {
-  "order": "Order",
-  "addtocart": "Add to cart"
+  "table": {
+    "columns": {
+      "product": "Product",
+      "category": "Category",
+      "brand": "Brand",
+      "purchases": "Purchases",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No results found"
+  },
+  "titles": {
+    "list": "Product List",
+    "create": "Create Product",
+    "edit": "Edit Product",
+    "view": "Product Details",
+    "delete": "Delete Product",
+    "trash": "Trash"
+  },
+  "filters": {
+    "search": "Search product",
+    "category": "All categories",
+    "brand": "All brands",
+    "status": {
+      "label": "Status",
+      "all": "All statuses",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "reset": "Reset"
+  },
+  "actions": {
+    "create": "Create product",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Save product",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "upload": "Upload",
+    "addImage": "Add image",
+    "saving": "Saving..."
+  },
+  "schema": {
+    "productName": {
+      "required": "Product name is required"
+    },
+    "slug": {
+      "required": "Slug is required"
+    },
+    "categoryId": {
+      "required": "Please select a category"
+    },
+    "brandId": {
+      "required": "Please select a brand"
+    },
+    "thumbnail": {
+      "invalid": "Invalid thumbnail",
+      "invalidType": "Only JPG, PNG, WEBP are allowed",
+      "maxSize": "Maximum image size is 5MB"
+    },
+    "images": {
+      "invalid": "Invalid detailed images",
+      "invalidType": "Only JPG, PNG, WEBP are allowed",
+      "maxSize": "Maximum size per image is 5MB"
+    },
+    "warrantyMonths": {
+      "invalid": "Warranty months must be a number",
+      "min": "Warranty months cannot be less than 0"
+    },
+    "status": {
+      "invalid": "Invalid status"
+    }
+  },
+  "fields": {
+    "productName": {
+      "label": "Product Name",
+      "placeholder": "Enter product name"
+    },
+    "slug": {
+      "label": "Slug",
+      "placeholder": "Enter slug"
+    },
+    "productDesc": {
+      "label": "Product Description",
+      "placeholder": "Enter product description"
+    },
+    "thumbnail": {
+      "label": "Thumbnail",
+      "placeholder": "Click to add thumbnail"
+    },
+    "images": {
+      "label": "Detailed Images",
+      "placeholder": "Click to add detailed images"
+    },
+    "categoryId": {
+      "label": "Category",
+      "placeholder": "Select category"
+    },
+    "brandId": {
+      "label": "Brand",
+      "placeholder": "Select brand"
+    },
+    "tagIds": {
+      "label": "Tags",
+      "placeholder": "Select product tags"
+    },
+    "warrantyMonths": {
+      "label": "Warranty (months)",
+      "placeholder": "Enter warranty months"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive",
+        "OUT_OF_STOCK": "Out of stock",
+        "DISCONTINUED": "Discontinued"
+      }
+    },
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "deletedAt": "Deleted At",
+    "specification": {
+      "screenSize": "Screen Size",
+      "screenTech": "Display Technology",
+      "resolution": "Resolution",
+      "operatingSystem": "Operating System",
+      "chip": "Processor (CPU)",
+      "cpu": "CPU Speed",
+      "gpu": "Graphics Processor (GPU)",
+      "ram": "RAM",
+      "storageCapacity": "Storage Capacity (ROM)",
+      "batteryCapacity": "Battery Capacity",
+      "chargingTech": "Charging Technology",
+      "backCamera": "Rear Camera",
+      "frontCamera": "Front Camera",
+      "connectivity": "Connectivity",
+      "specialFeature": "Special Features",
+      "weight": "Weight",
+      "releaseDate": "Release Date"
+    }
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "classification": "Classification & Status",
+    "images": "Product Images",
+    "specification": "Specifications"
+  },
+  "trash": {
+    "trashEmpty": "Trash is empty",
+    "remainingDays": "{{days}} days remaining before permanent deletion"
+  },
+  "message": {
+    "success": {
+      "create": "Product created successfully!",
+      "update": "Product updated successfully!",
+      "delete": "Product deleted successfully!",
+      "softDelete": "Product moved to trash successfully!",
+      "restore": "Product restored successfully!",
+      "uploadImages": "Product images uploaded successfully!"
+    },
+    "confirm": {
+      "softDelete": "Are you sure you want to delete the product '{{productName}}'? You can restore it from the trash.",
+      "hardDelete": "Are you sure you want to permanently delete the product '{{productName}}'? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create product!",
+      "update": "Failed to update product!",
+      "delete": "Failed to delete product!",
+      "softDelete": "Failed to move product to trash!",
+      "fetch": "Failed to fetch product list!",
+      "fetchDetail": "Failed to fetch product details!",
+      "restore": "Failed to restore product!",
+      "uploadImages": "Failed to upload product images!"
+    }
+  }
 }

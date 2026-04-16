@@ -11,6 +11,7 @@ import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.CategoryMapper;
 import com.haui.vtech.repository.CategoryRepository;
+import com.haui.vtech.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class CategoryServiceImpl implements CategoryService{
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final S3Service s3Service;
+    private final ProductRepository productRepository;
 
     @Override
     public CategoryResponse create(CategoryCreationRequest request, MultipartFile thumbnailUrl) {
@@ -119,6 +121,10 @@ public class CategoryServiceImpl implements CategoryService{
             throw new AppException(ErrorCode.CATEGORY_HAS_CHILD, category.getCategoryName());
         }
 
+        if (productRepository.existsByCategoryId(id)){
+            throw new AppException(ErrorCode.CATEGORY_USED_BY_PRODUCT, category.getCategoryName());
+        }
+
         s3Service.deleteImage(category.getThumbnailUrl());
         // TODO: logic to check if the category is used by any product
 
@@ -135,6 +141,10 @@ public class CategoryServiceImpl implements CategoryService{
 
         if (categoryRepository.existsByParentId(id)) {
             throw new AppException(ErrorCode.CATEGORY_HAS_CHILD, category.getCategoryName());
+        }
+
+        if (productRepository.existsByCategoryId(id)){
+            throw new AppException(ErrorCode.CATEGORY_USED_BY_PRODUCT, category.getCategoryName());
         }
 
         int affectedRows  = categoryRepository.softDelete(id, LocalDateTime.now());
