@@ -19,6 +19,10 @@ public interface ProductRepository extends JpaRepository<ProductEntity, String> 
 
     boolean existsByProductName(String productName);
 
+    boolean existsByBrandId(String brandId);
+
+    boolean existsByCategoryId(String categoryId);
+
     boolean existsByTags_Id(String tagId);
 
     @EntityGraph(attributePaths = {"images", "tags"})

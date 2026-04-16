@@ -38,11 +38,13 @@ public enum ErrorCode {
     CATEGORY_PARENT_NOT_FOUND(5004, "category.parent.not.found", HttpStatus.BAD_REQUEST),
     CATEGORY_PARENT_INVALID(5005, "category.parent.invalid", HttpStatus.BAD_REQUEST),
     CATEGORY_HAS_CHILD(5006, "category.has.child", HttpStatus.BAD_REQUEST),
+    CATEGORY_USED_BY_PRODUCT(5007, "category.used.by.product", HttpStatus.BAD_REQUEST),
 
     BRAND_NOT_FOUND(5007, "brand.not.found", HttpStatus.NOT_FOUND),
     BRAND_NAME_NOTBLANK(5008, "brand.name.not.blank", HttpStatus.BAD_REQUEST),
     BRAND_SLUG_NOTBLANK(5009, "brand.slug.not.blank", HttpStatus.BAD_REQUEST),
     BRAND_SLUG_EXISTED(5010, "brand.slug.exists", HttpStatus.BAD_REQUEST),
+    BRAND_USED_BY_PRODUCT(5011, "brand.used.by.product", HttpStatus.BAD_REQUEST),
 
     FILE_TYPE_INVALID(6000, "file.type.invalid", HttpStatus.BAD_REQUEST),
     FILE_TOO_LARGE(6001, "file.too.large", HttpStatus.BAD_REQUEST),
