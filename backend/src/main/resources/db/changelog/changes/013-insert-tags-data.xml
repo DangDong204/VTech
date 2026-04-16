@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="017-seed-tags-" author="dongdang" context="dev,test">
+
+        <!-- Nhu cầu sử dụng -->
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000001"/>
+            <column name="tag_name" value="Gaming"/>
+            <column name="tag_desc" value="Sản phẩm cấu hình mạnh mẽ, tản nhiệt tốt dành cho game thủ"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000002"/>
+            <column name="tag_name" value="Văn phòng"/>
+            <column name="tag_desc" value="Cấu hình tiêu chuẩn, phù hợp học tập và làm việc cơ bản"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000003"/>
+            <column name="tag_name" value="Đồ họa - Kỹ thuật"/>
+            <column name="tag_desc" value="Card đồ họa rời, màn hình chuẩn màu chuyên dụng"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000004"/>
+            <column name="tag_name" value="Cao cấp"/>
+            <column name="tag_desc" value="Thiết kế sang trọng, bảo mật cao dành cho doanh nhân"/>
+        </insert>
+
+        <!--  Tính năng nổi bật  -->
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000005"/>
+            <column name="tag_name" value="Mỏng nhẹ"/>
+            <column name="tag_desc" value="Trọng lượng siêu nhẹ, thiết kế nhỏ gọn dễ mang theo"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000006"/>
+            <column name="tag_name" value="Màn hình gập"/>
+            <column name="tag_desc" value="Công nghệ màn hình gập linh hoạt thế hệ mới"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000007"/>
+            <column name="tag_name" value="Sạc siêu nhanh"/>
+            <column name="tag_desc" value="Hỗ trợ công nghệ sạc công suất cao"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000008"/>
+            <column name="tag_name" value="Hỗ trợ 5G"/>
+            <column name="tag_desc" value="Tích hợp băng tần mạng 5G tốc độ cao"/>
+        </insert>
+
+        <!--  Tình trạng & Khuyến mãi  -->
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000009"/>
+            <column name="tag_name" value="Mới ra mắt"/>
+            <column name="tag_desc" value="Sản phẩm vừa được hãng giới thiệu, thuộc thế hệ mới nhất trên thị trường"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000010"/>
+            <column name="tag_name" value="Bán chạy"/>
+            <column name="tag_desc" value="Sản phẩm có doanh số tốt nhất hệ thống"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000011"/>
+            <column name="tag_name" value="Hàng mới về"/>
+            <column name="tag_desc" value="Sản phẩm vừa được nhập về hoặc cập nhật mới trong hệ thống cửa hàng"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="id" value="00000000-0000-8001-0000-000000000012"/>
+            <column name="tag_name" value="FLASH SALE"/>
+            <column name="tag_desc" value="Sản phẩm đang nằm trong chương trình sale đặc biệt"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

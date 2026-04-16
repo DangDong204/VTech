@@ -77,6 +77,16 @@
             <column name="display_order" value="7"/>
         </insert>
 
+        <!-- Tablet -->
+        <insert tableName="categories">
+            <column name="id" value="00000000-0000-7000-0000-000000001008"/>
+            <column name="category_name" value="Máy tính bảng"/>
+            <column name="slug" value="may-tinh-bang"/>
+            <column name="category_desc" value="Danh mục máy tính bảng các loại"/>
+            <column name="thumbnail_url" value="https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/category/tablet.png"/>
+            <column name="display_order" value="8"/>
+        </insert>
+
         <!-- ==================== CẤP 2  ==================== -->
 
         <!-- Bàn phím (con của Phụ kiện) -->
