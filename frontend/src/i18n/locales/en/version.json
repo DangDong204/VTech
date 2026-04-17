@@ -1,0 +1,53 @@
+{
+  "table": {
+    "columns": {
+      "versionName": "Version Name",
+      "actions": "Actions"
+    },
+    "noResults": "No data available"
+  },
+  "titles": {
+    "list": "Version List",
+    "create": "Add Version",
+    "edit": "Update Version",
+    "delete": "Delete Version"
+  },
+  "filters": {
+    "search": "Search versions..."
+  },
+  "actions": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "submit": "Save changes",
+    "confirm": "Confirm delete"
+  },
+  "schema": {
+    "versionName": {
+      "required": "Version name is required"
+    }
+  },
+  "fields": {
+    "versionName": {
+      "label": "Version Name",
+      "placeholder": "Example: 8GB - 256GB, Standard Edition..."
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Version added successfully!",
+      "update": "Version updated successfully!",
+      "delete": "Version deleted successfully!"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete '{{versionName}}'? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to add version!",
+      "update": "Failed to update version!",
+      "delete": "Failed to delete version!",
+      "action": "An error occurred, please try again!"
+    }
+  }
+}

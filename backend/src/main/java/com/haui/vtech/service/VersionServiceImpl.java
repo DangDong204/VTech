@@ -49,6 +49,6 @@ public class VersionServiceImpl implements VersionService {
         }
 
         versionRepository.delete(entity);
-        return entity.getId();
+        return entity.getVersionName();
     }
 }
