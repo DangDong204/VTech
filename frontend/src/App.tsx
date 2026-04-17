@@ -3,9 +3,12 @@ import DashboardHome from '@/pages/admin/dashboard/content/DashBoardHome'
 import LayoutAdmin from '@/pages/admin/LayoutAdmin'
 import BrandPage from '@/pages/admin/manage-brand/page'
 import CategoryPage from '@/pages/admin/manage-category/page'
+import ColorPage from '@/pages/admin/manage-color/page'
 import ProductPage from '@/pages/admin/manage-product/page'
 import TagPage from '@/pages/admin/manage-tag/page'
 import UserPage from '@/pages/admin/manage-user/page'
+import VariantPage from '@/pages/admin/manage-variant/page'
+import VersionPage from '@/pages/admin/manage-version/page'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
@@ -39,6 +42,9 @@ function App() {
               <Route path='brands' element={<BrandPage />} />
               <Route path='tags' element={<TagPage />} />
               <Route path='products' element={<ProductPage />} />
+              <Route path='products/:productId/variants' element={<VariantPage />} />
+              <Route path='colors' element={<ColorPage />} />
+              <Route path='versions' element={<VersionPage />} />
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}

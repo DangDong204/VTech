@@ -97,4 +97,7 @@ public class ProductEntity extends BaseEntity{
         tag.getProducts().remove(this);
     }
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductVariantEntity> variants = new HashSet<>();
+
 }

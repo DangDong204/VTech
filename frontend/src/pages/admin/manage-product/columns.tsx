@@ -8,6 +8,10 @@ import type { ProductImageResponse, SpecificationResponse } from '@/services/pro
 import { ProductStatusBadge } from '@/components/admin/data/manage-product/ProductStatusBadges'
 import { ProductActionsCell } from '@/components/admin/action/ProductAction'
 
+const formatVND = (amount: number) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
+}
+
 export type Product = {
   id: string
   productName: string
@@ -24,6 +28,9 @@ export type Product = {
   brandName?: string
   tags?: string[]
   status: ProductStatus
+  totalStock?: number // Thêm
+  minPrice?: number // Thêm
+  maxPrice?: number // Thêm
   images?: ProductImageResponse
   specification?: SpecificationResponse
   createdAt: string
@@ -96,6 +103,45 @@ export const columns: ColumnDef<Product>[] = [
     filterFn: (row, columnId, filterValue: string) => {
       if (!filterValue) return true
       return row.getValue<string | null>(columnId) === filterValue
+    }
+  },
+  {
+    id: 'priceRange',
+    header: ({ column }) => (
+      // Bạn có thể bổ sung 'product:table.columns.price' vào i18n sau
+      <DataTableColumnHeader column={column} title='Giá bán' />
+    ),
+    cell: ({ row }) => {
+      const min = row.original.minPrice || 0
+      const max = row.original.maxPrice || 0
+
+      if (min === 0 && max === 0) {
+        return <span className='text-muted-foreground italic text-xs'>Chưa có giá</span>
+      }
+
+      if (min === max) {
+        return <span className='font-medium text-destructive'>{formatVND(min)}</span>
+      }
+
+      return (
+        <span className='font-medium text-destructive'>
+          {formatVND(min)} - {formatVND(max)}
+        </span>
+      )
+    }
+  },
+
+  // 3. THÊM CỘT: TỔNG TỒN KHO
+  {
+    accessorKey: 'totalStock',
+    header: ({ column }) => <DataTableColumnHeader column={column} title='Tồn kho' />,
+    cell: ({ row }) => {
+      const stock = row.original.totalStock || 0
+      return (
+        <span className={stock === 0 ? 'text-destructive font-semibold' : 'font-medium'}>
+          {stock === 0 ? 'Hết hàng' : stock}
+        </span>
+      )
     }
   },
   {

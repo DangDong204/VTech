@@ -1,0 +1,53 @@
+{
+  "table": {
+    "columns": {
+      "versionName": "Tên phiên bản",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách phiên bản",
+    "create": "Thêm phiên bản",
+    "edit": "Cập nhật phiên bản",
+    "delete": "Xóa phiên bản"
+  },
+  "filters": {
+    "search": "Tìm kiếm phiên bản..."
+  },
+  "actions": {
+    "create": "Thêm mới",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "submit": "Lưu thay đổi",
+    "confirm": "Xác nhận xóa"
+  },
+  "schema": {
+    "versionName": {
+      "required": "Tên phiên bản không được để trống"
+    }
+  },
+  "fields": {
+    "versionName": {
+      "label": "Tên phiên bản",
+      "placeholder": "Ví dụ: 8GB - 256GB, Bản Tiêu Chuẩn..."
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Thêm phiên bản thành công!",
+      "update": "Cập nhật phiên bản thành công!",
+      "delete": "Xóa phiên bản thành công!"
+    },
+    "confirm": {
+      "delete": "Bạn có chắc chắn muốn xóa phiên bản '{{versionName}}' không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Thêm phiên bản thất bại!",
+      "update": "Cập nhật phiên bản thất bại!",
+      "delete": "Xóa phiên bản thất bại!",
+      "action": "Có lỗi xảy ra, vui lòng thử lại!"
+    }
+  }
+}

@@ -65,6 +65,25 @@ public enum ErrorCode {
     PRODUCT_SLUG_NOTBLANK(7002, "product.slug.not.blank", HttpStatus.BAD_REQUEST),
     PRODUCT_SLUG_EXISTED(7003, "product.slug.exists", HttpStatus.BAD_REQUEST),
 
+    COLOR_NOT_FOUND(7100, "color.not.found", HttpStatus.NOT_FOUND),
+    COLOR_ID_NOTBLANK(7101, "color.id.not.blank", HttpStatus.BAD_REQUEST),
+    COLOR_NAME_NOTBLANK(7102, "color.name.not.blank", HttpStatus.BAD_REQUEST),
+    COLOR_USED_BY_VARIANT(7103, "color.used.by.variant", HttpStatus.BAD_REQUEST),
+
+    VERSION_NOT_FOUND(7200, "version.not.found", HttpStatus.NOT_FOUND),
+    VERSION_ID_NOTBLANK(7201, "version.id.not.blank", HttpStatus.BAD_REQUEST),
+    VERSION_NAME_NOTBLANK(7202, "version.name.not.blank", HttpStatus.BAD_REQUEST),
+    VERSION_USED_BY_VARIANT(7203, "version.used.by.variant", HttpStatus.BAD_REQUEST),
+
+    SKU_EXISTED(7300, "product.variant.sku.exists", HttpStatus.BAD_REQUEST),
+    VARIANT_EXISTED(7301, "product.variant.exists", HttpStatus.BAD_REQUEST),
+    VARIANT_NOT_FOUND(7302, "product.variant.not.found", HttpStatus.NOT_FOUND),
+
+    PRODUCT_ID_NOTBLANK(7302, "product.id.not.blank", HttpStatus.BAD_REQUEST),
+    VARIANT_SKU_NOTBLANK(7303, "product.variant.sku.not.blank", HttpStatus.BAD_REQUEST),
+    BASE_PRICE_NOTNULL(7304, "product.variant.price.not.null", HttpStatus.BAD_REQUEST),
+    BASE_PRICE_MIN(7305, "product.variant.price.min", HttpStatus.BAD_REQUEST),
+
     SPEC_EXISTS(8000, "specification.exists", HttpStatus.BAD_REQUEST),
     SPEC_NOT_FOUND(8001, "specification.not.found", HttpStatus.NOT_FOUND)
     ;

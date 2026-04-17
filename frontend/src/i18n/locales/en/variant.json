@@ -1,0 +1,78 @@
+{
+  "table": {
+    "columns": {
+      "combination": "Combination",
+      "sku": "SKU",
+      "price": "Price",
+      "stock": "Stock",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No variants available."
+  },
+  "titles": {
+    "list": "Variant Management",
+    "create": "Add Variant",
+    "edit": "Update Variant",
+    "delete": "Delete Variant",
+    "back": "Back to product list"
+  },
+  "filters": {
+    "search": "Search SKU..."
+  },
+  "actions": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "submit": "Save variant",
+    "confirm": "Confirm delete"
+  },
+  "schema": {
+    "colorId": { "required": "Please select a color" },
+    "versionId": { "required": "Please select a version" },
+    "sku": { "required": "SKU is required" },
+    "basePrice": {
+      "invalid": "Base price must be a number",
+      "min": "Base price cannot be negative"
+    },
+    "salePrice": {
+      "min": "Sale price cannot be negative",
+      "max": "Sale price cannot be greater than base price"
+    },
+    "stockQuantity": { "min": "Quantity cannot be negative" }
+  },
+  "fields": {
+    "colorId": { "label": "Color", "placeholder": "Select a color..." },
+    "versionId": { "label": "Version", "placeholder": "Select a version..." },
+    "sku": { "label": "SKU", "placeholder": "Enter SKU..." },
+    "basePrice": { "label": "Base Price (VND)" },
+    "salePrice": { "label": "Sale Price (VND) - Optional" },
+    "stockQuantity": { "label": "Stock Quantity" },
+    "status": {
+      "label": "Status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive",
+        "OUT_OF_STOCK": "Out of Stock",
+        "DISCONTINUED": "Discontinued"
+      }
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Variant added successfully!",
+      "update": "Variant updated successfully!",
+      "delete": "Variant deleted successfully!"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete SKU '{{sku}}'? This data cannot be recovered."
+    },
+    "error": {
+      "create": "Failed to add variant!",
+      "update": "Failed to update variant!",
+      "delete": "Failed to delete variant!",
+      "action": "An error occurred, please try again!"
+    }
+  }
+}
