@@ -19,5 +19,6 @@
     <include file="classpath:db/changelog/changes/012-create-product-images-table.xml"/>
     <include file="classpath:db/changelog/changes/013-insert-tags-data.xml"/>
     <include file="classpath:db/changelog/changes/014-insert-products-data.xml"/>
+    <include file="classpath:db/changelog/changes/015-create-variants-table.xml"/>
 
 </databaseChangeLog>
