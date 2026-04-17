@@ -6,6 +6,7 @@ import enUser from './locales/en/user.json'
 import enCategory from './locales/en/category.json'
 import enBrand from './locales/en/brand.json'
 import enTag from './locales/en/tag.json'
+import enColor from './locales/en/color.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -18,6 +19,7 @@ declare module 'i18next' {
       category: typeof enCategory
       brand: typeof enBrand
       tag: typeof enTag
+      color: typeof enColor
     }
   }
 }

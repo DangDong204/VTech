@@ -3,6 +3,7 @@ import DashboardHome from '@/pages/admin/dashboard/content/DashBoardHome'
 import LayoutAdmin from '@/pages/admin/LayoutAdmin'
 import BrandPage from '@/pages/admin/manage-brand/page'
 import CategoryPage from '@/pages/admin/manage-category/page'
+import ColorPage from '@/pages/admin/manage-color/page'
 import ProductPage from '@/pages/admin/manage-product/page'
 import TagPage from '@/pages/admin/manage-tag/page'
 import UserPage from '@/pages/admin/manage-user/page'
@@ -39,6 +40,7 @@ function App() {
               <Route path='brands' element={<BrandPage />} />
               <Route path='tags' element={<TagPage />} />
               <Route path='products' element={<ProductPage />} />
+              <Route path='colors' element={<ColorPage />} />
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}

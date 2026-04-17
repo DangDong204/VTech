@@ -1,0 +1,62 @@
+{
+  "table": {
+    "columns": {
+      "colorName": "Màu sắc",
+      "hexCode": "Mã Hex",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách màu sắc",
+    "create": "Thêm màu sắc",
+    "edit": "Cập nhật màu sắc",
+    "delete": "Xóa màu sắc"
+  },
+  "filters": {
+    "search": "Tìm kiếm màu sắc..."
+  },
+  "actions": {
+    "create": "Thêm mới",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "submit": "Lưu thay đổi",
+    "confirm": "Xác nhận xóa"
+  },
+  "schema": {
+    "colorName": {
+      "required": "Tên màu sắc không được để trống"
+    },
+    "hexCode": {
+      "required": "Mã Hex không được để trống",
+      "invalid": "Mã Hex không hợp lệ (Ví dụ: #FFFFFF)"
+    }
+  },
+  "fields": {
+    "colorName": {
+      "label": "Tên màu sắc",
+      "placeholder": "Ví dụ: Đen nhám, Xanh Titan..."
+    },
+    "hexCode": {
+      "label": "Mã Hex",
+      "placeholder": "#FFFFFF"
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Thêm màu sắc thành công!",
+      "update": "Cập nhật màu sắc thành công!",
+      "delete": "Xóa màu sắc thành công!"
+    },
+    "confirm": {
+      "delete": "Bạn có chắc chắn muốn xóa màu '{{colorName}}' không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Thêm màu sắc thất bại!",
+      "update": "Cập nhật màu sắc thất bại!",
+      "delete": "Xóa màu sắc thất bại!",
+      "action": "Có lỗi xảy ra, vui lòng thử lại!"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "table": {
+    "columns": {
+      "colorName": "Color",
+      "hexCode": "Hex Code",
+      "actions": "Actions"
+    },
+    "noResults": "No data available"
+  },
+  "titles": {
+    "list": "Color List",
+    "create": "Add Color",
+    "edit": "Update Color",
+    "delete": "Delete Color"
+  },
+  "filters": {
+    "search": "Search colors..."
+  },
+  "actions": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "submit": "Save changes",
+    "confirm": "Confirm delete"
+  },
+  "schema": {
+    "colorName": {
+      "required": "Color name is required"
+    },
+    "hexCode": {
+      "required": "Hex code is required",
+      "invalid": "Invalid hex code (e.g., #FFFFFF)"
+    }
+  },
+  "fields": {
+    "colorName": {
+      "label": "Color Name",
+      "placeholder": "Example: Matte Black, Titanium Blue..."
+    },
+    "hexCode": {
+      "label": "Hex Code",
+      "placeholder": "#FFFFFF"
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Color added successfully!",
+      "update": "Color updated successfully!",
+      "delete": "Color deleted successfully!"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete '{{colorName}}'? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to add color!",
+      "update": "Failed to update color!",
+      "delete": "Failed to delete color!",
+      "action": "An error occurred, please try again!"
+    }
+  }
+}

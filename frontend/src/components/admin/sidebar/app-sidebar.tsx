@@ -68,11 +68,11 @@ const data = {
         },
         {
           title: 'Colors',
-          url: '#'
+          url: '/dashboard/colors'
         },
         {
           title: 'Versions',
-          url: '#'
+          url: '/dashboard/versions'
         },
         {
           title: 'Specifications',
