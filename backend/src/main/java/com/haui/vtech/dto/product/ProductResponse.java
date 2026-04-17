@@ -38,6 +38,10 @@ public class ProductResponse {
     Set<String> tags;
     ProductStatus status;
 
+    Integer totalStock;
+    BigDecimal minPrice;
+    BigDecimal maxPrice;
+
     ProductImageResponse images;
     SpecificationResponse specification;
 

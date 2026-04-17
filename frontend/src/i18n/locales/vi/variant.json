@@ -1,0 +1,78 @@
+{
+  "table": {
+    "columns": {
+      "combination": "Phân loại",
+      "sku": "Mã SKU",
+      "price": "Giá bán",
+      "stock": "Tồn kho",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Chưa có biến thể nào."
+  },
+  "titles": {
+    "list": "Quản lý biến thể",
+    "create": "Thêm biến thể",
+    "edit": "Cập nhật biến thể",
+    "delete": "Xóa biến thể",
+    "back": "Quay lại danh sách SP"
+  },
+  "filters": {
+    "search": "Tìm kiếm SKU..."
+  },
+  "actions": {
+    "create": "Thêm mới",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "submit": "Lưu biến thể",
+    "confirm": "Xác nhận xóa"
+  },
+  "schema": {
+    "colorId": { "required": "Vui lòng chọn màu sắc" },
+    "versionId": { "required": "Vui lòng chọn phiên bản" },
+    "sku": { "required": "Mã SKU không được để trống" },
+    "basePrice": {
+      "invalid": "Giá gốc phải là số",
+      "min": "Giá gốc không được âm"
+    },
+    "salePrice": {
+      "min": "Giá khuyến mãi không được âm",
+      "max": "Giá khuyến mãi không được lớn hơn giá gốc"
+    },
+    "stockQuantity": { "min": "Số lượng không được âm" }
+  },
+  "fields": {
+    "colorId": { "label": "Màu sắc", "placeholder": "Chọn màu sắc..." },
+    "versionId": { "label": "Phiên bản", "placeholder": "Chọn phiên bản..." },
+    "sku": { "label": "Mã SKU", "placeholder": "Nhập mã SKU..." },
+    "basePrice": { "label": "Giá gốc (VNĐ)" },
+    "salePrice": { "label": "Giá khuyến mãi (VNĐ) - Tùy chọn" },
+    "stockQuantity": { "label": "Số lượng tồn kho" },
+    "status": {
+      "label": "Trạng thái",
+      "options": {
+        "ACTIVE": "Đang bán",
+        "INACTIVE": "Ngừng bán",
+        "OUT_OF_STOCK": "Hết hàng",
+        "DISCONTINUED": "Ngừng kinh doanh"
+      }
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Thêm biến thể thành công!",
+      "update": "Cập nhật biến thể thành công!",
+      "delete": "Xóa biến thể thành công!"
+    },
+    "confirm": {
+      "delete": "Bạn có chắc chắn muốn xóa mã SKU '{{sku}}' không? Dữ liệu không thể khôi phục."
+    },
+    "error": {
+      "create": "Thêm biến thể thất bại!",
+      "update": "Cập nhật biến thể thất bại!",
+      "delete": "Xóa biến thể thất bại!",
+      "action": "Có lỗi xảy ra, vui lòng thử lại!"
+    }
+  }
+}

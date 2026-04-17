@@ -7,6 +7,7 @@ import ColorPage from '@/pages/admin/manage-color/page'
 import ProductPage from '@/pages/admin/manage-product/page'
 import TagPage from '@/pages/admin/manage-tag/page'
 import UserPage from '@/pages/admin/manage-user/page'
+import VariantPage from '@/pages/admin/manage-variant/page'
 import VersionPage from '@/pages/admin/manage-version/page'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
@@ -41,6 +42,7 @@ function App() {
               <Route path='brands' element={<BrandPage />} />
               <Route path='tags' element={<TagPage />} />
               <Route path='products' element={<ProductPage />} />
+              <Route path='products/:productId/variants' element={<VariantPage />} />
               <Route path='colors' element={<ColorPage />} />
               <Route path='versions' element={<VersionPage />} />
             </Route>

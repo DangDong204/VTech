@@ -11,6 +11,7 @@ public class ProductVariantResponse {
     private String productName; // Lấy thêm tên SP cho FE tiện hiển thị
     private String colorId;
     private String colorName; // Lấy thêm tên màu cho FE tiện hiển thị
+    private String hexCode; // Lấy thêm mã màu cho FE tiện hiển thị
     private String versionId;
     private String versionName; // Lấy thêm tên phiên bản cho FE tiện hiển thị
     private String sku;

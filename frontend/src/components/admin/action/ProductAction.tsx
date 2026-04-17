@@ -3,8 +3,9 @@ import { ViewProductDialog } from '@/components/admin/data/manage-product/read/V
 import { EditProductDialog } from '@/components/admin/data/manage-product/update/EditProductDialog'
 import { Button } from '@/components/ui/button'
 import type { Product } from '@/pages/admin/manage-product/columns'
-import { Edit, Eye, Trash2 } from 'lucide-react'
+import { Edit, Eye, Layers, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 
 interface ProductActionsCellProps {
   product: Product
@@ -18,6 +19,18 @@ export function ProductActionsCell({ product }: ProductActionsCellProps) {
   return (
     <>
       <div className='flex items-center justify-center gap-2'>
+        <Button
+          variant='ghost'
+          size='default'
+          className='h-8 px-2.5 hover:bg-purple-100 hover:text-purple-700 dark:hover:bg-purple-900/20'
+          asChild
+          title='Quản lý biến thể'
+        >
+          <Link to={`/dashboard/products/${product.id}/variants`}>
+            <Layers className='h-4 w-4' />
+          </Link>
+        </Button>
+
         <Button
           variant='ghost'
           size='default'

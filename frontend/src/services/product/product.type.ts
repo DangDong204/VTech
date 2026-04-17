@@ -16,6 +16,9 @@ export interface ProductResponse {
   brandName?: string
   tags?: string[]
   status: ProductStatus
+  totalStock?: number // Thêm
+  minPrice?: number // Thêm
+  maxPrice?: number // Thêm
   images?: ProductImageResponse
   specification?: SpecificationResponse
   createdAt: string

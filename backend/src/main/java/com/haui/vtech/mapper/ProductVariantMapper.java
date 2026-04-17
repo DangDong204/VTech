@@ -14,6 +14,7 @@ public interface ProductVariantMapper {
     @Mapping(target = "productName", source = "product.productName")
     @Mapping(target = "colorId", source = "color.id")
     @Mapping(target = "colorName", source = "color.colorName")
+    @Mapping(target = "hexCode", source = "color.hexCode")
     @Mapping(target = "versionId", source = "version.id")
     @Mapping(target = "versionName", source = "version.versionName")
     ProductVariantResponse toResponse(ProductVariantEntity entity);
