@@ -1,5 +1,6 @@
 import {
   AudioWaveform,
+  BadgeDollarSign,
   Box,
   CircleStar,
   Command,
@@ -26,6 +27,7 @@ import {
   SidebarHeader,
   SidebarRail
 } from '@/components/ui/sidebar'
+import { useAuthStore } from '@/store/auth.store'
 
 // This is sample data.
 const data = {
@@ -36,7 +38,7 @@ const data = {
   },
   teams: [
     {
-      name: 'Acme Inc',
+      name: 'Vtech ',
       logo: GalleryVerticalEnd,
       plan: 'Enterprise'
     },
@@ -63,10 +65,6 @@ const data = {
           url: '/dashboard/products'
         },
         {
-          title: 'Product Variant',
-          url: '#'
-        },
-        {
           title: 'Colors',
           url: '/dashboard/colors'
         },
@@ -74,8 +72,9 @@ const data = {
           title: 'Versions',
           url: '/dashboard/versions'
         },
+
         {
-          title: 'Specifications',
+          title: 'Receipt',
           url: '#'
         }
       ]
@@ -131,6 +130,11 @@ const data = {
       icon: TicketPercent
     },
     {
+      name: 'Promotions',
+      url: '/dashboard/vouchers',
+      icon: BadgeDollarSign
+    },
+    {
       name: 'Tags',
       url: '/dashboard/tags',
       icon: Tags
@@ -149,6 +153,14 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuthStore()
+
+  // Ưu tiên lấy username từ token, nếu không có thì mới fallback cắt từ email
+  const userData = {
+    name: user?.username || user?.sub?.split('@')[0] || 'VTech Admin',
+    email: user?.sub || 'vtech@gmail.com',
+    avatar: user?.avatar || 'https://ui.shadcn.com/avatars/02.png' // Ưu tiên avatar từ DB
+  }
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
@@ -159,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

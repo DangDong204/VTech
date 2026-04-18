@@ -36,6 +36,11 @@ public class JwtServiceImpl implements  JwtService {
 
         extraClaims.put("roles", roles);
 
+        if (userDetails instanceof com.haui.vtech.security.CustomUserDetails customUserDetails) {
+            extraClaims.put("username", customUserDetails.getUser().getUsername());
+            extraClaims.put("avatar", customUserDetails.getUser().getAvatar());
+        }
+
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername()) // Username ở đây chính là Email

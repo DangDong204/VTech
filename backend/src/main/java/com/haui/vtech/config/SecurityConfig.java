@@ -18,6 +18,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +37,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 1. THÊM DÒNG NÀY ĐẦU TIÊN
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF vì dùng JWT
                 .authorizeHttpRequests(auth -> auth
                         // 1. Mở toàn bộ cho nhóm API Xác thực
@@ -56,6 +63,27 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 2. Cho phép Frontend ở cổng 5173 truy cập (Nếu deploy thực tế thì đổi thành domain thật)
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+
+        // 3. Cho phép các method. Đặc biệt phải có OPTIONS để qua mặt Preflight
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        // 4. Cho phép các Header này đi qua
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Accept-Language"));
+
+        // 5. Bắt buộc bằng true nếu bạn có dùng Token đính trong Header hoặc Cookie
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Áp dụng CORS cho toàn bộ API
+        return source;
     }
 
     @Bean
