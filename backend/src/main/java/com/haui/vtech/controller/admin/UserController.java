@@ -9,6 +9,7 @@ import com.haui.vtech.service.UserService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,15 +23,8 @@ public class UserController {
     private final MessageUtil messageUtil;
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ApiResponse<UserResponse> createUser(@Valid @RequestBody UserCreationRequest request ) {
-        return ApiResponse.<UserResponse>builder()
-                .data(userService.create(request))
-                .message(messageUtil.getMessage("created.success"))
-                .build();
-    }
-
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<List<UserResponse>> getAll() {
         return ApiResponse.<List<UserResponse>>builder()
                 .data(userService.getAllUsers())
@@ -55,6 +49,7 @@ public class UserController {
     }
 
     @DeleteMapping("/trash/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteUser(@PathVariable String userId) {
         userService.delete(userId);
         return ApiResponse.<Void>builder()
@@ -63,6 +58,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteSoftUser(@PathVariable String userId) {
         userService.deleteSoft(userId);
         return ApiResponse.<Void>builder()
@@ -78,6 +74,7 @@ public class UserController {
     }
 
     @PatchMapping("/trash/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> restoreUser(@PathVariable String userId) {
         userService.restore(userId);
         return ApiResponse.<Void>builder()

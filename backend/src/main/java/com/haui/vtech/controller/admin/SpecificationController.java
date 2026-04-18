@@ -5,6 +5,7 @@ import com.haui.vtech.dto.product.SpecificationRequest;
 import com.haui.vtech.dto.product.SpecificationResponse;
 import com.haui.vtech.service.SpecificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +16,7 @@ public class SpecificationController {
     private final SpecificationService specificationService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<SpecificationResponse> createSpec(
             @PathVariable String productId,
             @RequestBody SpecificationRequest request) {
@@ -32,6 +34,7 @@ public class SpecificationController {
     }
 
     @PutMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<SpecificationResponse> updateSpec(
             @PathVariable String productId,
             @RequestBody SpecificationRequest request) {

@@ -7,6 +7,7 @@ import com.haui.vtech.service.ProductVariantService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class ProductVariantController {
     private final MessageUtil messageUtil;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ProductVariantResponse> create(
             @RequestBody @Valid ProductVariantRequest request) {
         return ApiResponse.<ProductVariantResponse>builder()
@@ -44,6 +46,7 @@ public class ProductVariantController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ProductVariantResponse> update(
             @PathVariable String id,
             @RequestBody @Valid ProductVariantRequest request) {
@@ -54,6 +57,7 @@ public class ProductVariantController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> delete(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("product.variant.deleted.success", variantService.delete(id)))

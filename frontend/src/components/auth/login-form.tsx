@@ -11,13 +11,18 @@ import { logInSchema } from '@/components/auth/schemas/schemas'
 import { useTranslation } from 'react-i18next'
 
 import LanguageSelector from '@/components/common/LanguageSelector'
-// import { useAuthStore } from '@/store/auth.store'
+import type { ApiErrorResponse } from '@/defines/error.type'
+import { loginApi } from '@/services/auth/auth.api'
+import { parseJwt, useAuthStore } from '@/store/auth.store'
+import { AxiosError } from 'axios'
+import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
 import type z from 'zod'
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const { t } = useTranslation('auth')
   type LogInFormValue = z.infer<typeof logInSchema>
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const {
     register,
@@ -27,23 +32,36 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     resolver: zodResolver(logInSchema)
   })
 
-  // const { login, roles } = useAuthStore()
+  const login = useAuthStore((state) => state.login)
 
   const onSubmit = async (data: LogInFormValue) => {
-    // try {
-    //   await login(data)
-    //   if (roles.includes('ADMIN')) {
-    //     navigate('/dashboard')
-    //   } else {
-    //     navigate('/profile')
-    //   }
-    // } catch (error: unknown) {
-    //   if (error instanceof Error) {
-    //     toast.error(error.message)
-    //   } else {
-    //     toast.error('Login failed')
-    //   }
-    // }
+    try {
+      const res = await loginApi(data)
+      if (res.data?.accessToken) {
+        const token = res.data.accessToken
+
+        // 1. Lưu token vào Zustand (và localStorage)
+        login(token)
+        toast.success(res.message)
+
+        // 2. Giải mã Token ngay lập tức để lấy Roles
+        const payload = parseJwt(token)
+        const roles = payload?.roles || []
+
+        // 3. Phân luồng điều hướng dựa trên Role
+        if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_STAFF')) {
+          navigate('/dashboard')
+        } else {
+          navigate('/')
+        }
+      }
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<ApiErrorResponse>
+
+      const message = axiosError.response?.data?.message || t('login.errors')
+
+      toast.error(message)
+    }
   }
 
   return (

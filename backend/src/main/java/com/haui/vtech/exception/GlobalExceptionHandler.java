@@ -4,6 +4,8 @@ import com.haui.vtech.dto.ApiResponse;
 import com.haui.vtech.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,8 +39,20 @@ public class GlobalExceptionHandler {
                 .body(apiResponse);
     }
 
-    @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex){
+    @ExceptionHandler(value = BadCredentialsException.class)
+    ResponseEntity<ApiResponse> handleBadCredentialsException(BadCredentialsException ex){
+        ErrorCode errorCode = ErrorCode.BAD_CREDENTIALS;
+
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(messageUtil.getMessage(errorCode.getMessage()))
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(value = {AccessDeniedException.class, AuthorizationDeniedException.class})
+    ResponseEntity<ApiResponse> handleAccessDeniedException(Exception ex){
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(

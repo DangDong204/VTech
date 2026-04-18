@@ -11,6 +11,7 @@ import com.haui.vtech.service.CategoryService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ public class CategoryController {
     private final MessageUtil messageUtil;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<CategoryResponse> createCategory(
             @Valid @ModelAttribute CategoryCreationRequest request,
             @RequestPart(required = false) MultipartFile thumbnailUrl
@@ -51,6 +53,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<CategoryResponse> updateCategory(
             @PathVariable String categoryId,
             @Valid @ModelAttribute CategoryUpdateRequest request,
@@ -64,6 +67,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/trash/{categoryId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteCategory(@PathVariable String categoryId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage(
@@ -73,6 +77,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteSoftCategory(@PathVariable String categoryId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage(
@@ -89,6 +94,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/trash/{categoryId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> restoreCategory(@PathVariable String categoryId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage(

@@ -10,6 +10,7 @@ import com.haui.vtech.service.ProductService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ public class ProductController {
     private final MessageUtil messageUtil;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ProductResponse> createProduct(
             @Valid @ModelAttribute ProductCreationRequest request) {
         ProductResponse response = productService.create(request);
@@ -42,6 +44,7 @@ public class ProductController {
     }
 
     @PostMapping("/{productId}/images")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> uploadProductImages(
             @PathVariable String productId,
             @RequestParam(required = false) MultipartFile thumbnail,
@@ -60,6 +63,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}/images/detail")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteProductImage(
             @PathVariable String productId,
             @RequestParam String imageUrl) {
@@ -77,6 +81,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ProductResponse> updateProduct(
             @PathVariable String productId,
             @Valid @ModelAttribute ProductUpdateRequest request) {
@@ -88,6 +93,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/trash/{productId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteProduct(@PathVariable String productId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("product.deleted.success", productService.delete(productId)))
@@ -95,6 +101,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteSoftProduct(@PathVariable String productId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("product.deleted.soft.success", productService.deleteSoft(productId)))
@@ -109,6 +116,7 @@ public class ProductController {
     }
 
     @PatchMapping("trash/{productId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> restoreProduct(@PathVariable String productId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("product.restored.success", productService.restore(productId)))
