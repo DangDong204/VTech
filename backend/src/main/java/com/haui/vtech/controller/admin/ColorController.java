@@ -7,6 +7,7 @@ import com.haui.vtech.service.ColorService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class ColorController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ColorResponse> create(
             @RequestBody @Valid ColorRequest request) {
         return ApiResponse.<ColorResponse>builder()
@@ -36,6 +38,7 @@ public class ColorController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ColorResponse> update(
             @PathVariable String id,
             @RequestBody @Valid ColorRequest request) {
@@ -46,6 +49,7 @@ public class ColorController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> delete(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("color.deleted.success",

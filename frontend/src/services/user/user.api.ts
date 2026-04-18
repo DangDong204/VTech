@@ -54,6 +54,6 @@ export const deleteHardUserApi = async (userId: string) => {
 }
 
 export const signUpApi = async (data: SignUpRequest) => {
-  const res = await api.post<ApiResponse<UserResponse>>('/users/register', data)
+  const res = await api.post<ApiResponse<UserResponse>>('/auth/register', data)
   return res.data
 }

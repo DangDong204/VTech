@@ -9,6 +9,7 @@ import com.haui.vtech.service.TagService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class TagController {
     private final MessageUtil messageUtil;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<TagResponse> createTag(
             @Valid @ModelAttribute TagCreationRequest request
     ) {
@@ -46,6 +48,7 @@ public class TagController {
     }
 
     @PutMapping("/{tagId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<TagResponse> updateTag(
             @PathVariable String tagId,
             @Valid @ModelAttribute TagUpdateRequest request
@@ -58,6 +61,7 @@ public class TagController {
     }
 
     @DeleteMapping("/trash/{tagId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteTag(@PathVariable String tagId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("tag.deleted.success", tagService.delete(tagId)))
@@ -65,6 +69,7 @@ public class TagController {
     }
 
     @DeleteMapping("/{tagId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteSoftTag(@PathVariable String tagId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("tag.deleted.soft.success", tagService.deleteSoft(tagId)))
@@ -79,6 +84,7 @@ public class TagController {
     }
 
     @PatchMapping("trash/{tagId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> restoreTag(@PathVariable String tagId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("tag.restored.success", tagService.restore(tagId)))

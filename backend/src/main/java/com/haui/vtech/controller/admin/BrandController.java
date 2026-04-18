@@ -8,6 +8,7 @@ import com.haui.vtech.service.BrandService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ public class BrandController {
     private final MessageUtil messageUtil;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<BrandResponse> createBrand(
             @Valid @ModelAttribute BrandCreationRequest request,
             @RequestPart(required = false) MultipartFile brandLogo
@@ -48,6 +50,7 @@ public class BrandController {
     }
 
     @PutMapping("/{brandId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<BrandResponse> updateBrand(
             @PathVariable String brandId,
             @Valid @ModelAttribute BrandUpdateRequest request,
@@ -61,6 +64,7 @@ public class BrandController {
     }
 
     @DeleteMapping("/trash/{brandId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteBrand(@PathVariable String brandId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("brand.deleted.success", brandService.delete(brandId)))
@@ -68,6 +72,7 @@ public class BrandController {
     }
 
     @DeleteMapping("/{brandId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> deleteSoftBrand(@PathVariable String brandId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("brand.deleted.soft.success", brandService.deleteSoft(brandId)))
@@ -82,6 +87,7 @@ public class BrandController {
     }
 
     @PatchMapping("/trash/{brandId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> restoreBrand(@PathVariable String brandId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("brand.restored.success", brandService.restore(brandId)))

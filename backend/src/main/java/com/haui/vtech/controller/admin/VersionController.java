@@ -7,6 +7,7 @@ import com.haui.vtech.service.VersionService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class VersionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<VersionResponse> create(
             @RequestBody @Valid VersionRequest request) {
         return ApiResponse.<VersionResponse>builder()
@@ -36,6 +38,7 @@ public class VersionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<VersionResponse> update(
             @PathVariable String id,
             @RequestBody @Valid VersionRequest request) {
@@ -46,6 +49,7 @@ public class VersionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<Void> delete(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("version.deleted.success",

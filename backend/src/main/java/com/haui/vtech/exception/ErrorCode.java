@@ -13,6 +13,7 @@ public enum ErrorCode {
     EMAIL_NOT_EXSISTED(1002, "email.not.existed", HttpStatus.NOT_FOUND),
     EMAIL_NOTBLANK(1003, "email.not.blank", HttpStatus.BAD_REQUEST),
     EMAIL_VALID(1004, "email.valid", HttpStatus.BAD_REQUEST),
+    BAD_CREDENTIALS(1005, "auth.bad.credentials", HttpStatus.UNAUTHORIZED),
 
     USERNAME_NOTBLANK(2001, "username.not.blank", HttpStatus.BAD_REQUEST),
     PASSWORD_INVALID(2002, "password.invalid", HttpStatus.BAD_REQUEST),
