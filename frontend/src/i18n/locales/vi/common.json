@@ -25,12 +25,6 @@
     "profile": "Tài khoản",
     "logout": "Đăng xuất"
   },
-  "footer": {
-    "copyright": "© {{year}} VTech. Bảo lưu mọi quyền.",
-    "privacy": "Chính sách bảo mật",
-    "terms": "Điều khoản dịch vụ",
-    "help": "Trung tâm trợ giúp"
-  },
   "language": {
     "vietnamese": "Tiếng Việt",
     "english": "Tiếng Anh"
@@ -53,5 +47,178 @@
   "datatableView": {
     "view": "Hiển thị",
     "toggleColumns": "Ẩn / hiện cột"
+  },
+
+  "header": {
+    "searchPlaceholder": "Tìm kiếm điện thoại, laptop, phụ kiện...",
+    "location": "TP. Hồ Chí Minh",
+    "cart": "Giỏ hàng",
+    "login": "Đăng nhập",
+    "account": "Tài khoản"
+  },
+  "categories": {
+    "title": "Danh mục",
+    "phones": "Điện thoại",
+    "laptops": "Laptop",
+    "tablets": "Máy tính bảng",
+    "audio": "Âm thanh",
+    "smartwatch": "Đồng hồ thông minh",
+    "accessories": "Phụ kiện",
+    "smarthome": "Nhà thông minh",
+    "gaming": "Gaming",
+    "cameras": "Máy ảnh",
+    "tv": "Tivi & Màn hình"
+  },
+  "banners": {
+    "slide1Title": "iPhone 16 Pro Max",
+    "slide1Sub": "Giảm đến 25% — Miễn phí vận chuyển toàn quốc",
+    "slide2Title": "Khuyến mãi Laptop Gaming",
+    "slide2Sub": "Sức mạnh RTX 4090. Số lượng có hạn.",
+    "slide3Title": "Combo Nhà Thông Minh",
+    "slide3Sub": "Tiết kiệm lớn khi mua combo 3+ thiết bị",
+    "sideBanner1": "Thu cũ đổi mới giảm 30%",
+    "sideBanner2": "Trả góp 0%"
+  },
+  "home": {
+    "flashSale": "Flash Sale",
+    "endsIn": "Kết thúc sau",
+    "trendingPhones": "Điện thoại nổi bật",
+    "viewAll": "Xem tất cả",
+    "sold": "đã bán"
+  },
+  "product": {
+    "addToCart": "Thêm vào giỏ",
+    "off": "GIẢM"
+  },
+  "productDetail": {
+    "version": "Phiên bản",
+    "color": "Màu sắc:",
+    "quantity": "Số lượng:",
+    "buyNow": "Mua ngay",
+    "features": "Đặc điểm nổi bật",
+    "specs": "Thông số kỹ thuật",
+    "warranty": "Bảo hành chính hãng 12 tháng",
+    "exchange": "1 đổi 1 trong 30 ngày",
+    "addedToCart": "Đã thêm sản phẩm vào giỏ hàng!",
+    "reviews_one": "{{count}} đánh giá",
+    "reviews_other": "{{count}} đánh giá",
+    "customerReviews": "Khách hàng đánh giá",
+    "writeReview": "Viết đánh giá của bạn",
+    "rating": "Đánh giá:",
+    "reviewPlaceholder": "Chia sẻ cảm nhận của bạn về sản phẩm này...",
+    "sendReview": "Gửi đánh giá",
+    "errorNoStar": "Vui lòng chọn số sao đánh giá!",
+    "errorNoContent": "Vui lòng nhập nội dung đánh giá!",
+    "reviewSuccess": "Cảm ơn bạn đã gửi đánh giá!"
+  },
+  "policy": {
+    "shipping": { "title": "Miễn phí vận chuyển", "sub": "Toàn quốc cho đơn từ 500K₫" },
+    "warranty": { "title": "Bảo hành 12 tháng", "sub": "Bảo hành chính hãng" },
+    "exchange": { "title": "Đổi trả 30 ngày", "sub": "1 đổi 1 nếu có lỗi" },
+    "installment": { "title": "Trả góp 0%", "sub": "Linh hoạt đến 12 tháng" }
+  },
+  "brands": {
+    "title": "Thương hiệu hàng đầu"
+  },
+  "news": {
+    "title": "Tin công nghệ & Đánh giá",
+    "readMore": "Xem thêm",
+    "a1": {
+      "title": "Đánh giá iPhone 16 Pro Max: Camera Pro thực thụ",
+      "excerpt": "Flagship của Apple đẩy nhiếp ảnh điện toán đi xa hơn bao giờ hết."
+    },
+    "a2": {
+      "title": "Laptop Gaming tốt nhất dưới 30 triệu",
+      "excerpt": "Những cấu hình RTX mạnh mẽ trong tầm giá hợp lý."
+    },
+    "a3": {
+      "title": "Galaxy S25 Ultra: Có gì đáng mong chờ",
+      "excerpt": "Rò rỉ cho thấy khung titan mỏng hơn và nâng cấp AI lớn."
+    },
+    "a4": {
+      "title": "Nhà thông minh giá rẻ — Bắt đầu từ đâu",
+      "excerpt": "Xây dựng ngôi nhà kết nối đầu tiên với 5 thiết bị tiết kiệm."
+    }
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "itemCount_one": "{{count}} sản phẩm",
+    "itemCount_other": "{{count}} sản phẩm",
+    "summary": "Tóm tắt đơn hàng",
+    "subtotal": "Tạm tính",
+    "shipping": "Vận chuyển",
+    "free": "Miễn phí",
+    "discount": "Giảm giá",
+    "total": "Tổng cộng",
+    "checkout": "Tiến hành thanh toán",
+    "secure": "Thanh toán an toàn SSL",
+    "color": "Màu",
+    "storage": "Dung lượng",
+    "quantity": "Số lượng",
+    "increase": "Tăng số lượng",
+    "decrease": "Giảm số lượng",
+    "remove": "Xoá sản phẩm",
+    "voucher": {
+      "label": "Mã giảm giá",
+      "placeholder": "Nhập mã (thử VTECH10)",
+      "apply": "Áp dụng",
+      "applied": "Áp dụng mã thành công!",
+      "invalid": "Mã giảm giá không hợp lệ"
+    },
+    "empty": {
+      "title": "Giỏ hàng trống",
+      "sub": "Bạn chưa thêm sản phẩm nào. Khám phá ưu đãi mới nhất của chúng tôi.",
+      "cta": "Tiếp tục mua sắm"
+    }
+  },
+  "checkout": {
+    "emptyCartError": "Giỏ hàng của bạn đang trống!",
+    "orderSuccess": "Đặt hàng thành công! Cảm ơn bạn.",
+    "backToCart": "Quay lại giỏ hàng",
+    "shippingInfo": "Thông tin giao hàng",
+    "fullName": "Họ và tên",
+    "fullNamePlaceholder": "Nhập họ và tên người nhận",
+    "phone": "Số điện thoại",
+    "phonePlaceholder": "Nhập số điện thoại",
+    "email": "Email (Không bắt buộc)",
+    "emailPlaceholder": "Để nhận email xác nhận đơn hàng",
+    "address": "Địa chỉ nhận hàng",
+    "addressPlaceholder": "Số nhà, Tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố",
+    "note": "Ghi chú đơn hàng",
+    "notePlaceholder": "Ghi chú thêm về thời gian giao hàng...",
+    "paymentMethod": "Phương thức thanh toán",
+    "cod": "Thanh toán khi nhận hàng (COD)",
+    "vnpay": "Thanh toán qua VNPAY",
+    "transfer": "Chuyển khoản ngân hàng",
+    "shippingFee": "Phí vận chuyển",
+    "placeOrder": "Hoàn tất đặt hàng",
+    "secureInfo": "Mọi thông tin của bạn được bảo mật an toàn"
+  },
+  "footer": {
+    "about": {
+      "title": "Về VTech",
+      "intro": "Nhà bán lẻ điện tử uy tín tại Việt Nam với hơn 500 cửa hàng.",
+      "careers": "Tuyển dụng",
+      "stores": "Hệ thống cửa hàng",
+      "news": "Tin tức & blog"
+    },
+    "support": {
+      "title": "Hỗ trợ khách hàng",
+      "warranty": "Chính sách bảo hành",
+      "shipping": "Vận chuyển & đổi trả",
+      "installment": "Mua trả góp",
+      "faq": "Câu hỏi thường gặp"
+    },
+    "payment": {
+      "title": "Phương thức thanh toán",
+      "desc": "Thanh toán an toàn với mọi đối tác lớn."
+    },
+    "newsletter": {
+      "title": "Bản tin",
+      "desc": "Nhận ưu đãi độc quyền qua email.",
+      "placeholder": "Email của bạn",
+      "subscribe": "Đăng ký"
+    },
+    "copyright": "© 2025 VTech. Bản quyền đã được bảo hộ."
   }
 }

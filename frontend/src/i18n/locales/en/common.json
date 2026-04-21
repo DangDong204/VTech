@@ -25,12 +25,6 @@
     "profile": "Profile",
     "logout": "Logout"
   },
-  "footer": {
-    "copyright": "© {{year}} VTech. All rights reserved.",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
-    "help": "Help Center"
-  },
   "language": {
     "vietnamese": "Vietnamese",
     "english": "English"
@@ -53,5 +47,178 @@
   "datatableView": {
     "view": "View",
     "toggleColumns": "Toggle columns"
+  },
+
+  "header": {
+    "searchPlaceholder": "Search for phones, laptops, accessories...",
+    "location": "Ho Chi Minh City",
+    "cart": "Cart",
+    "login": "Login",
+    "account": "Account"
+  },
+  "categories": {
+    "title": "Categories",
+    "phones": "Phones",
+    "laptops": "Laptops",
+    "tablets": "Tablets",
+    "audio": "Audio",
+    "smartwatch": "Smartwatch",
+    "accessories": "Accessories",
+    "smarthome": "Smart Home",
+    "gaming": "Gaming",
+    "cameras": "Cameras",
+    "tv": "TV & Display"
+  },
+  "banners": {
+    "slide1Title": "iPhone 16 Pro Max",
+    "slide1Sub": "Up to 25% off — Free shipping nationwide",
+    "slide2Title": "Gaming Laptop Sale",
+    "slide2Sub": "RTX 4090 powered. Limited stock.",
+    "slide3Title": "Smart Home Bundle",
+    "slide3Sub": "Save big when you bundle 3+ devices",
+    "sideBanner1": "Trade-in & Save 30%",
+    "sideBanner2": "0% Installment Plan"
+  },
+  "home": {
+    "flashSale": "Flash Sale",
+    "endsIn": "Ends in",
+    "trendingPhones": "Trending Smartphones",
+    "viewAll": "View all",
+    "sold": "sold"
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "off": "OFF"
+  },
+  "productDetail": {
+    "version": "Version",
+    "color": "Color:",
+    "quantity": "Quantity:",
+    "buyNow": "Buy now",
+    "features": "Key features",
+    "specs": "Specifications",
+    "warranty": "Official 12-month warranty",
+    "exchange": "1-for-1 exchange within 30 days",
+    "addedToCart": "Product added to cart!",
+    "reviews_one": "{{count}} review",
+    "reviews_other": "{{count}} reviews",
+    "customerReviews": "Customer reviews",
+    "writeReview": "Write your review",
+    "rating": "Rating:",
+    "reviewPlaceholder": "Share your thoughts about this product...",
+    "sendReview": "Submit review",
+    "errorNoStar": "Please select a star rating!",
+    "errorNoContent": "Please enter review content!",
+    "reviewSuccess": "Thank you for your review!"
+  },
+  "policy": {
+    "shipping": { "title": "Free Shipping", "sub": "Nationwide on orders over 500K₫" },
+    "warranty": { "title": "12-Month Warranty", "sub": "Genuine manufacturer warranty" },
+    "exchange": { "title": "30-Day Exchange", "sub": "1-to-1 swap on any defect" },
+    "installment": { "title": "0% Installment", "sub": "Flexible plans up to 12 months" }
+  },
+  "brands": {
+    "title": "Top Brands"
+  },
+  "news": {
+    "title": "Tech News & Reviews",
+    "readMore": "Read more",
+    "a1": {
+      "title": "iPhone 16 Pro Max Review: A True Pro Camera",
+      "excerpt": "Apple's flagship pushes computational photography further than ever before."
+    },
+    "a2": {
+      "title": "Best Gaming Laptops Under 30 Million VND",
+      "excerpt": "Our hand-picked rigs that deliver RTX power without breaking the bank."
+    },
+    "a3": {
+      "title": "Galaxy S25 Ultra: What to Expect",
+      "excerpt": "Leaks point to a slimmer titanium frame and major AI upgrades."
+    },
+    "a4": {
+      "title": "Smart Home on a Budget — Where to Start",
+      "excerpt": "Build your first connected home with these 5 affordable devices."
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items",
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "discount": "Discount",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "secure": "Secure SSL checkout",
+    "color": "Color",
+    "storage": "Storage",
+    "quantity": "Quantity",
+    "increase": "Increase quantity",
+    "decrease": "Decrease quantity",
+    "remove": "Remove item",
+    "voucher": {
+      "label": "Voucher / Promo code",
+      "placeholder": "Enter code (try VTECH10)",
+      "apply": "Apply",
+      "applied": "Voucher applied successfully!",
+      "invalid": "Invalid voucher code"
+    },
+    "empty": {
+      "title": "Your cart is empty",
+      "sub": "Looks like you haven't added anything yet. Discover our latest deals.",
+      "cta": "Continue Shopping"
+    }
+  },
+  "checkout": {
+    "emptyCartError": "Your cart is empty!",
+    "orderSuccess": "Order placed successfully! Thank you.",
+    "backToCart": "Back to cart",
+    "shippingInfo": "Shipping information",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Enter recipient's full name",
+    "phone": "Phone number",
+    "phonePlaceholder": "Enter phone number",
+    "email": "Email (Optional)",
+    "emailPlaceholder": "To receive order confirmation email",
+    "address": "Shipping address",
+    "addressPlaceholder": "House number, Street name, Ward/Commune, District, Province/City",
+    "note": "Order notes",
+    "notePlaceholder": "Additional notes about delivery time...",
+    "paymentMethod": "Payment method",
+    "cod": "Cash on delivery (COD)",
+    "vnpay": "Pay via VNPAY",
+    "transfer": "Bank transfer",
+    "shippingFee": "Shipping fee",
+    "placeOrder": "Place order",
+    "secureInfo": "All your information is securely protected"
+  },
+  "footer": {
+    "about": {
+      "title": "About VTech",
+      "intro": "Vietnam's trusted electronics retailer with 500+ stores nationwide.",
+      "careers": "Careers",
+      "stores": "Store locations",
+      "news": "News & blog"
+    },
+    "support": {
+      "title": "Customer Support",
+      "warranty": "Warranty policy",
+      "shipping": "Shipping & returns",
+      "installment": "Installment plans",
+      "faq": "FAQ"
+    },
+    "payment": {
+      "title": "Payment Methods",
+      "desc": "Secure checkout with all major providers."
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "desc": "Get exclusive deals straight to your inbox.",
+      "placeholder": "Your email address",
+      "subscribe": "Subscribe"
+    },
+    "copyright": "© 2025 VTech. All rights reserved."
   }
 }

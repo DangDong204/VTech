@@ -11,6 +11,12 @@ import VariantPage from '@/pages/admin/manage-variant/page'
 import VersionPage from '@/pages/admin/manage-version/page'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
+import CartPage from '@/pages/user/cart/CartPage'
+import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
+import ClientLayout from '@/pages/user/ClientLayout'
+import HomePage from '@/pages/user/home/HomePage'
+import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
+import ProductListPage from '@/pages/user/product-list/ProductListPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
@@ -29,6 +35,14 @@ function App() {
         <Routes>
           {/* <Route path='*' element={<NotFound404 />} /> */}
           {/* TODO: tạo các public route */}
+          <Route element={<ClientLayout />}>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/cart' element={<CartPage />} />
+            <Route path='/products' element={<ProductListPage />} />
+            <Route path='/product/:slug' element={<ProductDetailPage />} />
+            <Route path='/checkout' element={<CheckoutPage />} />
+          </Route>
+
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignupPage />} />
 
