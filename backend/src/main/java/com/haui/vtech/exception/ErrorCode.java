@@ -96,6 +96,14 @@ public enum ErrorCode {
     VOUCHER_VALUE_INVALID(9005, "voucher.value.invalid", HttpStatus.BAD_REQUEST),
     VOUCHER_MIN_ORDER_INVALID(9006, "voucher.min.order.invalid", HttpStatus.BAD_REQUEST),
     VOUCHER_DATES_INVALID(9007, "voucher.dates.invalid", HttpStatus.BAD_REQUEST),
+
+    PROMOTION_NOT_FOUND(10000, "promotion.not.found", HttpStatus.NOT_FOUND),
+    PROMOTION_NAME_NOTBLANK(10001, "promotion.name.not.blank", HttpStatus.BAD_REQUEST),
+    PROMOTION_TYPE_INVALID(10002, "promotion.type.invalid", HttpStatus.BAD_REQUEST),
+    PROMOTION_VALUE_INVALID(10003, "promotion.value.invalid", HttpStatus.BAD_REQUEST),
+    PROMOTION_DATES_INVALID(10004, "promotion.dates.invalid", HttpStatus.BAD_REQUEST),
+    PROMOTION_IN_USE(10005, "promotion.in.use", HttpStatus.BAD_REQUEST),
+    PROMOTION_NAME_EXISTED(10006, "promotion.name.exists", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
