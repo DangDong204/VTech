@@ -131,7 +131,7 @@ const data = {
     },
     {
       name: 'Promotions',
-      url: '/dashboard/vouchers',
+      url: '/dashboard/promotions',
       icon: BadgeDollarSign
     },
     {
