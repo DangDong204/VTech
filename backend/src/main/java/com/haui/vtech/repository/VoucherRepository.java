@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,4 +43,15 @@ public interface VoucherRepository extends JpaRepository<VoucherEntity, String> 
     int restore(@Param("id") String id);
 
     List<VoucherEntity> findAllByStatusAndDeletedAtIsNotNullOrderByDeletedAtDesc(VoucherStatus status);
+
+    @Modifying
+    @Transactional
+    @Query("""
+        UPDATE VoucherEntity v 
+        SET v.status = 'INACTIVE' 
+        WHERE v.status = 'ACTIVE' 
+          AND v.endDate IS NOT NULL 
+          AND v.endDate < :now
+    """)
+    int deactivateExpiredVouchers(@Param("now") LocalDateTime now);
 }

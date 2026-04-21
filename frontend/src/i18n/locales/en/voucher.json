@@ -1,0 +1,171 @@
+{
+  "table": {
+    "columns": {
+      "voucherCode": "Voucher Code",
+      "voucherName": "Campaign Name",
+      "type": "Discount Type",
+      "discountValue": "Value",
+      "minOrderValue": "Min Order",
+      "usage": "Used / Limit",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No results found"
+  },
+  "titles": {
+    "list": "Voucher List",
+    "create": "Create Voucher",
+    "edit": "Edit Voucher",
+    "view": "Voucher Details",
+    "delete": "Delete Voucher",
+    "trash": "Voucher Trash"
+  },
+  "filters": {
+    "search": "Search by code or name...",
+    "type": {
+      "label": "Discount Type",
+      "all": "All Types",
+      "PERCENTAGE": "Percentage",
+      "FIXED_AMOUNT": "Fixed Amount",
+      "FREE_SHIP": "Free Shipping"
+    },
+    "status": {
+      "label": "Status",
+      "all": "All Status",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "reset": "Reset"
+  },
+  "actions": {
+    "create": "Create Voucher",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Save Changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "schema": {
+    "voucherCode": {
+      "required": "Voucher code is required",
+      "invalid": "Code cannot contain spaces or special characters"
+    },
+    "voucherName": {
+      "required": "Campaign name is required"
+    },
+    "type": {
+      "invalid": "Invalid discount type"
+    },
+    "discountValue": {
+      "invalid": "Discount value must be a number",
+      "min": "Discount value must be greater than 0"
+    },
+    "minOrderValue": {
+      "invalid": "Min order value must be a number",
+      "min": "Min order value cannot be negative"
+    },
+    "maxDiscountAmount": {
+      "invalid": "Max discount amount must be a number",
+      "min": "Max discount amount cannot be negative"
+    },
+    "usageLimit": {
+      "invalid": "Usage limit must be a positive integer"
+    },
+    "dates": {
+      "startRequired": "Start date is required",
+      "endRequired": "End date is required",
+      "invalidRange": "Start date must be before end date"
+    },
+    "status": {
+      "invalid": "Invalid status"
+    }
+  },
+  "fields": {
+    "voucherCode": {
+      "label": "Voucher Code",
+      "placeholder": "Ex: FREESHIP, VTECH10..."
+    },
+    "voucherName": {
+      "label": "Campaign Name",
+      "placeholder": "Ex: 10% off for orders over 5M"
+    },
+    "type": {
+      "label": "Discount Type",
+      "placeholder": "Select type",
+      "options": {
+        "PERCENTAGE": "Percentage (%)",
+        "FIXED_AMOUNT": "Fixed Amount (VND)",
+        "FREE_SHIP": "Free Shipping"
+      }
+    },
+    "discountValue": {
+      "label": "Discount Value",
+      "placeholder": "Enter amount or %"
+    },
+    "maxDiscountAmount": {
+      "label": "Max Discount (VND)",
+      "placeholder": "Empty = No limit"
+    },
+    "minOrderValue": {
+      "label": "Min Order Value (VND)",
+      "placeholder": "Enter min value"
+    },
+    "usageLimit": {
+      "label": "Usage Limit",
+      "placeholder": "Empty = Unlimited"
+    },
+    "usedCount": {
+      "label": "Used Count"
+    },
+    "startDate": {
+      "label": "Start Date"
+    },
+    "endDate": {
+      "label": "End Date"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      }
+    },
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "deletedAt": "Deleted At"
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "conditions": "Usage Conditions",
+    "timeline": "Timeline & Status"
+  },
+  "trash": {
+    "trashEmpty": "Trash is empty",
+    "remainingDays": "{{days}} days remaining before permanent deletion"
+  },
+  "message": {
+    "success": {
+      "create": "Voucher created successfully!",
+      "update": "Voucher updated successfully!",
+      "delete": "Voucher permanently deleted!",
+      "softDelete": "Voucher moved to trash!",
+      "restore": "Voucher restored successfully!"
+    },
+    "confirm": {
+      "softDelete": "Are you sure you want to delete voucher '{{voucherCode}}'? It will be moved to trash.",
+      "hardDelete": "Are you sure you want to permanently delete voucher '{{voucherCode}}'? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create voucher!",
+      "update": "Failed to update voucher!",
+      "delete": "Failed to delete voucher!",
+      "softDelete": "Failed to move voucher to trash!",
+      "fetch": "Failed to fetch voucher list!",
+      "fetchDetail": "Failed to fetch voucher details!",
+      "restore": "Failed to restore voucher!"
+    }
+  }
+}

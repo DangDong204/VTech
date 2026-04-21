@@ -9,6 +9,7 @@ import enTag from './locales/en/tag.json'
 import enColor from './locales/en/color.json'
 import enVersion from './locales/en/version.json'
 import enVariant from './locales/en/variant.json'
+import enVoucher from './locales/en/voucher.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -24,6 +25,7 @@ declare module 'i18next' {
       color: typeof enColor
       version: typeof enVersion
       variant: typeof enVariant
+      voucher: typeof enVoucher
     }
   }
 }
