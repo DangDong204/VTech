@@ -9,6 +9,7 @@ import TagPage from '@/pages/admin/manage-tag/page'
 import UserPage from '@/pages/admin/manage-user/page'
 import VariantPage from '@/pages/admin/manage-variant/page'
 import VersionPage from '@/pages/admin/manage-version/page'
+import VoucherPage from '@/pages/admin/manage-voucher/page'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import CartPage from '@/pages/user/cart/CartPage'
@@ -59,6 +60,7 @@ function App() {
               <Route path='products/:productId/variants' element={<VariantPage />} />
               <Route path='colors' element={<ColorPage />} />
               <Route path='versions' element={<VersionPage />} />
+              <Route path='vouchers' element={<VoucherPage />} />
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}

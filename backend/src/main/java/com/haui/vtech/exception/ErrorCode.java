@@ -86,7 +86,16 @@ public enum ErrorCode {
     BASE_PRICE_MIN(7305, "product.variant.price.min", HttpStatus.BAD_REQUEST),
 
     SPEC_EXISTS(8000, "specification.exists", HttpStatus.BAD_REQUEST),
-    SPEC_NOT_FOUND(8001, "specification.not.found", HttpStatus.NOT_FOUND)
+    SPEC_NOT_FOUND(8001, "specification.not.found", HttpStatus.NOT_FOUND),
+
+    VOUCHER_NOT_FOUND(9000, "voucher.not.found", HttpStatus.NOT_FOUND),
+    VOUCHER_CODE_NOTBLANK(9001, "voucher.code.not.blank", HttpStatus.BAD_REQUEST),
+    VOUCHER_CODE_EXISTED(9002, "voucher.code.exists", HttpStatus.BAD_REQUEST),
+    VOUCHER_NAME_NOTBLANK(9003, "voucher.name.not.blank", HttpStatus.BAD_REQUEST),
+    VOUCHER_TYPE_INVALID(9004, "voucher.type.invalid", HttpStatus.BAD_REQUEST),
+    VOUCHER_VALUE_INVALID(9005, "voucher.value.invalid", HttpStatus.BAD_REQUEST),
+    VOUCHER_MIN_ORDER_INVALID(9006, "voucher.min.order.invalid", HttpStatus.BAD_REQUEST),
+    VOUCHER_DATES_INVALID(9007, "voucher.dates.invalid", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

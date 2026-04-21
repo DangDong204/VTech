@@ -1,0 +1,171 @@
+{
+  "table": {
+    "columns": {
+      "voucherCode": "Mã Voucher",
+      "voucherName": "Tên chương trình",
+      "type": "Loại giảm giá",
+      "discountValue": "Mức giảm",
+      "minOrderValue": "Đơn tối thiểu",
+      "usage": "Đã dùng / Giới hạn",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách phiếu giảm giá",
+    "create": "Tạo phiếu giảm giá",
+    "edit": "Chỉnh sửa phiếu giảm giá",
+    "view": "Thông tin phiếu giảm giá",
+    "delete": "Xoá phiếu giảm giá",
+    "trash": "Thùng rác voucher"
+  },
+  "filters": {
+    "search": "Tìm kiếm mã hoặc tên voucher...",
+    "type": {
+      "label": "Loại giảm giá",
+      "all": "Tất cả loại",
+      "PERCENTAGE": "Theo phần trăm",
+      "FIXED_AMOUNT": "Giảm tiền mặt",
+      "FREE_SHIP": "Miễn phí vận chuyển"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả trạng thái",
+      "ACTIVE": "Hoạt động",
+      "INACTIVE": "Ngừng hoạt động"
+    },
+    "reset": "Đặt lại"
+  },
+  "actions": {
+    "create": "Tạo voucher mới",
+    "view": "Xem",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "submit": "Lưu thay đổi",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận"
+  },
+  "schema": {
+    "voucherCode": {
+      "required": "Mã voucher không được để trống",
+      "invalid": "Mã không được chứa khoảng trắng hoặc ký tự đặc biệt"
+    },
+    "voucherName": {
+      "required": "Tên chương trình không được để trống"
+    },
+    "type": {
+      "invalid": "Loại giảm giá không hợp lệ"
+    },
+    "discountValue": {
+      "invalid": "Giá trị giảm phải là số",
+      "min": "Giá trị giảm phải lớn hơn 0"
+    },
+    "minOrderValue": {
+      "invalid": "Đơn tối thiểu phải là số",
+      "min": "Đơn tối thiểu không được âm"
+    },
+    "maxDiscountAmount": {
+      "invalid": "Mức giảm tối đa phải là số",
+      "min": "Mức giảm tối đa không được âm"
+    },
+    "usageLimit": {
+      "invalid": "Giới hạn sử dụng phải là số nguyên dương"
+    },
+    "dates": {
+      "startRequired": "Ngày bắt đầu không được để trống",
+      "endRequired": "Ngày kết thúc không được để trống",
+      "invalidRange": "Ngày bắt đầu phải trước ngày kết thúc"
+    },
+    "status": {
+      "invalid": "Trạng thái không hợp lệ"
+    }
+  },
+  "fields": {
+    "voucherCode": {
+      "label": "Mã Voucher",
+      "placeholder": "VD: FREESHIP, VTECH10..."
+    },
+    "voucherName": {
+      "label": "Tên chương trình",
+      "placeholder": "VD: Giảm 10% cho đơn từ 5 triệu"
+    },
+    "type": {
+      "label": "Loại giảm giá",
+      "placeholder": "Chọn loại giảm giá",
+      "options": {
+        "PERCENTAGE": "Theo phần trăm (%)",
+        "FIXED_AMOUNT": "Trừ tiền thẳng (VNĐ)",
+        "FREE_SHIP": "Miễn phí vận chuyển"
+      }
+    },
+    "discountValue": {
+      "label": "Giá trị giảm",
+      "placeholder": "Nhập số tiền hoặc % giảm"
+    },
+    "maxDiscountAmount": {
+      "label": "Giảm tối đa (VNĐ)",
+      "placeholder": "Không điền = Không giới hạn"
+    },
+    "minOrderValue": {
+      "label": "Đơn hàng tối thiểu (VNĐ)",
+      "placeholder": "Nhập giá trị đơn tối thiểu"
+    },
+    "usageLimit": {
+      "label": "Giới hạn sử dụng (Lượt)",
+      "placeholder": "Không điền = Không giới hạn"
+    },
+    "usedCount": {
+      "label": "Đã sử dụng"
+    },
+    "startDate": {
+      "label": "Ngày bắt đầu"
+    },
+    "endDate": {
+      "label": "Ngày kết thúc"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái",
+      "options": {
+        "ACTIVE": "Hoạt động",
+        "INACTIVE": "Ngừng hoạt động"
+      }
+    },
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật",
+    "deletedAt": "Ngày xoá"
+  },
+  "sections": {
+    "basicInfo": "Thông tin cơ bản",
+    "conditions": "Điều kiện áp dụng",
+    "timeline": "Thời gian & Trạng thái"
+  },
+  "trash": {
+    "trashEmpty": "Thùng rác trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
+  },
+  "message": {
+    "success": {
+      "create": "Tạo voucher thành công!",
+      "update": "Cập nhật voucher thành công!",
+      "delete": "Xóa vĩnh viễn voucher thành công!",
+      "softDelete": "Đã chuyển voucher vào thùng rác!",
+      "restore": "Khôi phục voucher thành công!"
+    },
+    "confirm": {
+      "softDelete": "Bạn có chắc chắn muốn xóa voucher '{{voucherCode}}' không? Voucher sẽ được chuyển vào thùng rác.",
+      "hardDelete": "Bạn có chắc chắn muốn xóa vĩnh viễn voucher '{{voucherCode}}' không? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo voucher thất bại!",
+      "update": "Cập nhật voucher thất bại!",
+      "delete": "Xóa voucher thất bại!",
+      "softDelete": "Xóa mềm voucher thất bại!",
+      "fetch": "Lấy danh sách voucher thất bại!",
+      "fetchDetail": "Lấy thông tin voucher thất bại!",
+      "restore": "Khôi phục voucher thất bại!"
+    }
+  }
+}
