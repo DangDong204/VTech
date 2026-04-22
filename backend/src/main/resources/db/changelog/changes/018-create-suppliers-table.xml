@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-suppliers-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="suppliers"/>
+            </not>
+        </preConditions>
+        <createTable tableName="suppliers" remarks="Bảng nhà cung cấp">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="supplier_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact_name" type="VARCHAR(100)"/>
+            <column name="phone" type="VARCHAR(20)"/>
+            <column name="email" type="VARCHAR(100)"/>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="insert-real-suppliers" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM suppliers</sqlCheck>
+        </preConditions>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000001"/>
+            <column name="supplier_name" value="Công ty CP Thế Giới Số (Digiworld)"/>
+            <column name="contact_name" value="Nguyễn Tường Dũng"/>
+            <column name="phone" value="02839290059"/>
+            <column name="email" value="info@digiworld.com.vn"/>
+            <column name="address" value="Số 195-197 Phan Đăng Lưu, Phường 1, Phú Nhuận, TP.HCM"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000002"/>
+            <column name="supplier_name" value="Công ty CP Synnex FPT"/>
+            <column name="contact_name" value="Lê Công Trí"/>
+            <column name="phone" value="02473006666"/>
+            <column name="email" value="synnex@fpt.com"/>
+            <column name="address" value="Tòa nhà FPT, Phố Duy Tân, Dịch Vọng Hậu, Cầu Giấy, Hà Nội"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000003"/>
+            <column name="supplier_name" value="Tổng Công ty CP Dịch vụ Tổng hợp Dầu khí (Petrosetco)"/>
+            <column name="contact_name" value="Trần Phùng"/>
+            <column name="phone" value="02838221666"/>
+            <column name="email" value="contact@petrosetco.com.vn"/>
+            <column name="address" value="Lầu 6, Số 1-5 Lê Duẩn, Bến Nghé, Quận 1, TP.HCM"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000004"/>
+            <column name="supplier_name" value="Công ty Thương mại và Xuất Nhập khẩu Viettel (Viettel Commerce)"/>
+            <column name="contact_name" value="Hoàng Mai Lan"/>
+            <column name="phone" value="02462556789"/>
+            <column name="email" value="commerce@viettel.com.vn"/>
+            <column name="address" value="Số 1 Giang Văn Minh, Kim Mã, Ba Đình, Hà Nội"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000005"/>
+            <column name="supplier_name" value="Công ty CP Đầu tư và Phát triển Công nghệ Quốc gia ADG"/>
+            <column name="contact_name" value="Vũ Minh Đức"/>
+            <column name="phone" value="02439336118"/>
+            <column name="email" value="info@adg.vn"/>
+            <column name="address" value="Số 42-44 Ngụy Như Kon Tum, Thanh Xuân, Hà Nội"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000006"/>
+            <column name="supplier_name" value="Công ty TNHH Thương Mại Dịch Vụ Tin Học Viễn Sơn"/>
+            <column name="contact_name" value="Trần Minh Sơn"/>
+            <column name="phone" value="02838326085"/>
+            <column name="email" value="info@microstar.com.vn"/>
+            <column name="address" value="162B Bùi Thị Xuân, Phường Phạm Ngũ Lão, Quận 1, TP.HCM"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000007"/>
+            <column name="supplier_name" value="Công ty CP Máy tính Vĩnh Xuân (SPC)"/>
+            <column name="contact_name" value="Nguyễn Thanh Sơn"/>
+            <column name="phone" value="02439433888"/>
+            <column name="email" value="sales@spc.com.vn"/>
+            <column name="address" value="Số 39 Trần Quốc Toản, Trần Hưng Đạo, Hoàn Kiếm, Hà Nội"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000008"/>
+            <column name="supplier_name" value="Công ty CP Tin học Mai Hoàng"/>
+            <column name="contact_name" value="Phạm Đức Anh"/>
+            <column name="phone" value="02438692828"/>
+            <column name="email" value="info@maihoang.com.vn"/>
+            <column name="address" value="Số 241 Phố Vọng, Đồng Tâm, Hai Bà Trưng, Hà Nội"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000009"/>
+            <column name="supplier_name" value="Công ty Thương mại Dịch vụ Thủy Linh (TLC)"/>
+            <column name="contact_name" value="Vũ Phương Liên"/>
+            <column name="phone" value="02435371525"/>
+            <column name="email" value="lienhe@thuylinh.vn"/>
+            <column name="address" value="Số 33 Thái Hà, Trung Liệt, Đống Đa, Hà Nội"/>
+        </insert>
+        <insert tableName="suppliers">
+            <column name="id" value="sup-0000-0000-0000-000000000010"/>
+            <column name="supplier_name" value="Công ty CP Công nghệ Elite (Elite Technology)"/>
+            <column name="contact_name" value="Lâm Tú Tường"/>
+            <column name="phone" value="02839333933"/>
+            <column name="email" value="contact@elite-jsc.com"/>
+            <column name="address" value="289/1 Ung Văn Khiêm, Phường 25, Bình Thạnh, TP.HCM"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="create-inventory-receipts-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="inventory_receipts"/>
+            </not>
+        </preConditions>
+        <createTable tableName="inventory_receipts" remarks="Bảng phiếu nhập kho">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="receipt_code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="supplier_id" type="VARCHAR(36)"/>
+            <column name="total_amount" type="DECIMAL(15, 2)" defaultValue="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note" type="TEXT"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING"/>
+            <column name="created_by" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="inventory_receipts" baseColumnNames="supplier_id"
+                                 constraintName="fk_receipt_supplier"
+                                 referencedTableName="suppliers" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="create-inventory-receipt-details-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="inventory_receipt_details"/>
+            </not>
+        </preConditions>
+        <createTable tableName="inventory_receipt_details" remarks="Bảng chi tiết phiếu nhập">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="receipt_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="variant_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="import_price" type="DECIMAL(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_price" type="DECIMAL(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="inventory_receipt_details" baseColumnNames="receipt_id"
+                                 constraintName="fk_detail_receipt"
+                                 referencedTableName="inventory_receipts" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="inventory_receipt_details" baseColumnNames="variant_id"
+                                 constraintName="fk_detail_variant"
+                                 referencedTableName="product_variants" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="add-audit-columns-to-receipt-details" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="inventory_receipt_details" columnName="created_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="inventory_receipt_details">
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -104,6 +104,13 @@ public enum ErrorCode {
     PROMOTION_DATES_INVALID(10004, "promotion.dates.invalid", HttpStatus.BAD_REQUEST),
     PROMOTION_IN_USE(10005, "promotion.in.use", HttpStatus.BAD_REQUEST),
     PROMOTION_NAME_EXISTED(10006, "promotion.name.exists", HttpStatus.BAD_REQUEST),
+
+    SUPPLIER_NOT_FOUND(11000, "supplier.not.found", HttpStatus.NOT_FOUND),
+    RECEIPT_NOT_FOUND(11001, "receipt.not.found", HttpStatus.NOT_FOUND),
+    RECEIPT_NOT_PENDING(11002, "receipt.not.pending", HttpStatus.BAD_REQUEST),
+    EXCEL_INVALID_FORMAT(11003, "excel.invalid.format", HttpStatus.BAD_REQUEST),
+    EXCEL_READ_ERROR(11004, "excel.read.error", HttpStatus.INTERNAL_SERVER_ERROR),
+    RECEIPT_DETAIL_EMPTY(110005, "receipt.detail.empty", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
