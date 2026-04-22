@@ -1,5 +1,6 @@
 package com.haui.vtech.service;
 
+import com.haui.vtech.dto.receipt.ExcelPreviewResponse;
 import com.haui.vtech.dto.receipt.ReceiptDetailRequest;
 import com.haui.vtech.dto.receipt.ReceiptRequest;
 import com.haui.vtech.dto.receipt.ReceiptResponse;
@@ -170,8 +171,118 @@ public class InventoryReceiptServiceImpl implements InventoryReceiptService {
     }
 
     @Override
+    @Transactional
+    public ReceiptResponse cancelReceipt(String id) {
+        InventoryReceiptEntity receipt = receiptRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.RECEIPT_NOT_FOUND));
+
+        if (receipt.getStatus() != ReceiptStatus.PENDING) {
+            throw new AppException(ErrorCode.RECEIPT_NOT_PENDING);
+        }
+
+        receipt.setStatus(ReceiptStatus.CANCELLED);
+        return receiptMapper.toResponse(receiptRepository.save(receipt));
+    }
+
+    @Override
+    public List<ExcelPreviewResponse> previewExcelData(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new AppException(ErrorCode.EXCEL_INVALID_FORMAT);
+        }
+
+        List<ExcelPreviewResponse> previewList = new ArrayList<>();
+
+        try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                String sku = null;
+                Integer quantity = null;
+                BigDecimal importPrice = null;
+                boolean isValid = true;
+                List<String> errors = new ArrayList<>();
+                String productName = null;
+                String variantId = null;
+
+                try {
+                    // 1. Đọc SKU
+                    sku = getCellStringValue(row.getCell(0));
+                    if (sku == null || sku.isBlank()) {
+                        isValid = false;
+                        errors.add("SKU không được để trống");
+                    }
+
+                    // 2. Đọc Số lượng
+                    try {
+                        quantity = (int) row.getCell(1).getNumericCellValue();
+                        if (quantity <= 0) {
+                            isValid = false;
+                            errors.add("Số lượng phải là số > 0");
+                        }
+                    } catch (Exception e) {
+                        isValid = false;
+                        errors.add("Số lượng sai định dạng");
+                    }
+
+                    // 3. Đọc Giá nhập
+                    try {
+                        importPrice = BigDecimal.valueOf(row.getCell(2).getNumericCellValue());
+                        if (importPrice.compareTo(BigDecimal.ZERO) < 0) {
+                            isValid = false;
+                            errors.add("Giá nhập không được âm");
+                        }
+                    } catch (Exception e) {
+                        isValid = false;
+                        errors.add("Giá nhập sai định dạng");
+                    }
+
+                    // 4. Validate DB nếu các định dạng trên đúng
+                    if (isValid && sku != null) {
+                        ProductVariantEntity variant = variantRepository.findBySkuIn(List.of(sku))
+                                .stream().findFirst()
+                                .orElse(null);
+
+                        if (variant == null) {
+                            isValid = false;
+                            errors.add("Mã SKU không tồn tại trong hệ thống");
+                        } else {
+                            variantId = variant.getId();
+                            productName = variant.getProduct().getProductName() + " - " + variant.getVersion().getVersionName() + " (" + variant.getColor().getColorName() + ")";
+                        }
+                    }
+
+                } catch (Exception ex) {
+                    isValid = false;
+                    errors.add("Lỗi không xác định khi đọc dòng");
+                }
+
+                // Build object trả về
+                previewList.add(ExcelPreviewResponse.builder()
+                        .rowIndex(i + 1)
+                        .sku(sku)
+                        .quantity(quantity != null ? quantity : 0)
+                        .importPrice(importPrice != null ? importPrice : BigDecimal.ZERO)
+                        .isValid(isValid)
+                        .errors(errors)
+                        .productName(productName)
+                        .variantId(variantId)
+                        .build());
+            }
+
+            return previewList;
+
+        } catch (Exception e) {
+            log.error("Lỗi đọc file Excel Preview", e);
+            throw new AppException(ErrorCode.EXCEL_READ_ERROR);
+        }
+    }
+
+    @Override
     public List<ReceiptResponse> getAllReceipts() {
-        return receiptRepository.findAll().stream().map(receiptMapper::toResponse).toList();
+        return receiptRepository.findAllByOrderByIdDesc().stream().map(receiptMapper::toResponse).toList();
     }
 
     @Override

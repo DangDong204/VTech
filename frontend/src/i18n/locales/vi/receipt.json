@@ -1,0 +1,78 @@
+{
+  "titles": {
+    "list": "Danh sách phiếu nhập kho",
+    "create": "Tạo phiếu nhập",
+    "view": "Chi tiết phiếu nhập",
+    "importExcel": "Nhập từ file Excel"
+  },
+  "table": {
+    "columns": {
+      "receiptCode": "Mã phiếu",
+      "supplier": "Nhà cung cấp",
+      "totalAmount": "Tổng tiền",
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật",
+      "createdBy": "Người tạo",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu phiếu nhập"
+  },
+  "fields": {
+    "supplier": {
+      "label": "Nhà cung cấp",
+      "placeholder": "Chọn nhà cung cấp"
+    },
+    "note": {
+      "label": "Ghi chú",
+      "placeholder": "Nhập ghi chú cho phiếu này"
+    },
+    "sku": "Mã SKU",
+    "product": "Sản phẩm",
+    "quantity": "Số lượng",
+    "importPrice": "Giá nhập",
+    "totalPrice": "Thành tiền"
+  },
+  "filters": {
+    "search": "Tìm kiếm mã phiếu...",
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả trạng thái",
+      "PENDING": "Chờ duyệt",
+      "COMPLETED": "Hoàn thành",
+      "CANCELLED": "Đã hủy"
+    },
+    "reset": "Đặt lại"
+  },
+  "actions": {
+    "create": "Tạo phiếu",
+    "complete": "Duyệt phiếu",
+    "view": "Xem chi tiết",
+    "downloadTemplate": "Tải file mẫu",
+    "confirmImport": "Xác nhận Import",
+    "cancel": "Hủy phiếu"
+  },
+  "import": {
+    "dragDrop": "Kéo thả file Excel vào đây hoặc click để chọn",
+    "validRow": "Hợp lệ",
+    "invalidRow": "Lỗi",
+    "summary": "Tìm thấy {{total}} dòng: {{valid}} hợp lệ, {{invalid}} lỗi."
+  },
+  "message": {
+    "success": {
+      "create": "Tạo phiếu nhập thành công!",
+      "complete": "Duyệt phiếu và cộng kho thành công!",
+      "cancel": "Hủy phiếu nhập thành công!"
+    },
+    "confirm": {
+      "complete": "Bạn có chắc chắn muốn duyệt phiếu này? Sau khi duyệt, số lượng tồn kho sẽ được cộng và không thể hoàn tác.",
+      "cancel": "Bạn có chắc chắn muốn hủy phiếu nhập này? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo phiếu nhập thất bại!",
+      "complete": "Duyệt phiếu thất bại!",
+      "cancel": "Hủy phiếu thất bại!",
+      "preview": "Lỗi khi đọc file Excel!"
+    }
+  }
+}

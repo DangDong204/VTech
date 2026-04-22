@@ -1,6 +1,7 @@
 package com.haui.vtech.controller.admin;
 
 import com.haui.vtech.dto.ApiResponse;
+import com.haui.vtech.dto.receipt.ExcelPreviewResponse;
 import com.haui.vtech.dto.receipt.ReceiptRequest;
 import com.haui.vtech.dto.receipt.ReceiptResponse;
 import com.haui.vtech.service.InventoryReceiptService;
@@ -53,6 +54,26 @@ public class InventoryReceiptController {
         return ApiResponse.<ReceiptResponse>builder()
                 .data(receiptService.completeReceipt(id))
                 .message(messageUtil.getMessage("receipt.completed.success"))
+                .build();
+    }
+
+    @PatchMapping("/{id}/cancel")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ApiResponse<ReceiptResponse> cancelReceipt(@PathVariable String id) {
+        return ApiResponse.<ReceiptResponse>builder()
+                .data(receiptService.cancelReceipt(id))
+                .message("Đã hủy phiếu nhập kho thành công!")
+                .build();
+    }
+
+    @PostMapping(value = "/import-preview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ApiResponse<List<ExcelPreviewResponse>> previewExcel(
+            @RequestParam("file") MultipartFile file
+    ) {
+        return ApiResponse.<List<ExcelPreviewResponse>>builder()
+                .data(receiptService.previewExcelData(file))
+                .message("Đã phân tích file Excel")
                 .build();
     }
 

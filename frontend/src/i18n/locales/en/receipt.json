@@ -1,0 +1,78 @@
+{
+  "titles": {
+    "list": "Inventory Receipt List",
+    "create": "Create Receipt",
+    "view": "Receipt Details",
+    "importExcel": "Import from Excel File"
+  },
+  "table": {
+    "columns": {
+      "receiptCode": "Receipt Code",
+      "supplier": "Supplier",
+      "totalAmount": "Total Amount",
+      "status": "Status",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "createdBy": "Created By",
+      "actions": "Actions"
+    },
+    "noResults": "No inventory receipts found"
+  },
+  "fields": {
+    "supplier": {
+      "label": "Supplier",
+      "placeholder": "Select supplier"
+    },
+    "note": {
+      "label": "Note",
+      "placeholder": "Enter a note for this receipt"
+    },
+    "sku": "SKU",
+    "product": "Product",
+    "quantity": "Quantity",
+    "importPrice": "Import Price",
+    "totalPrice": "Total Price"
+  },
+  "filters": {
+    "search": "Search receipt code...",
+    "status": {
+      "label": "Status",
+      "all": "All Statuses",
+      "PENDING": "Pending",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "reset": "Reset"
+  },
+  "actions": {
+    "create": "Create Receipt",
+    "complete": "Approve Receipt",
+    "view": "View Details",
+    "downloadTemplate": "Download Template",
+    "confirmImport": "Confirm Import",
+    "cancel": "Cancel Receipt"
+  },
+  "import": {
+    "dragDrop": "Drag and drop an Excel file here or click to select",
+    "validRow": "Valid",
+    "invalidRow": "Error",
+    "summary": "Found {{total}} rows: {{valid}} valid, {{invalid}} invalid."
+  },
+  "message": {
+    "success": {
+      "create": "Inventory receipt created successfully!",
+      "complete": "Receipt approved and stock updated successfully!",
+      "cancel": "Inventory receipt cancelled successfully!"
+    },
+    "confirm": {
+      "complete": "Are you sure you want to approve this receipt? Once approved, inventory quantities will be updated and cannot be undone.",
+      "cancel": "Are you sure you want to cancel this inventory receipt? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create inventory receipt!",
+      "complete": "Failed to approve receipt!",
+      "cancel": "Failed to cancel inventory receipt!",
+      "preview": "Error reading Excel file!"
+    }
+  }
+}
