@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-promotions-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="promotions"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="promotions" remarks="Bảng chương trình khuyến mãi">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="promotion_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="promotion_desc" type="TEXT"/>
+            <column name="discount_type" type="VARCHAR(20)">
+                <constraints nullable="false"/> </column>
+            <column name="discount_value" type="DECIMAL(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
+
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-promotion-variants-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="promotion_variants"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="promotion_variants" remarks="Bảng trung gian áp dụng KM cho biến thể">
+            <column name="promotion_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="variant_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="promotion_variants" columnNames="promotion_id, variant_id" constraintName="pk_promotion_variants"/>
+
+        <addForeignKeyConstraint baseTableName="promotion_variants" baseColumnNames="promotion_id"
+                                 constraintName="fk_promovar_promotion"
+                                 referencedTableName="promotions" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="promotion_variants" baseColumnNames="variant_id"
+                                 constraintName="fk_promovar_variant"
+                                 referencedTableName="product_variants" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

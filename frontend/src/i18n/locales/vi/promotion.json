@@ -1,0 +1,146 @@
+{
+  "table": {
+    "columns": {
+      "promotionName": "Tên chương trình",
+      "type": "Loại giảm",
+      "discountValue": "Mức giảm",
+      "dates": "Thời gian áp dụng",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu"
+  },
+  "titles": {
+    "list": "Danh sách chương trình khuyến mãi",
+    "create": "Tạo chương trình khuyến mãi",
+    "edit": "Chỉnh sửa chương trình khuyến mãi",
+    "view": "Thông tin chương trình",
+    "delete": "Xoá chương trình",
+    "trash": "Thùng rác khuyến mãi"
+  },
+  "filters": {
+    "search": "Tìm kiếm tên chương trình...",
+    "type": {
+      "label": "Loại giảm giá",
+      "all": "Tất cả loại",
+      "PERCENTAGE": "Theo phần trăm (%)",
+      "FIXED_AMOUNT": "Giảm tiền mặt"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả trạng thái",
+      "ACTIVE": "Hoạt động",
+      "INACTIVE": "Ngừng hoạt động"
+    },
+    "reset": "Đặt lại"
+  },
+  "actions": {
+    "create": "Tạo khuyến mãi mới",
+    "view": "Xem",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "submit": "Lưu thay đổi",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận"
+  },
+  "schema": {
+    "promotionName": {
+      "required": "Tên chương trình không được để trống",
+      "exists": "Tên chương trình khuyến mãi đã tồn tại"
+    },
+    "type": {
+      "invalid": "Loại giảm giá không hợp lệ"
+    },
+    "discountValue": {
+      "invalid": "Giá trị giảm phải là số",
+      "min": "Giá trị giảm phải lớn hơn hoặc bằng 0"
+    },
+    "dates": {
+      "startRequired": "Ngày bắt đầu không được để trống",
+      "endRequired": "Ngày kết thúc không được để trống",
+      "invalidRange": "Ngày bắt đầu phải trước ngày kết thúc"
+    },
+    "status": {
+      "invalid": "Trạng thái không hợp lệ"
+    },
+    "variantIds": {
+      "invalid": "Danh sách sản phẩm áp dụng không hợp lệ"
+    }
+  },
+  "fields": {
+    "promotionName": {
+      "label": "Tên chương trình",
+      "placeholder": "VD: Siêu Sale 30/4"
+    },
+    "promotionDesc": {
+      "label": "Mô tả",
+      "placeholder": "Nhập mô tả cho chương trình"
+    },
+    "type": {
+      "label": "Loại giảm giá",
+      "placeholder": "Chọn loại giảm giá",
+      "options": {
+        "PERCENTAGE": "Theo phần trăm (%)",
+        "FIXED_AMOUNT": "Trừ tiền thẳng (VNĐ)"
+      }
+    },
+    "discountValue": {
+      "label": "Mức giảm",
+      "placeholder": "Nhập số tiền hoặc % giảm"
+    },
+    "variantIds": {
+      "label": "Sản phẩm áp dụng",
+      "placeholder": "Chọn các biến thể sản phẩm",
+      "empty": "Chưa chọn sản phẩm nào"
+    },
+    "startDate": {
+      "label": "Ngày bắt đầu"
+    },
+    "endDate": {
+      "label": "Ngày kết thúc"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái",
+      "options": {
+        "ACTIVE": "Hoạt động",
+        "INACTIVE": "Ngừng hoạt động"
+      }
+    },
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật",
+    "deletedAt": "Ngày xoá"
+  },
+  "sections": {
+    "basicInfo": "Thông tin cơ bản",
+    "conditions": "Mức giảm & Thời gian",
+    "products": "Sản phẩm áp dụng"
+  },
+  "trash": {
+    "trashEmpty": "Thùng rác trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
+  },
+  "message": {
+    "success": {
+      "create": "Tạo chương trình khuyến mãi thành công!",
+      "update": "Cập nhật chương trình thành công!",
+      "delete": "Xóa vĩnh viễn chương trình thành công!",
+      "softDelete": "Đã chuyển chương trình vào thùng rác!",
+      "restore": "Khôi phục chương trình thành công!"
+    },
+    "confirm": {
+      "softDelete": "Bạn có chắc chắn muốn xóa chương trình '{{promotionName}}'? Dữ liệu sẽ được chuyển vào thùng rác.",
+      "hardDelete": "Bạn có chắc chắn muốn xóa vĩnh viễn chương trình '{{promotionName}}'? Hành động này không thể hoàn tác."
+    },
+    "error": {
+      "create": "Tạo chương trình thất bại!",
+      "update": "Cập nhật chương trình thất bại!",
+      "delete": "Xóa chương trình thất bại!",
+      "softDelete": "Xóa mềm chương trình thất bại! Đảm bảo không có sản phẩm nào đang liên kết.",
+      "fetch": "Lấy danh sách khuyến mãi thất bại!",
+      "fetchDetail": "Lấy thông tin chương trình thất bại!",
+      "restore": "Khôi phục chương trình thất bại!"
+    }
+  }
+}

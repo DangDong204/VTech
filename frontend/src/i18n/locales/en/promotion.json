@@ -1,0 +1,146 @@
+{
+  "table": {
+    "columns": {
+      "promotionName": "Campaign Name",
+      "type": "Discount Type",
+      "discountValue": "Value",
+      "dates": "Duration",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No results found"
+  },
+  "titles": {
+    "list": "Promotions List",
+    "create": "Create Promotion",
+    "edit": "Edit Promotion",
+    "view": "Promotion Details",
+    "delete": "Delete Promotion",
+    "trash": "Promotions Trash"
+  },
+  "filters": {
+    "search": "Search campaign name...",
+    "type": {
+      "label": "Discount Type",
+      "all": "All Types",
+      "PERCENTAGE": "Percentage (%)",
+      "FIXED_AMOUNT": "Fixed Amount"
+    },
+    "status": {
+      "label": "Status",
+      "all": "All Status",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "reset": "Reset"
+  },
+  "actions": {
+    "create": "Create Promotion",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "submit": "Save Changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "schema": {
+    "promotionName": {
+      "required": "Campaign name is required",
+      "exists": "Promotion campaign name already exists"
+    },
+    "type": {
+      "invalid": "Invalid discount type"
+    },
+    "discountValue": {
+      "invalid": "Discount value must be a number",
+      "min": "Discount value cannot be negative"
+    },
+    "dates": {
+      "startRequired": "Start date is required",
+      "endRequired": "End date is required",
+      "invalidRange": "Start date must be before end date"
+    },
+    "status": {
+      "invalid": "Invalid status"
+    },
+    "variantIds": {
+      "invalid": "Selected variants are invalid"
+    }
+  },
+  "fields": {
+    "promotionName": {
+      "label": "Campaign Name",
+      "placeholder": "Ex: Summer Sale"
+    },
+    "promotionDesc": {
+      "label": "Description",
+      "placeholder": "Enter promotion description"
+    },
+    "type": {
+      "label": "Discount Type",
+      "placeholder": "Select discount type",
+      "options": {
+        "PERCENTAGE": "Percentage (%)",
+        "FIXED_AMOUNT": "Fixed Amount (VND)"
+      }
+    },
+    "discountValue": {
+      "label": "Discount Value",
+      "placeholder": "Enter amount or %"
+    },
+    "variantIds": {
+      "label": "Applied Products",
+      "placeholder": "Select product variants",
+      "empty": "No products selected"
+    },
+    "startDate": {
+      "label": "Start Date"
+    },
+    "endDate": {
+      "label": "End Date"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "options": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      }
+    },
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "deletedAt": "Deleted At"
+  },
+  "sections": {
+    "basicInfo": "Basic Information",
+    "conditions": "Discount & Timeline",
+    "products": "Applied Products"
+  },
+  "trash": {
+    "trashEmpty": "Trash is empty",
+    "remainingDays": "{{days}} days remaining before permanent deletion"
+  },
+  "message": {
+    "success": {
+      "create": "Promotion created successfully!",
+      "update": "Promotion updated successfully!",
+      "delete": "Promotion permanently deleted!",
+      "softDelete": "Promotion moved to trash!",
+      "restore": "Promotion restored successfully!"
+    },
+    "confirm": {
+      "softDelete": "Are you sure you want to delete promotion '{{promotionName}}'? It will be moved to trash.",
+      "hardDelete": "Are you sure you want to permanently delete promotion '{{promotionName}}'? This action cannot be undone."
+    },
+    "error": {
+      "create": "Failed to create promotion!",
+      "update": "Failed to update promotion!",
+      "delete": "Failed to delete promotion!",
+      "softDelete": "Failed to move to trash! Ensure no products are linked.",
+      "fetch": "Failed to fetch promotions list!",
+      "fetchDetail": "Failed to fetch promotion details!",
+      "restore": "Failed to restore promotion!"
+    }
+  }
+}
