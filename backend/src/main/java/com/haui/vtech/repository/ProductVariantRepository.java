@@ -15,4 +15,6 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariantEn
 
     boolean existsByProductIdAndColorIdAndVersionId(String productId, String colorId, String versionId);
 
+    // Thêm hàm này để truy vấn hàng loạt SKU từ file Excel
+    List<ProductVariantEntity> findBySkuIn(List<String> skus);
 }

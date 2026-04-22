@@ -22,5 +22,6 @@
     <include file="classpath:db/changelog/changes/015-create-variants-table.xml"/>
     <include file="classpath:db/changelog/changes/016-create-vouchers-table.xml"/>
     <include file="classpath:db/changelog/changes/017-create-promotions-table.xml"/>
+    <include file="classpath:db/changelog/changes/018-create-suppliers-table.xml"/>
 
 </databaseChangeLog>

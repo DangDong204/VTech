@@ -6,6 +6,7 @@ import CategoryPage from '@/pages/admin/manage-category/page'
 import ColorPage from '@/pages/admin/manage-color/page'
 import ProductPage from '@/pages/admin/manage-product/page'
 import PromotionPage from '@/pages/admin/manage-promotion/page'
+import ReceiptPage from '@/pages/admin/manage-receipt/page'
 import TagPage from '@/pages/admin/manage-tag/page'
 import UserPage from '@/pages/admin/manage-user/page'
 import VariantPage from '@/pages/admin/manage-variant/page'
@@ -63,6 +64,7 @@ function App() {
               <Route path='versions' element={<VersionPage />} />
               <Route path='vouchers' element={<VoucherPage />} />
               <Route path='promotions' element={<PromotionPage />} />
+              <Route path='receipts' element={<ReceiptPage />} />
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}
