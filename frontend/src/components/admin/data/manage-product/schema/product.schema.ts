@@ -3,6 +3,15 @@ import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/defines/upload-image'
 import i18n from '@/i18n/i18n'
 import { ProductStatus } from '@/defines/enum/product.enum'
 
+const dynamicSpecSchema = z
+  .array(
+    z.object({
+      label: z.string().min(1, 'Tên thông số không được trống'),
+      value: z.string().min(1, 'Giá trị không được trống')
+    })
+  )
+  .optional()
+
 export const createProductSchema = z.object({
   productName: z.string().min(1, i18n.t('product:schema.productName.required')),
   slug: z.string().min(1, i18n.t('product:schema.slug.required')),
@@ -11,11 +20,9 @@ export const createProductSchema = z.object({
   categoryId: z
     .string({ message: i18n.t('product:schema.categoryId.required') })
     .min(1, i18n.t('product:schema.categoryId.required')),
-
   brandId: z
     .string({ message: i18n.t('product:schema.brandId.required') })
     .min(1, i18n.t('product:schema.brandId.required')),
-
   tagIds: z.array(z.string()).optional(),
 
   thumbnail: z
@@ -29,7 +36,6 @@ export const createProductSchema = z.object({
       (file) => !file || file.size <= MAX_FILE_SIZE,
       i18n.t('product:schema.thumbnail.maxSize')
     )
-
     .optional()
     .nullable(),
 
@@ -49,27 +55,7 @@ export const createProductSchema = z.object({
     )
     .optional(),
 
-  specification: z
-    .object({
-      screenSize: z.string().optional(),
-      screenTech: z.string().optional(),
-      resolution: z.string().optional(),
-      operatingSystem: z.string().optional(),
-      chip: z.string().optional(),
-      cpu: z.string().optional(),
-      gpu: z.string().optional(),
-      ram: z.string().optional(),
-      storageCapacity: z.string().optional(),
-      batteryCapacity: z.string().optional(),
-      chargingTech: z.string().optional(),
-      backCamera: z.string().optional(),
-      frontCamera: z.string().optional(),
-      connectivity: z.string().optional(),
-      specialFeature: z.string().optional(),
-      weight: z.string().optional(),
-      releaseDate: z.string().optional()
-    })
-    .optional()
+  specs: dynamicSpecSchema
 })
 
 export const updateProductSchema = z.object({
@@ -120,27 +106,7 @@ export const updateProductSchema = z.object({
     )
     .optional(),
 
-  specification: z
-    .object({
-      screenSize: z.string().optional(),
-      screenTech: z.string().optional(),
-      resolution: z.string().optional(),
-      operatingSystem: z.string().optional(),
-      chip: z.string().optional(),
-      cpu: z.string().optional(),
-      gpu: z.string().optional(),
-      ram: z.string().optional(),
-      storageCapacity: z.string().optional(),
-      batteryCapacity: z.string().optional(),
-      chargingTech: z.string().optional(),
-      backCamera: z.string().optional(),
-      frontCamera: z.string().optional(),
-      connectivity: z.string().optional(),
-      specialFeature: z.string().optional(),
-      weight: z.string().optional(),
-      releaseDate: z.string().optional()
-    })
-    .optional()
+  specs: dynamicSpecSchema // Thay thế cấu trúc cũ
 })
 
 export type CreateProductFormValues = z.infer<typeof createProductSchema>

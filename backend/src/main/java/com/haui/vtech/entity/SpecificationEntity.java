@@ -1,13 +1,18 @@
 package com.haui.vtech.entity;
 
+import com.haui.vtech.dto.product.SpecPair;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "specifications")
@@ -22,24 +27,11 @@ public class SpecificationEntity extends BaseEntity{
     @JoinColumn(name = "product_id", nullable = false, unique = true)
     private ProductEntity product;
 
-    private String screenSize;
-    private String screenTech;
-    private String resolution;
-    private String operatingSystem;
-    private String chip;
-    private String cpu;
-    private String gpu;
-    private String ram;
-    private String storageCapacity;
-    private String batteryCapacity;
-    private String chargingTech;
-    private String backCamera;
-    private String frontCamera;
-    private String connectivity;
+//    @JdbcTypeCode(SqlTypes.JSON)
+//    @Column(name = "attributes", columnDefinition = "json")
+//    private Map<String, String> attributes;
 
-    @Column(columnDefinition = "TEXT")
-    private String specialFeature;
-
-    private String weight;
-    private LocalDate releaseDate;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "attributes", columnDefinition = "json")
+    private List<SpecPair> attributes;
 }

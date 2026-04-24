@@ -20,6 +20,12 @@ import ClientLayout from '@/pages/user/ClientLayout'
 import HomePage from '@/pages/user/home/HomePage'
 import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
 import ProductListPage from '@/pages/user/product-list/ProductListPage'
+import AddressesPage from '@/pages/user/profile/AddressesPage'
+import ChangePasswordPage from '@/pages/user/profile/ChangePasswordPage'
+import OrdersPage from '@/pages/user/profile/OrdersPage'
+import OverviewPage from '@/pages/user/profile/OverviewPage'
+import ProfileLayout from '@/pages/user/profile/ProfileLayout'
+// import ProductListPage from '@/pages/user/product-list/ProductListPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
@@ -44,6 +50,12 @@ function App() {
             <Route path='/products' element={<ProductListPage />} />
             <Route path='/product/:slug' element={<ProductDetailPage />} />
             <Route path='/checkout' element={<CheckoutPage />} />
+            <Route element={<ProfileLayout />}>
+              <Route path='/profile' element={<OverviewPage />} />
+              <Route path='/orders' element={<OrdersPage />} />
+              <Route path='/addresses' element={<AddressesPage />} />
+              <Route path='/change-password' element={<ChangePasswordPage />} />
+            </Route>
           </Route>
 
           <Route path='/login' element={<LoginPage />} />

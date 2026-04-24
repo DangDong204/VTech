@@ -18,6 +18,8 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, String
 
     List<CategoryEntity> findByStatusNot(CategoryStatus categoryStatus);
 
+    List<CategoryEntity> findByStatusOrderByDisplayOrderAsc(CategoryStatus status);
+
     @Modifying
     @Query("""
         update CategoryEntity c

@@ -1,9 +1,6 @@
 package com.haui.vtech.mapper;
 
-import com.haui.vtech.dto.product.ProductCreationRequest;
-import com.haui.vtech.dto.product.ProductImageResponse;
-import com.haui.vtech.dto.product.ProductResponse;
-import com.haui.vtech.dto.product.ProductUpdateRequest;
+import com.haui.vtech.dto.product.*;
 import com.haui.vtech.entity.ProductEntity;
 import com.haui.vtech.entity.ProductImageEntity;
 import com.haui.vtech.entity.ProductVariantEntity;
@@ -93,4 +90,39 @@ public interface ProductMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(@MappingTarget ProductEntity entity, ProductUpdateRequest request);
+
+    // --- MAPPING DÀNH CHO CLIENT (GIAO DIỆN NGƯỜI DÙNG) ---
+
+    @Mapping(target = "baseName", source = "productName")
+    @Mapping(target = "slug", source = "slug")
+    @Mapping(target = "rating", source = "ratingAvg")
+    @Mapping(target = "reviews", source = "totalReviews")
+    @Mapping(target = "thumbnail", expression = "java(extractThumbnailForClient(entity.getImages()))")
+    @Mapping(target = "variants", expression = "java(mapClientVariants(entity.getVariants()))")
+    ClientProductResponse toClientResponse(ProductEntity entity);
+
+    default String extractThumbnailForClient(Set<ProductImageEntity> images) {
+        if (images == null || images.isEmpty()) return null;
+        // Tìm ảnh được set làm thumbnail, nếu không có thì lấy đại 1 ảnh bất kỳ
+        return images.stream()
+                .filter(img -> Boolean.TRUE.equals(img.getIsThumbnail()))
+                .map(ProductImageEntity::getImageUrl)
+                .findFirst()
+                .orElse(images.iterator().next().getImageUrl());
+    }
+
+    default List<ClientVariantResponse> mapClientVariants(Set<ProductVariantEntity> variants) {
+        if (variants == null || variants.isEmpty()) return new ArrayList<>();
+        return variants.stream()
+                .map(v -> ClientVariantResponse.builder()
+                        .id(v.getId())
+                        .version(v.getVersion() != null ? v.getVersion().getVersionName() : "")
+                        .color(v.getColor() != null ? v.getColor().getColorName() : "")
+                        .colorHex(v.getColor() != null ? v.getColor().getHexCode() : "#cccccc")
+                        // Nếu có giá Sale thì lấy Sale, không thì lấy Base
+                        .price(v.getSalePrice() != null ? v.getSalePrice() : v.getBasePrice())
+                        .originalPrice(v.getBasePrice()) // Luôn lấy Base làm giá gốc
+                        .build())
+                .collect(Collectors.toList());
+    }
 }

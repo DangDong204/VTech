@@ -25,7 +25,7 @@ export function CreateProductDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='sm:max-w-[1200px] p-0'>
+      <DialogContent className='sm:max-w-[1285px] p-0'>
         <DialogHeader className='px-6 pt-6'>
           <DialogTitle></DialogTitle>
         </DialogHeader>
