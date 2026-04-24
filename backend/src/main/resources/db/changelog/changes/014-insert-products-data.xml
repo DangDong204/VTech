@@ -8,6 +8,7 @@
 
     <changeSet id="018-seed-products" author="dongdang" context="dev,test">
 
+        <!-- iPhone 17 Pro -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000001"/>
             <column name="product_name" value="iPhone 17 Pro"/>
@@ -26,25 +27,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000001"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000001"/>
-            <column name="screen_size" value="6.1 inch"/>
-            <column name="screen_tech" value="Super Retina XDR OLED"/>
-            <column name="resolution" value="2556 x 1179 pixels"/>
-            <column name="operating_system" value="iOS 19"/>
-            <column name="chip" value="Apple A19 Pro"/>
-            <column name="cpu" value="Hexa-core"/>
-            <column name="gpu" value="Apple GPU (6-core)"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="3500 mAh"/>
-            <column name="charging_tech" value="Sạc nhanh 27W, MagSafe 15W"/>
-            <column name="back_camera" value="Chính 48MP &amp; Phụ 48MP, 12MP"/>
-            <column name="front_camera" value="24MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 7, Bluetooth 5.4, USB-C"/>
-            <column name="special_feature" value="Khung Titanium, Face ID, Apple Intelligence, IP68"/>
-            <column name="weight" value="187g"/>
-            <column name="release_date" valueDate="2025-09-20"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.1 inch"},{"label":"Công nghệ màn hình","value":"Super Retina XDR OLED"},{"label":"Độ phân giải","value":"2556 x 1179 pixels"},{"label":"Hệ điều hành","value":"iOS 19"},{"label":"Chip","value":"Apple A19 Pro"},{"label":"CPU","value":"Hexa-core"},{"label":"GPU","value":"Apple GPU (6-core)"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"3500 mAh"},{"label":"Công nghệ sạc","value":"Sạc nhanh 27W, MagSafe 15W"},{"label":"Camera sau","value":"Chính 48MP &amp; Phụ 48MP, 12MP"},{"label":"Camera trước","value":"24MP"},{"label":"Kết nối","value":"5G, Wi-Fi 7, Bluetooth 5.4, USB-C"},{"label":"Tính năng đặc biệt","value":"Khung Titanium, Face ID, Apple Intelligence, IP68"},{"label":"Khối lượng","value":"187g"},{"label":"Ngày ra mắt","value":"2025-09-20"}]'/>
         </insert>
 
+        <!-- iPhone 17 -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000002"/>
             <column name="product_name" value="iPhone 17"/>
@@ -63,25 +49,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000002"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000002"/>
-            <column name="screen_size" value="6.1 inch"/>
-            <column name="screen_tech" value="Super Retina XDR OLED"/>
-            <column name="resolution" value="2556 x 1179 pixels"/>
-            <column name="operating_system" value="iOS 19"/>
-            <column name="chip" value="Apple A19"/>
-            <column name="cpu" value="Hexa-core"/>
-            <column name="gpu" value="Apple GPU (5-core)"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="128GB"/>
-            <column name="battery_capacity" value="3400 mAh"/>
-            <column name="charging_tech" value="Sạc nhanh 20W, MagSafe 15W"/>
-            <column name="back_camera" value="Chính 48MP &amp; Phụ 12MP"/>
-            <column name="front_camera" value="24MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 7, Bluetooth 5.4, USB-C"/>
-            <column name="special_feature" value="Khung Nhôm, Face ID, IP68"/>
-            <column name="weight" value="171g"/>
-            <column name="release_date" valueDate="2025-09-20"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.1 inch"},{"label":"Công nghệ màn hình","value":"Super Retina XDR OLED"},{"label":"Độ phân giải","value":"2556 x 1179 pixels"},{"label":"Hệ điều hành","value":"iOS 19"},{"label":"Chip","value":"Apple A19"},{"label":"CPU","value":"Hexa-core"},{"label":"GPU","value":"Apple GPU (5-core)"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"128GB"},{"label":"Dung lượng pin","value":"3400 mAh"},{"label":"Công nghệ sạc","value":"Sạc nhanh 20W, MagSafe 15W"},{"label":"Camera sau","value":"Chính 48MP &amp; Phụ 12MP"},{"label":"Camera trước","value":"24MP"},{"label":"Kết nối","value":"5G, Wi-Fi 7, Bluetooth 5.4, USB-C"},{"label":"Tính năng đặc biệt","value":"Khung Nhôm, Face ID, IP68"},{"label":"Khối lượng","value":"171g"},{"label":"Ngày ra mắt","value":"2025-09-20"}]'/>
         </insert>
 
+        <!-- iPhone 16 Pro -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000003"/>
             <column name="product_name" value="iPhone 16 Pro"/>
@@ -100,25 +71,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000003"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000003"/>
-            <column name="screen_size" value="6.1 inch"/>
-            <column name="screen_tech" value="LTPO Super Retina XDR OLED"/>
-            <column name="resolution" value="2556 x 1179 pixels"/>
-            <column name="operating_system" value="iOS 18"/>
-            <column name="chip" value="Apple A18 Pro"/>
-            <column name="cpu" value="Hexa-core"/>
-            <column name="gpu" value="Apple GPU (6-core)"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="3274 mAh"/>
-            <column name="charging_tech" value="Sạc nhanh 25W, MagSafe 15W"/>
-            <column name="back_camera" value="Chính 48MP &amp; Phụ 48MP, 12MP"/>
-            <column name="front_camera" value="12MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 7, Bluetooth 5.3, USB-C"/>
-            <column name="special_feature" value="Camera Control, Nút Action, Khung Titanium"/>
-            <column name="weight" value="199g"/>
-            <column name="release_date" valueDate="2024-09-20"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.1 inch"},{"label":"Công nghệ màn hình","value":"LTPO Super Retina XDR OLED"},{"label":"Độ phân giải","value":"2556 x 1179 pixels"},{"label":"Hệ điều hành","value":"iOS 18"},{"label":"Chip","value":"Apple A18 Pro"},{"label":"CPU","value":"Hexa-core"},{"label":"GPU","value":"Apple GPU (6-core)"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"3274 mAh"},{"label":"Công nghệ sạc","value":"Sạc nhanh 25W, MagSafe 15W"},{"label":"Camera sau","value":"Chính 48MP &amp; Phụ 48MP, 12MP"},{"label":"Camera trước","value":"12MP"},{"label":"Kết nối","value":"5G, Wi-Fi 7, Bluetooth 5.3, USB-C"},{"label":"Tính năng đặc biệt","value":"Camera Control, Nút Action, Khung Titanium"},{"label":"Khối lượng","value":"199g"},{"label":"Ngày ra mắt","value":"2024-09-20"}]'/>
         </insert>
 
+        <!-- iPhone 16 Plus -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000004"/>
             <column name="product_name" value="iPhone 16 Plus"/>
@@ -137,25 +93,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000004"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000004"/>
-            <column name="screen_size" value="6.7 inch"/>
-            <column name="screen_tech" value="Super Retina XDR OLED"/>
-            <column name="resolution" value="2796 x 1290 pixels"/>
-            <column name="operating_system" value="iOS 18"/>
-            <column name="chip" value="Apple A18"/>
-            <column name="cpu" value="Hexa-core"/>
-            <column name="gpu" value="Apple GPU (5-core)"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="128GB"/>
-            <column name="battery_capacity" value="4383 mAh"/>
-            <column name="charging_tech" value="Sạc nhanh 20W, MagSafe 15W"/>
-            <column name="back_camera" value="Chính 48MP &amp; Phụ 12MP"/>
-            <column name="front_camera" value="12MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 7, Bluetooth 5.3, USB-C"/>
-            <column name="special_feature" value="Dynamic Island, Khung Nhôm"/>
-            <column name="weight" value="199g"/>
-            <column name="release_date" valueDate="2024-09-20"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.7 inch"},{"label":"Công nghệ màn hình","value":"Super Retina XDR OLED"},{"label":"Độ phân giải","value":"2796 x 1290 pixels"},{"label":"Hệ điều hành","value":"iOS 18"},{"label":"Chip","value":"Apple A18"},{"label":"CPU","value":"Hexa-core"},{"label":"GPU","value":"Apple GPU (5-core)"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"128GB"},{"label":"Dung lượng pin","value":"4383 mAh"},{"label":"Công nghệ sạc","value":"Sạc nhanh 20W, MagSafe 15W"},{"label":"Camera sau","value":"Chính 48MP &amp; Phụ 12MP"},{"label":"Camera trước","value":"12MP"},{"label":"Kết nối","value":"5G, Wi-Fi 7, Bluetooth 5.3, USB-C"},{"label":"Tính năng đặc biệt","value":"Dynamic Island, Khung Nhôm"},{"label":"Khối lượng","value":"199g"},{"label":"Ngày ra mắt","value":"2024-09-20"}]'/>
         </insert>
 
+        <!-- Samsung Galaxy S25 FE -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000005"/>
             <column name="product_name" value="Samsung Galaxy S25 FE"/>
@@ -174,25 +115,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000005"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000005"/>
-            <column name="screen_size" value="6.4 inch"/>
-            <column name="screen_tech" value="Dynamic AMOLED 2X"/>
-            <column name="resolution" value="FHD+ (1080 x 2340 pixels)"/>
-            <column name="operating_system" value="Android 15"/>
-            <column name="chip" value="Exynos 2500"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Xclipse 940"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="128GB"/>
-            <column name="battery_capacity" value="4500 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh 25W, Không dây 15W"/>
-            <column name="back_camera" value="Chính 50MP &amp; Phụ 12MP, 8MP"/>
-            <column name="front_camera" value="10MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 6E, Bluetooth 5.3"/>
-            <column name="special_feature" value="Galaxy AI, Chống nước IP68, Samsung DeX"/>
-            <column name="weight" value="209g"/>
-            <column name="release_date" valueDate="2025-10-15"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.4 inch"},{"label":"Công nghệ màn hình","value":"Dynamic AMOLED 2X"},{"label":"Độ phân giải","value":"FHD+ (1080 x 2340 pixels)"},{"label":"Hệ điều hành","value":"Android 15"},{"label":"Chip","value":"Exynos 2500"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Xclipse 940"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"128GB"},{"label":"Dung lượng pin","value":"4500 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh 25W, Không dây 15W"},{"label":"Camera sau","value":"Chính 50MP &amp; Phụ 12MP, 8MP"},{"label":"Camera trước","value":"10MP"},{"label":"Kết nối","value":"5G, Wi-Fi 6E, Bluetooth 5.3"},{"label":"Tính năng đặc biệt","value":"Galaxy AI, Chống nước IP68, Samsung DeX"},{"label":"Khối lượng","value":"209g"},{"label":"Ngày ra mắt","value":"2025-10-15"}]'/>
         </insert>
 
+        <!-- Samsung Galaxy S26 Ultra -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000006"/>
             <column name="product_name" value="Samsung Galaxy S26 Ultra"/>
@@ -211,25 +137,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000006"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000006"/>
-            <column name="screen_size" value="6.8 inch"/>
-            <column name="screen_tech" value="Dynamic AMOLED 2X"/>
-            <column name="resolution" value="QHD+ (1440 x 3120 pixels)"/>
-            <column name="operating_system" value="Android 16"/>
-            <column name="chip" value="Snapdragon 8 Gen 5"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Adreno 840"/>
-            <column name="ram" value="12GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="5000 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh 45W, Không dây 15W"/>
-            <column name="back_camera" value="Chính 200MP &amp; Phụ 50MP, 50MP, 12MP"/>
-            <column name="front_camera" value="12MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 7, Bluetooth 5.4, UWB"/>
-            <column name="special_feature" value="Bút S-Pen, Khung Titanium, Galaxy AI, IP68"/>
-            <column name="weight" value="232g"/>
-            <column name="release_date" valueDate="2026-01-15"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.8 inch"},{"label":"Công nghệ màn hình","value":"Dynamic AMOLED 2X"},{"label":"Độ phân giải","value":"QHD+ (1440 x 3120 pixels)"},{"label":"Hệ điều hành","value":"Android 16"},{"label":"Chip","value":"Snapdragon 8 Gen 5"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Adreno 840"},{"label":"RAM","value":"12GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"5000 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh 45W, Không dây 15W"},{"label":"Camera sau","value":"Chính 200MP &amp; Phụ 50MP, 50MP, 12MP"},{"label":"Camera trước","value":"12MP"},{"label":"Kết nối","value":"5G, Wi-Fi 7, Bluetooth 5.4, UWB"},{"label":"Tính năng đặc biệt","value":"Bút S-Pen, Khung Titanium, Galaxy AI, IP68"},{"label":"Khối lượng","value":"232g"},{"label":"Ngày ra mắt","value":"2026-01-15"}]'/>
         </insert>
 
+        <!-- Samsung Galaxy Z Fold 7 -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000007"/>
             <column name="product_name" value="Samsung Galaxy Z Fold 7"/>
@@ -248,25 +159,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000007"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000007"/>
-            <column name="screen_size" value="7.6 inch"/>
-            <column name="screen_tech" value="Foldable Dynamic AMOLED 2X"/>
-            <column name="resolution" value="QXGA+ (Màn chính), HD+ (Màn phụ)"/>
-            <column name="operating_system" value="Android 15"/>
-            <column name="chip" value="Snapdragon 8 Gen 4"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Adreno 830"/>
-            <column name="ram" value="12GB"/>
-            <column name="storage_capacity" value="512GB"/>
-            <column name="battery_capacity" value="4400 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh 25W, Không dây 15W"/>
-            <column name="back_camera" value="Chính 50MP &amp; Phụ 12MP, 10MP"/>
-            <column name="front_camera" value="10MP (Ngoài), 4MP (Trong)"/>
-            <column name="connectivity" value="5G, Wi-Fi 7, Bluetooth 5.3"/>
-            <column name="special_feature" value="Thiết kế gập màn hình lớn, Galaxy AI, IP48"/>
-            <column name="weight" value="239g"/>
-            <column name="release_date" valueDate="2025-07-25"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"7.6 inch"},{"label":"Công nghệ màn hình","value":"Foldable Dynamic AMOLED 2X"},{"label":"Độ phân giải","value":"QXGA+ (Màn chính), HD+ (Màn phụ)"},{"label":"Hệ điều hành","value":"Android 15"},{"label":"Chip","value":"Snapdragon 8 Gen 4"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Adreno 830"},{"label":"RAM","value":"12GB"},{"label":"Bộ nhớ trong","value":"512GB"},{"label":"Dung lượng pin","value":"4400 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh 25W, Không dây 15W"},{"label":"Camera sau","value":"Chính 50MP &amp; Phụ 12MP, 10MP"},{"label":"Camera trước","value":"10MP (Ngoài), 4MP (Trong)"},{"label":"Kết nối","value":"5G, Wi-Fi 7, Bluetooth 5.3"},{"label":"Tính năng đặc biệt","value":"Thiết kế gập màn hình lớn, Galaxy AI, IP48"},{"label":"Khối lượng","value":"239g"},{"label":"Ngày ra mắt","value":"2025-07-25"}]'/>
         </insert>
 
+        <!-- Samsung Galaxy Z Flip 7 -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000008"/>
             <column name="product_name" value="Samsung Galaxy Z Flip 7"/>
@@ -285,25 +181,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000008"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000008"/>
-            <column name="screen_size" value="6.7 inch"/>
-            <column name="screen_tech" value="Foldable Dynamic AMOLED 2X"/>
-            <column name="resolution" value="FHD+ (Màn chính), 720 x 748 pixels (Màn phụ)"/>
-            <column name="operating_system" value="Android 15"/>
-            <column name="chip" value="Snapdragon 8 Gen 4"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Adreno 830"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="3800 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh 25W, Không dây 15W"/>
-            <column name="back_camera" value="Chính 50MP &amp; Phụ 12MP"/>
-            <column name="front_camera" value="10MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 6E, Bluetooth 5.3"/>
-            <column name="special_feature" value="Thiết kế gập vỏ sò, Màn hình phụ Flex Window, IP48"/>
-            <column name="weight" value="187g"/>
-            <column name="release_date" valueDate="2025-07-25"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.7 inch"},{"label":"Công nghệ màn hình","value":"Foldable Dynamic AMOLED 2X"},{"label":"Độ phân giải","value":"FHD+ (Màn chính), 720 x 748 pixels (Màn phụ)"},{"label":"Hệ điều hành","value":"Android 15"},{"label":"Chip","value":"Snapdragon 8 Gen 4"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Adreno 830"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"3800 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh 25W, Không dây 15W"},{"label":"Camera sau","value":"Chính 50MP &amp; Phụ 12MP"},{"label":"Camera trước","value":"10MP"},{"label":"Kết nối","value":"5G, Wi-Fi 6E, Bluetooth 5.3"},{"label":"Tính năng đặc biệt","value":"Thiết kế gập vỏ sò, Màn hình phụ Flex Window, IP48"},{"label":"Khối lượng","value":"187g"},{"label":"Ngày ra mắt","value":"2025-07-25"}]'/>
         </insert>
 
+        <!-- Xiaomi 17 Ultra -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000009"/>
             <column name="product_name" value="Xiaomi 17 Ultra"/>
@@ -322,25 +203,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000009"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000009"/>
-            <column name="screen_size" value="6.73 inch"/>
-            <column name="screen_tech" value="LTPO AMOLED"/>
-            <column name="resolution" value="WQHD+ (1440 x 3200 pixels)"/>
-            <column name="operating_system" value="HyperOS"/>
-            <column name="chip" value="Snapdragon 8 Gen 4"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Adreno 830"/>
-            <column name="ram" value="16GB"/>
-            <column name="storage_capacity" value="512GB"/>
-            <column name="battery_capacity" value="5300 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh 90W, Không dây 80W"/>
-            <column name="back_camera" value="Cụm 4 camera Leica (Chính 50MP &amp; Phụ 50MP, 50MP, 50MP)"/>
-            <column name="front_camera" value="32MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 7, Bluetooth 5.4, Hồng ngoại"/>
-            <column name="special_feature" value="Ống kính quang học Leica, Chống nước IP68"/>
-            <column name="weight" value="227g"/>
-            <column name="release_date" valueDate="2025-04-18"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.73 inch"},{"label":"Công nghệ màn hình","value":"LTPO AMOLED"},{"label":"Độ phân giải","value":"WQHD+ (1440 x 3200 pixels)"},{"label":"Hệ điều hành","value":"HyperOS"},{"label":"Chip","value":"Snapdragon 8 Gen 4"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Adreno 830"},{"label":"RAM","value":"16GB"},{"label":"Bộ nhớ trong","value":"512GB"},{"label":"Dung lượng pin","value":"5300 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh 90W, Không dây 80W"},{"label":"Camera sau","value":"Cụm 4 camera Leica (Chính 50MP &amp; Phụ 50MP, 50MP, 50MP)"},{"label":"Camera trước","value":"32MP"},{"label":"Kết nối","value":"5G, Wi-Fi 7, Bluetooth 5.4, Hồng ngoại"},{"label":"Tính năng đặc biệt","value":"Ống kính quang học Leica, Chống nước IP68"},{"label":"Khối lượng","value":"227g"},{"label":"Ngày ra mắt","value":"2025-04-18"}]'/>
         </insert>
 
+        <!-- Oppo A6 Pro -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000010"/>
             <column name="product_name" value="Oppo A6 Pro"/>
@@ -359,25 +225,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000010"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000010"/>
-            <column name="screen_size" value="6.7 inch"/>
-            <column name="screen_tech" value="AMOLED"/>
-            <column name="resolution" value="FHD+ (1080 x 2412 pixels)"/>
-            <column name="operating_system" value="ColorOS 15"/>
-            <column name="chip" value="Dimensity 7300"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Mali-G615"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="5000 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh SuperVOOC 67W"/>
-            <column name="back_camera" value="Chính 64MP &amp; Phụ 2MP"/>
-            <column name="front_camera" value="16MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 6, Bluetooth 5.3"/>
-            <column name="special_feature" value="Màn hình cong 3D, Chống nước bụi IP54"/>
-            <column name="weight" value="177g"/>
-            <column name="release_date" valueDate="2025-03-20"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.7 inch"},{"label":"Công nghệ màn hình","value":"AMOLED"},{"label":"Độ phân giải","value":"FHD+ (1080 x 2412 pixels)"},{"label":"Hệ điều hành","value":"ColorOS 15"},{"label":"Chip","value":"Dimensity 7300"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Mali-G615"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"5000 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh SuperVOOC 67W"},{"label":"Camera sau","value":"Chính 64MP &amp; Phụ 2MP"},{"label":"Camera trước","value":"16MP"},{"label":"Kết nối","value":"5G, Wi-Fi 6, Bluetooth 5.3"},{"label":"Tính năng đặc biệt","value":"Màn hình cong 3D, Chống nước bụi IP54"},{"label":"Khối lượng","value":"177g"},{"label":"Ngày ra mắt","value":"2025-03-20"}]'/>
         </insert>
 
+        <!-- Oppo Reno 13 F -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000011"/>
             <column name="product_name" value="Oppo Reno 13 F"/>
@@ -396,25 +247,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000011"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000011"/>
-            <column name="screen_size" value="6.7 inch"/>
-            <column name="screen_tech" value="AMOLED"/>
-            <column name="resolution" value="FHD+ (1080 x 2412 pixels)"/>
-            <column name="operating_system" value="ColorOS 15"/>
-            <column name="chip" value="Dimensity 8300"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Mali-G615"/>
-            <column name="ram" value="12GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="5000 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh SuperVOOC 80W"/>
-            <column name="back_camera" value="Chính 50MP &amp; Phụ 8MP, 2MP"/>
-            <column name="front_camera" value="32MP"/>
-            <column name="connectivity" value="5G, Wi-Fi 6, Bluetooth 5.4"/>
-            <column name="special_feature" value="Chuyên gia chân dung AI Portrait, IP65"/>
-            <column name="weight" value="182g"/>
-            <column name="release_date" valueDate="2025-05-25"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"6.7 inch"},{"label":"Công nghệ màn hình","value":"AMOLED"},{"label":"Độ phân giải","value":"FHD+ (1080 x 2412 pixels)"},{"label":"Hệ điều hành","value":"ColorOS 15"},{"label":"Chip","value":"Dimensity 8300"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Mali-G615"},{"label":"RAM","value":"12GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"5000 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh SuperVOOC 80W"},{"label":"Camera sau","value":"Chính 50MP &amp; Phụ 8MP, 2MP"},{"label":"Camera trước","value":"32MP"},{"label":"Kết nối","value":"5G, Wi-Fi 6, Bluetooth 5.4"},{"label":"Tính năng đặc biệt","value":"Chuyên gia chân dung AI Portrait, IP65"},{"label":"Khối lượng","value":"182g"},{"label":"Ngày ra mắt","value":"2025-05-25"}]'/>
         </insert>
 
+        <!-- MacBook Pro 14 M5 Pro -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000012"/>
             <column name="product_name" value="MacBook Pro 14 M5 Pro"/>
@@ -433,25 +269,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000012"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000012"/>
-            <column name="screen_size" value="14.2 inch"/>
-            <column name="screen_tech" value="Liquid Retina XDR, ProMotion 120Hz"/>
-            <column name="resolution" value="3024 x 1964 pixels"/>
-            <column name="operating_system" value="macOS 16"/>
-            <column name="chip" value="Apple M5 Pro"/>
-            <column name="cpu" value="12-core CPU"/>
-            <column name="gpu" value="18-core GPU"/>
-            <column name="ram" value="18GB"/>
-            <column name="storage_capacity" value="512GB SSD"/>
-            <column name="battery_capacity" value="72.4 Wh"/>
-            <column name="charging_tech" value="Sạc nhanh 96W USB-C, MagSafe 3"/>
-            <column name="back_camera" value="Không có"/>
-            <column name="front_camera" value="1080p FaceTime HD"/>
-            <column name="connectivity" value="Wi-Fi 7, Bluetooth 5.4, Thunderbolt 5"/>
-            <column name="special_feature" value="Bàn phím Magic Keyboard, Touch ID, Vỏ nhôm tái chế"/>
-            <column name="weight" value="1.61 kg"/>
-            <column name="release_date" valueDate="2025-11-15"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"14.2 inch"},{"label":"Công nghệ màn hình","value":"Liquid Retina XDR, ProMotion 120Hz"},{"label":"Độ phân giải","value":"3024 x 1964 pixels"},{"label":"Hệ điều hành","value":"macOS 16"},{"label":"Chip","value":"Apple M5 Pro"},{"label":"CPU","value":"12-core CPU"},{"label":"GPU","value":"18-core GPU"},{"label":"RAM","value":"18GB"},{"label":"Bộ nhớ trong","value":"512GB SSD"},{"label":"Dung lượng pin","value":"72.4 Wh"},{"label":"Công nghệ sạc","value":"Sạc nhanh 96W USB-C, MagSafe 3"},{"label":"Camera sau","value":"Không có"},{"label":"Camera trước","value":"1080p FaceTime HD"},{"label":"Kết nối","value":"Wi-Fi 7, Bluetooth 5.4, Thunderbolt 5"},{"label":"Tính năng đặc biệt","value":"Bàn phím Magic Keyboard, Touch ID, Vỏ nhôm tái chế"},{"label":"Khối lượng","value":"1.61 kg"},{"label":"Ngày ra mắt","value":"2025-11-15"}]'/>
         </insert>
 
+        <!-- iPad A16 -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000013"/>
             <column name="product_name" value="iPad A16"/>
@@ -470,25 +291,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000013"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000013"/>
-            <column name="screen_size" value="10.9 inch"/>
-            <column name="screen_tech" value="Liquid Retina IPS LCD"/>
-            <column name="resolution" value="2360 x 1640 pixels"/>
-            <column name="operating_system" value="iPadOS 18"/>
-            <column name="chip" value="Apple A16 Bionic"/>
-            <column name="cpu" value="Hexa-core"/>
-            <column name="gpu" value="Apple GPU (5-core)"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="128GB"/>
-            <column name="battery_capacity" value="28.6 Wh (~7600 mAh)"/>
-            <column name="charging_tech" value="Sạc nhanh 20W qua cổng USB-C"/>
-            <column name="back_camera" value="12MP Wide"/>
-            <column name="front_camera" value="12MP Ultra Wide (Landscape)"/>
-            <column name="connectivity" value="Wi-Fi 6E, Bluetooth 5.3"/>
-            <column name="special_feature" value="Hỗ trợ Apple Pencil (USB-C), Touch ID ở nút nguồn"/>
-            <column name="weight" value="477g"/>
-            <column name="release_date" valueDate="2024-10-20"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"10.9 inch"},{"label":"Công nghệ màn hình","value":"Liquid Retina IPS LCD"},{"label":"Độ phân giải","value":"2360 x 1640 pixels"},{"label":"Hệ điều hành","value":"iPadOS 18"},{"label":"Chip","value":"Apple A16 Bionic"},{"label":"CPU","value":"Hexa-core"},{"label":"GPU","value":"Apple GPU (5-core)"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"128GB"},{"label":"Dung lượng pin","value":"28.6 Wh (~7600 mAh)"},{"label":"Công nghệ sạc","value":"Sạc nhanh 20W qua cổng USB-C"},{"label":"Camera sau","value":"12MP Wide"},{"label":"Camera trước","value":"12MP Ultra Wide (Landscape)"},{"label":"Kết nối","value":"Wi-Fi 6E, Bluetooth 5.3"},{"label":"Tính năng đặc biệt","value":"Hỗ trợ Apple Pencil (USB-C), Touch ID ở nút nguồn"},{"label":"Khối lượng","value":"477g"},{"label":"Ngày ra mắt","value":"2024-10-20"}]'/>
         </insert>
 
+        <!-- Xiaomi Pad 8 -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000014"/>
             <column name="product_name" value="Xiaomi Pad 8"/>
@@ -507,25 +313,10 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000014"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000014"/>
-            <column name="screen_size" value="11 inch"/>
-            <column name="screen_tech" value="IPS LCD, 144Hz, HDR10, Dolby Vision"/>
-            <column name="resolution" value="2880 x 1800 pixels"/>
-            <column name="operating_system" value="HyperOS"/>
-            <column name="chip" value="Snapdragon 8 Gen 2"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Adreno 740"/>
-            <column name="ram" value="8GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="8840 mAh"/>
-            <column name="charging_tech" value="Sạc nhanh 67W"/>
-            <column name="back_camera" value="13MP"/>
-            <column name="front_camera" value="8MP"/>
-            <column name="connectivity" value="Wi-Fi 7, Bluetooth 5.3, USB-C"/>
-            <column name="special_feature" value="Hỗ trợ bút cảm ứng, Âm thanh 4 loa Dolby Atmos"/>
-            <column name="weight" value="490g"/>
-            <column name="release_date" valueDate="2025-04-15"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"11 inch"},{"label":"Công nghệ màn hình","value":"IPS LCD, 144Hz, HDR10, Dolby Vision"},{"label":"Độ phân giải","value":"2880 x 1800 pixels"},{"label":"Hệ điều hành","value":"HyperOS"},{"label":"Chip","value":"Snapdragon 8 Gen 2"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Adreno 740"},{"label":"RAM","value":"8GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"8840 mAh"},{"label":"Công nghệ sạc","value":"Sạc nhanh 67W"},{"label":"Camera sau","value":"13MP"},{"label":"Camera trước","value":"8MP"},{"label":"Kết nối","value":"Wi-Fi 7, Bluetooth 5.3, USB-C"},{"label":"Tính năng đặc biệt","value":"Hỗ trợ bút cảm ứng, Âm thanh 4 loa Dolby Atmos"},{"label":"Khối lượng","value":"490g"},{"label":"Ngày ra mắt","value":"2025-04-15"}]'/>
         </insert>
 
+        <!-- Samsung Galaxy Tab S11 -->
         <insert tableName="products">
             <column name="id" value="00000000-0000-9000-0000-000000000015"/>
             <column name="product_name" value="Samsung Galaxy Tab S11"/>
@@ -544,23 +335,7 @@
         <insert tableName="specifications">
             <column name="id" value="00000000-0000-9200-0000-000000000015"/>
             <column name="product_id" value="00000000-0000-9000-0000-000000000015"/>
-            <column name="screen_size" value="11 inch"/>
-            <column name="screen_tech" value="Dynamic AMOLED 2X, 120Hz"/>
-            <column name="resolution" value="2560 x 1600 pixels"/>
-            <column name="operating_system" value="Android 15"/>
-            <column name="chip" value="Snapdragon 8 Gen 4 for Galaxy"/>
-            <column name="cpu" value="Octa-core"/>
-            <column name="gpu" value="Adreno 830"/>
-            <column name="ram" value="12GB"/>
-            <column name="storage_capacity" value="256GB"/>
-            <column name="battery_capacity" value="8400 mAh"/>
-            <column name="charging_tech" value="Sạc siêu nhanh 45W"/>
-            <column name="back_camera" value="13MP"/>
-            <column name="front_camera" value="12MP Ultrawide"/>
-            <column name="connectivity" value="5G (Tuỳ chọn), Wi-Fi 7, Bluetooth 5.4"/>
-            <column name="special_feature" value="Bút S-Pen kèm theo, Chống nước IP68, Samsung DeX"/>
-            <column name="weight" value="498g"/>
-            <column name="release_date" valueDate="2025-08-10"/>
+            <column name="attributes" value='[{"label":"Màn hình","value":"11 inch"},{"label":"Công nghệ màn hình","value":"Dynamic AMOLED 2X, 120Hz"},{"label":"Độ phân giải","value":"2560 x 1600 pixels"},{"label":"Hệ điều hành","value":"Android 15"},{"label":"Chip","value":"Snapdragon 8 Gen 4 for Galaxy"},{"label":"CPU","value":"Octa-core"},{"label":"GPU","value":"Adreno 830"},{"label":"RAM","value":"12GB"},{"label":"Bộ nhớ trong","value":"256GB"},{"label":"Dung lượng pin","value":"8400 mAh"},{"label":"Công nghệ sạc","value":"Sạc siêu nhanh 45W"},{"label":"Camera sau","value":"13MP"},{"label":"Camera trước","value":"12MP Ultrawide"},{"label":"Kết nối","value":"5G (Tuỳ chọn), Wi-Fi 7, Bluetooth 5.4"},{"label":"Tính năng đặc biệt","value":"Bút S-Pen kèm theo, Chống nước IP68, Samsung DeX"},{"label":"Khối lượng","value":"498g"},{"label":"Ngày ra mắt","value":"2025-08-10"}]'/>
         </insert>
 
     </changeSet>

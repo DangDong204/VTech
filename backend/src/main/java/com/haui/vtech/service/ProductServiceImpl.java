@@ -1,8 +1,6 @@
 package com.haui.vtech.service;
 
-import com.haui.vtech.dto.product.ProductCreationRequest;
-import com.haui.vtech.dto.product.ProductResponse;
-import com.haui.vtech.dto.product.ProductUpdateRequest;
+import com.haui.vtech.dto.product.*;
 import com.haui.vtech.entity.BrandEntity;
 import com.haui.vtech.entity.CategoryEntity;
 import com.haui.vtech.entity.ProductEntity;
@@ -19,10 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -222,5 +219,136 @@ public class ProductServiceImpl implements ProductService {
 
         return productRepository.findByBrandIdAndStatus(brandId, ProductStatus.ACTIVE)
                 .stream().map(productMapper::toResponse).toList();
+    }
+
+    @Override
+    public List<ClientProductResponse> getAllClientProducts() {
+        return productRepository.findByStatus(ProductStatus.ACTIVE).stream().map(productMapper::toClientResponse).toList();
+    }
+
+    @Override
+    public ClientProductDetailResponse getClientProductDetail(String slug) {
+        ProductEntity product = productRepository.findBySlugAndStatus(slug, ProductStatus.ACTIVE)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, "Không tìm thấy sản phẩm"));
+
+        // 1. Lấy danh sách URL ảnh (Sắp xếp theo thứ tự hiển thị nếu có)
+        List<String> imageUrls = new ArrayList<>();
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            imageUrls = product.getImages().stream()
+                    .sorted((img1, img2) -> {
+                        Integer order1 = img1.getDisplayOrder() != null ? img1.getDisplayOrder() : 0;
+                        Integer order2 = img2.getDisplayOrder() != null ? img2.getDisplayOrder() : 0;
+                        return order1.compareTo(order2);
+                    })
+                    .map(image -> image.getImageUrl())
+                    .toList();
+        }
+
+        // 2. Xử lý Biến thể (Variants)
+        List<String> versions = new ArrayList<>();
+        List<ClientColorOption> colors = new ArrayList<>();
+        List<ClientVariantDetailResponse> variantList = new ArrayList<>();
+
+        BigDecimal minPrice = null;
+        BigDecimal originalPriceOfMin = null;
+
+        if (product.getVariants() != null && !product.getVariants().isEmpty()) {
+            for (var v : product.getVariants()) {
+                String verName = v.getVersion() != null ? v.getVersion().getVersionName() : "Tiêu chuẩn";
+                String colName = v.getColor() != null ? v.getColor().getColorName() : "Mặc định";
+                String colHex = v.getColor() != null ? v.getColor().getHexCode() : "#FFFFFF";
+
+                BigDecimal salePrice = v.getSalePrice() != null ? v.getSalePrice() : v.getBasePrice();
+                BigDecimal basePrice = v.getBasePrice();
+
+                variantList.add(ClientVariantDetailResponse.builder()
+                        .id(v.getId())
+                        .version(verName)
+                        .color(colName)
+                        .price(salePrice)
+                        .originalPrice(basePrice)
+                        .build());
+
+                // Gom nhóm versions (không trùng lặp)
+                if (!versions.contains(verName)) {
+                    versions.add(verName);
+                }
+
+                // Gom nhóm colors (không trùng lặp theo mã Hex)
+                boolean colorExists = colors.stream().anyMatch(c -> c.getHex().equals(colHex));
+                if (!colorExists) {
+                    colors.add(ClientColorOption.builder().name(colName).hex(colHex).build());
+                }
+
+                // Tìm giá thấp nhất để làm giá mặc định
+                if (minPrice == null || salePrice.compareTo(minPrice) < 0) {
+                    minPrice = salePrice;
+                    originalPriceOfMin = basePrice;
+                }
+            }
+        }
+
+        // 3. Xử lý Thông số kỹ thuật (Bây giờ nó đã là List sẵn rồi)
+        List<ClientSpecOption> specOptions = new ArrayList<>();
+        if (product.getSpecification() != null && product.getSpecification().getAttributes() != null) {
+            product.getSpecification().getAttributes().forEach(pair -> {
+                specOptions.add(ClientSpecOption.builder()
+                        .label(pair.getLabel())
+                        .value(pair.getValue())
+                        .build());
+            });
+        }
+
+        // 4. Trả về kết quả
+        return ClientProductDetailResponse.builder()
+                .id(product.getId())
+                .name(product.getProductName())
+                .category(product.getCategory() != null ? product.getCategory().getCategoryName() : "Sản phẩm")
+                .description(product.getProductDesc())
+                .price(minPrice != null ? minPrice : BigDecimal.ZERO)
+                .originalPrice(originalPriceOfMin != null ? originalPriceOfMin : BigDecimal.ZERO)
+                .rating(product.getRatingAvg())
+                .reviews(product.getTotalReviews())
+                .images(imageUrls)
+                .versions(versions)
+                .colors(colors)
+                .variantList(variantList)
+                .specs(specOptions)
+                .build();
+    }
+
+    @Override
+    public List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, BigDecimal minPrice, BigDecimal maxPrice, String sort) {
+        List<ProductEntity> products = productRepository.searchClientProducts(categorySlug, brandSlug, tagId, minPrice, maxPrice);
+
+        List<ClientProductResponse> responseList = products.stream()
+                .map(productMapper::toClientResponse)
+                .collect(Collectors.toList());
+
+        // Xử lý Sắp xếp (Sorting) trên Memory
+        if (sort != null) {
+            switch (sort) {
+                case "price-asc":
+                    responseList.sort(Comparator.comparing(this::getMinPriceOfClientProduct));
+                    break;
+                case "price-desc":
+                    responseList.sort(Comparator.comparing(this::getMinPriceOfClientProduct).reversed());
+                    break;
+                case "rating":
+                    responseList.sort(Comparator.comparing(ClientProductResponse::getRating).reversed());
+                    break;
+                default: // "newest" hoặc nổi bật
+                    // Mặc định lật ngược list để cái mới nhất lên đầu
+                    java.util.Collections.reverse(responseList);
+                    break;
+            }
+        }
+        return responseList;
+    }
+
+    // Helper method tính giá nhỏ nhất để sort
+    private BigDecimal getMinPriceOfClientProduct(ClientProductResponse p) {
+        if (p.getVariants() == null || p.getVariants().isEmpty()) return BigDecimal.ZERO;
+        return p.getVariants().stream().map(v -> v.getPrice()).min(BigDecimal::compareTo).orElse(BigDecimal.ZERO);
     }
 }

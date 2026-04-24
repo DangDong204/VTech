@@ -4,16 +4,15 @@ import { FlashSale } from '@/components/user/home/FlashSale'
 import { HeroBanner } from '@/components/user/home/HeroBanner'
 import { PolicyBanner } from '@/components/user/home/PolicyBanner'
 import { TechNewsSection } from '@/components/user/home/TechNewSection'
-import { TrendingPhones } from '@/components/user/home/TrendingPhone'
 
 export default function HomePage() {
   return (
-    <div className='container mx-auto flex flex-col gap-8 px-4'>
-      <section className='grid grid-cols-1 gap-4 md:grid-cols-4 lg:gap-6'>
-        <div className='hidden md:block md:col-span-1'>
+    <div className='container mx-auto flex flex-col gap-6 lg:gap-8 px-4 pt-4'>
+      <section className='flex flex-col lg:flex-row gap-4'>
+        <div className='hidden lg:block lg:w-[220px] xl:w-[240px] shrink-0'>
           <CategorySidebar />
         </div>
-        <div className='col-span-1 md:col-span-3'>
+        <div className='flex-1 min-w-0'>
           <HeroBanner />
         </div>
       </section>
@@ -28,10 +27,6 @@ export default function HomePage() {
 
       <section>
         <BrandCarousel />
-      </section>
-
-      <section>
-        <TrendingPhones />
       </section>
 
       <section className='pb-8'>

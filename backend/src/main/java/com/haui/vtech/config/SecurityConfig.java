@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF vì dùng JWT
                 .authorizeHttpRequests(auth -> auth
                         // 1. Mở toàn bộ cho nhóm API Xác thực
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/client/**").permitAll()
 
                         // 2. Mở cửa CHỈ VỚI METHOD GET cho các API dữ liệu công khai (Storefront)
                         .requestMatchers(org.springframework.http.HttpMethod.GET,

@@ -1,9 +1,8 @@
 package com.haui.vtech.service;
 
-import com.haui.vtech.dto.product.ProductCreationRequest;
-import com.haui.vtech.dto.product.ProductResponse;
-import com.haui.vtech.dto.product.ProductUpdateRequest;
+import com.haui.vtech.dto.product.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {
@@ -33,5 +32,9 @@ public interface ProductService {
     // TODO: getProductsByBrand
     List<ProductResponse> getProductsByBrand(String brandId);
 
+    List<ClientProductResponse> getAllClientProducts();
 
+    ClientProductDetailResponse getClientProductDetail(String slug);
+
+    List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, BigDecimal minPrice, BigDecimal maxPrice, String sort);
 }

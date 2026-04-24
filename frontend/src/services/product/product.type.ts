@@ -64,44 +64,18 @@ export interface ProductImageResponse {
   images?: string[] | null
 }
 
-export interface SpecificationResponse {
-  productId: string
-  screenSize?: string
-  screenTech?: string
-  resolution?: string
-  operatingSystem?: string
-  chip?: string
-  cpu?: string
-  gpu?: string
-  ram?: string
-  storageCapacity?: string
-  batteryCapacity?: string
-  chargingTech?: string
-  backCamera?: string
-  frontCamera?: string
-  connectivity?: string
-  specialFeature?: string
-  weight?: string
-  releaseDate?: string // Trả về dạng dd-MM-yyyy
+// Thêm interface mới này
+export interface SpecPair {
+  label: string
+  value: string
 }
 
-// Payload cho API Specification
+// Sửa lại 2 interface này
+export interface SpecificationResponse {
+  productId: string
+  attributes?: SpecPair[] // Chuyển từ Record<string, string> sang mảng SpecPair[]
+}
+
 export interface SpecificationPayload {
-  screenSize?: string
-  screenTech?: string
-  resolution?: string
-  operatingSystem?: string
-  chip?: string
-  cpu?: string
-  gpu?: string
-  ram?: string
-  storageCapacity?: string
-  batteryCapacity?: string
-  chargingTech?: string
-  backCamera?: string
-  frontCamera?: string
-  connectivity?: string
-  specialFeature?: string
-  weight?: string
-  releaseDate?: string // Format YYYY-MM-DD
+  attributes?: SpecPair[] // Chuyển sang mảng SpecPair[]
 }
