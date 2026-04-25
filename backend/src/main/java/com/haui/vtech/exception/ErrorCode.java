@@ -115,6 +115,8 @@ public enum ErrorCode {
     CART_NOT_FOUND(12000, "cart.not.found", HttpStatus.NOT_FOUND),
     CART_ITEM_NOT_FOUND(12001, "cart.item.not.found", HttpStatus.NOT_FOUND),
     OUT_OF_STOCK(12002, "product.out.of.stock", HttpStatus.BAD_REQUEST),
+
+    ADDRESS_NOT_FOUND(13000, "address.not.found", HttpStatus.NOT_FOUND)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

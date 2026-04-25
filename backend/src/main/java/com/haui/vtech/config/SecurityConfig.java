@@ -57,9 +57,12 @@ public class SecurityConfig {
                                 "/api/v1/client/categories/**"
                         ).permitAll()
 
-                        // CÁC ENDPOINT QUAN TRỌNG NHƯ GIỎ HÀNG, THANH TOÁN BẮT BUỘC AUTH
-                        .requestMatchers("/api/v1/client/cart/**", "/api/v1/client/orders/**").authenticated()
-
+                        // CÁC ENDPOINT CẦN LOGIN
+                        .requestMatchers(
+                                "/api/v1/client/cart/**",
+                                "/api/v1/client/orders/**",
+                                "/api/v1/client/addresses/**")
+                        .authenticated()
                         // 3. Các request còn lại (POST, PUT, DELETE của sản phẩm, hoặc mọi request tới users, orders...) BẮT BUỘC ĐĂNG NHẬP
                         .anyRequest().authenticated()
                 )
