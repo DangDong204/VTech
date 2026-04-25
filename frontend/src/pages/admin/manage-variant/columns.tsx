@@ -40,15 +40,32 @@ export const columns: ColumnDef<ProductVariantResponse>[] = [
     cell: ({ row }) => {
       const variant = row.original
       return (
-        <div className='flex flex-col gap-1'>
-          <span className='font-medium text-primary'>{variant.versionName}</span>
-          <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-            <div
-              className='h-4 w-4 rounded-full border shadow-sm'
-              style={{ backgroundColor: variant.hexCode }}
-              title={variant.hexCode}
-            />
-            <span>{variant.colorName}</span>
+        <div className='flex items-center gap-3'>
+          <div className='h-12 w-12 shrink-0 border rounded bg-slate-50 flex items-center justify-center overflow-hidden relative'>
+            {variant.imageUrl ? (
+              <img
+                src={variant.imageUrl}
+                alt={variant.sku}
+                className='w-full h-full object-contain'
+              />
+            ) : (
+              <span className='text-[10px] text-muted-foreground italic text-center leading-tight px-1'>
+                Chưa có ảnh
+              </span>
+            )}
+          </div>
+
+          {/* Cột Tên - Màu sắc */}
+          <div className='flex flex-col gap-1'>
+            <span className='font-medium text-primary text-sm'>{variant.versionName}</span>
+            <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
+              <div
+                className='h-3 w-3 rounded-full border shadow-sm'
+                style={{ backgroundColor: variant.hexCode }}
+                title={variant.hexCode}
+              />
+              <span>{variant.colorName}</span>
+            </div>
           </div>
         </div>
       )

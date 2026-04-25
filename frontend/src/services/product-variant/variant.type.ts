@@ -14,6 +14,7 @@ export interface ProductVariantResponse {
   salePrice: number
   stockQuantity: number
   status: ProductStatus
+  imageUrl?: string // BỔ SUNG
 }
 
 export interface ProductVariantPayload {
@@ -25,4 +26,5 @@ export interface ProductVariantPayload {
   salePrice?: number | null
   stockQuantity: number
   status?: ProductStatus
+  image?: File | null // BỔ SUNG FILE DÙNG ĐỂ CHỨA ẢNH UPLOAD
 }

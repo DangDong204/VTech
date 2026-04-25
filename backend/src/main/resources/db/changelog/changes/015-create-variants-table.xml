@@ -98,58 +98,11 @@
 
         <addUniqueConstraint tableName="product_variants" columnNames="product_id, color_id, version_id" constraintName="uk_product_color_version"/>
     </changeSet>
-
-<!--    <changeSet id="015-1-create-goods-receipts" author="dongdang">-->
-<!--        <createTable tableName="goods_receipts">-->
-<!--            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>-->
-<!--            <column name="total_amount" type="DECIMAL(15,2)"><constraints nullable="false"/></column>-->
-<!--            <column name="note" type="TEXT"/>-->
-<!--            <column name="status" type="VARCHAR(20)" defaultValue="COMPLETED"/> <column name="created_by" type="VARCHAR(255)"/> <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--        </createTable>-->
-<!--    </changeSet>-->
-
-<!--    <changeSet id="015-2-create-goods-receipt-details" author="dongdang">-->
-<!--        <createTable tableName="goods_receipt_details">-->
-<!--            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>-->
-<!--            <column name="receipt_id" type="VARCHAR(36)"><constraints nullable="false"/></column>-->
-<!--            <column name="variant_id" type="VARCHAR(36)"><constraints nullable="false"/></column>-->
-
-<!--            <column name="quantity" type="INT"><constraints nullable="false"/></column>-->
-<!--            <column name="import_price" type="DECIMAL(15,2)"><constraints nullable="false"/></column>-->
-
-<!--            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--        </createTable>-->
-
-<!--        <addForeignKeyConstraint baseTableName="goods_receipt_details" baseColumnNames="receipt_id" constraintName="fk_grd_receipt" referencedTableName="goods_receipts" referencedColumnNames="id"/>-->
-<!--        <addForeignKeyConstraint baseTableName="goods_receipt_details" baseColumnNames="variant_id" constraintName="fk_grd_variant" referencedTableName="product_variants" referencedColumnNames="id"/>-->
-<!--    </changeSet>-->
-
-<!--    <changeSet id="016-1-create-promotions" author="dongdang">-->
-<!--        <createTable tableName="promotions">-->
-<!--            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>-->
-<!--            <column name="name" type="VARCHAR(255)"><constraints nullable="false"/></column>-->
-<!--            <column name="description" type="TEXT"/>-->
-<!--            <column name="discount_type" type="VARCHAR(20)"><constraints nullable="false"/></column> <column name="discount_value" type="DECIMAL(15,2)"><constraints nullable="false"/></column>-->
-
-<!--            <column name="start_date" type="TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--            <column name="end_date" type="TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/> <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"><constraints nullable="false"/></column>-->
-<!--        </createTable>-->
-<!--    </changeSet>-->
-
-<!--    <changeSet id="016-2-create-promotion-variants" author="dongdang">-->
-<!--        <createTable tableName="promotion_variants">-->
-<!--            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>-->
-<!--            <column name="promotion_id" type="VARCHAR(36)"><constraints nullable="false"/></column>-->
-<!--            <column name="variant_id" type="VARCHAR(36)"><constraints nullable="false"/></column>-->
-<!--        </createTable>-->
-
-<!--        <addForeignKeyConstraint baseTableName="promotion_variants" baseColumnNames="promotion_id" constraintName="fk_pvp_promotion" referencedTableName="promotions" referencedColumnNames="id"/>-->
-<!--        <addForeignKeyConstraint baseTableName="promotion_variants" baseColumnNames="variant_id" constraintName="fk_pvp_variant" referencedTableName="product_variants" referencedColumnNames="id"/>-->
-<!--        <addUniqueConstraint tableName="promotion_variants" columnNames="promotion_id, variant_id" constraintName="uk_promotion_variant"/>-->
-<!--    </changeSet>-->
+    <!--    -->
+    <changeSet id="add-image-url-to-product-variants" author="dongdang">
+        <addColumn tableName="product_variants">
+            <column name="image_url" type="VARCHAR(500)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

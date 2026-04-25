@@ -7,8 +7,10 @@ import com.haui.vtech.service.ProductVariantService;
 import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,12 +22,13 @@ public class ProductVariantController {
     private final ProductVariantService variantService;
     private final MessageUtil messageUtil;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ProductVariantResponse> create(
-            @RequestBody @Valid ProductVariantRequest request) {
+            @RequestPart("data") @Valid ProductVariantRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         return ApiResponse.<ProductVariantResponse>builder()
-                .data(variantService.create(request))
+                .data(variantService.create(request, image))
                 .message(messageUtil.getMessage("product.variant.created.success", request.getSku()))
                 .build();
     }
@@ -45,13 +48,14 @@ public class ProductVariantController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ApiResponse<ProductVariantResponse> update(
             @PathVariable String id,
-            @RequestBody @Valid ProductVariantRequest request) {
+            @RequestPart("data") @Valid ProductVariantRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         return ApiResponse.<ProductVariantResponse>builder()
-                .data(variantService.update(id, request))
+                .data(variantService.update(id, request, image))
                 .message(messageUtil.getMessage("product.variant.updated.success", request.getSku()))
                 .build();
     }

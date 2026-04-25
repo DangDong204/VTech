@@ -22,7 +22,7 @@ export function CreateVariantDialog({ productId }: { productId: string }) {
           <Plus className='mr-2 h-4 w-4' /> {t('actions.create')}
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[700px] p-0'>
+      <DialogContent className='sm:max-w-[900px] p-0'>
         <DialogHeader className='px-6 pt-6'>
           <DialogTitle></DialogTitle>
         </DialogHeader>

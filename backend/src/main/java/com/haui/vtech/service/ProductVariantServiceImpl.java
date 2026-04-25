@@ -6,6 +6,7 @@ import com.haui.vtech.entity.ColorEntity;
 import com.haui.vtech.entity.ProductEntity;
 import com.haui.vtech.entity.ProductVariantEntity;
 import com.haui.vtech.entity.VersionEntity;
+import com.haui.vtech.enums.ImageFolder;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.ProductVariantMapper;
@@ -15,6 +16,7 @@ import com.haui.vtech.repository.ProductVariantRepository;
 import com.haui.vtech.repository.VersionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,9 +29,10 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     private final ColorRepository colorRepository;
     private final VersionRepository versionRepository;
     private final ProductVariantMapper variantMapper;
+    private final S3Service s3Service;
 
     @Override
-    public ProductVariantResponse create(ProductVariantRequest request) {
+    public ProductVariantResponse create(ProductVariantRequest request, MultipartFile image) {
         if (variantRepository.existsBySku(request.getSku())) {
             throw new AppException(ErrorCode.SKU_EXISTED, request.getSku());
         }
@@ -41,6 +44,12 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
         ProductVariantEntity entity = variantMapper.toEntity(request);
         setVariantRelations(entity, request);
+
+        if (image != null && !image.isEmpty()) {
+            // Lưu ý: Đổi ImageFolder.PRODUCT thành Enum tương ứng trong dự án của bạn
+            String imageUrl = s3Service.uploadImage(image, ImageFolder.PRODUCT, "variants");
+            entity.setImageUrl(imageUrl);
+        }
 
         return variantMapper.toResponse(variantRepository.save(entity));
 
@@ -62,7 +71,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
-    public ProductVariantResponse update(String id, ProductVariantRequest request) {
+    public ProductVariantResponse update(String id, ProductVariantRequest request, MultipartFile image) {
         ProductVariantEntity entity = variantRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, id));
 
@@ -83,6 +92,14 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         variantMapper.updateEntity(entity, request);
         setVariantRelations(entity, request);
 
+        if (image != null && !image.isEmpty()) {
+            if (entity.getImageUrl() != null) {
+                s3Service.deleteImage(entity.getImageUrl());
+            }
+            String imageUrl = s3Service.uploadImage(image, ImageFolder.PRODUCT, "variants");
+            entity.setImageUrl(imageUrl);
+        }
+
         return variantMapper.toResponse(variantRepository.save(entity));
     }
 
@@ -90,6 +107,11 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public String delete(String id) {
         ProductVariantEntity entity = variantRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, id));
+
+        // XÓA ẢNH TRÊN S3 TRƯỚC KHI XÓA RECORD
+        if (entity.getImageUrl() != null) {
+            s3Service.deleteImage(entity.getImageUrl());
+        }
 
         String sku = entity.getSku();
         variantRepository.delete(entity);

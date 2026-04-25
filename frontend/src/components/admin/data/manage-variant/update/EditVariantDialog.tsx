@@ -14,7 +14,7 @@ export function EditVariantDialog({ open, onOpenChange, variant }: EditVariantDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-[700px] p-0'>
+      <DialogContent className='sm:max-w-[900px] p-0'>
         <DialogHeader className='px-6 pt-6'>
           <DialogTitle>{t('titles.edit')}</DialogTitle>
         </DialogHeader>
