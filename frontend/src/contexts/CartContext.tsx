@@ -1,82 +1,129 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
+import { toast } from 'sonner'
+import {
+  getMyCartApi,
+  addToCartApi,
+  updateCartItemApi,
+  removeCartItemApi,
+  clearCartApi
+} from '@/services/cart/cart.api'
+import type { CartResponse, CartItemResponse } from '@/services/cart/cart.type'
+import { useAuthStore } from '@/store/auth.store'
+import type { ApiErrorResponse } from '@/defines/error.type'
 
-export interface CartItem {
-  id: string
-  name: string
-  price: number
-  originalPrice?: number
-  image?: string
-  hue?: number
-  variant?: { color?: string; storage?: string }
-  quantity: number
+interface HttpError {
+  response?: {
+    data?: ApiErrorResponse
+  }
 }
 
 interface CartContextValue {
-  items: CartItem[]
-  addItem: (item: Omit<CartItem, 'quantity'>, qty?: number) => void
-  removeItem: (id: string) => void
-  updateQuantity: (id: string, qty: number) => void
-  clear: () => void
+  cart: CartResponse | null
+  items: CartItemResponse[]
+  isLoading: boolean
+  addItem: (variantId: string, qty?: number) => Promise<void>
+  removeItem: (cartDetailId: string) => Promise<void>
+  updateQuantity: (cartDetailId: string, qty: number) => Promise<void>
+  clear: () => Promise<void>
   totalCount: number
   subtotal: number
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined)
 
-const seed: CartItem[] = [
-  {
-    id: 'iphone-16-pm',
-    name: 'iPhone 16 Pro Max 256GB',
-    price: 32990000,
-    originalPrice: 36990000,
-    image:
-      'https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/product/iphone-16-plus/iphone-16-plus-trang-1.webp',
-    hue: 240,
-    variant: { color: 'Titanium', storage: '256GB' },
-    quantity: 1
-  },
-  {
-    id: 'airpods-pro-2',
-    name: 'AirPods Pro 2 (USB-C)',
-    price: 5490000,
-    originalPrice: 6490000,
-    image:
-      'https://vtech-image-ndd.s3.ap-southeast-2.amazonaws.com/product/iphone-16-plus/iphone-16-plus-hong-1.webp',
-    hue: 200,
-    variant: { color: 'White' },
-    quantity: 2
-  }
-]
-
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(seed)
+  const [cart, setCart] = useState<CartResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const addItem = useCallback((item: Omit<CartItem, 'quantity'>, qty = 1) => {
-    setItems((prev) => {
-      const found = prev.find((p) => p.id === item.id)
-      if (found) {
-        return prev.map((p) => (p.id === item.id ? { ...p, quantity: p.quantity + qty } : p))
-      }
-      return [...prev, { ...item, quantity: qty }]
-    })
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+
+  const fetchCart = useCallback(async () => {
+    if (!isAuthenticated) {
+      setCart(null)
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      const data = await getMyCartApi()
+      setCart(data)
+    } catch {
+      toast.error('Lỗi khi tải giỏ hàng ')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [isAuthenticated])
+
+  useEffect(() => {
+    fetchCart()
+  }, [fetchCart])
+
+  const addItem = useCallback(async (variantId: string, qty = 1) => {
+    try {
+      const updatedCart = await addToCartApi({ variantId, quantity: qty })
+      setCart(updatedCart)
+      toast.success('Đã thêm sản phẩm vào giỏ hàng!', {
+        id: 'add-cart-success' // Gắn ID để không bị spam toast thành công
+      })
+    } catch (error: unknown) {
+      // Ép kiểu error về HttpError để lấy đúng structure
+      const err = error as HttpError
+      toast.error(err.response?.data?.message || 'Không thể thêm vào giỏ hàng', {
+        id: `add-error-${variantId}`
+      })
+    }
   }, [])
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((p) => p.id !== id))
+  const removeItem = useCallback(async (cartDetailId: string) => {
+    try {
+      const updatedCart = await removeCartItemApi(cartDetailId)
+      setCart(updatedCart)
+    } catch {
+      toast.error('Lỗi khi xóa sản phẩm')
+    }
   }, [])
 
-  const updateQuantity = useCallback((id: string, qty: number) => {
-    setItems((prev) => prev.map((p) => (p.id === id ? { ...p, quantity: Math.max(1, qty) } : p)))
+  const updateQuantity = useCallback(async (cartDetailId: string, qty: number) => {
+    if (qty < 1) return
+    try {
+      const updatedCart = await updateCartItemApi(cartDetailId, qty)
+      setCart(updatedCart)
+    } catch (error: unknown) {
+      // Ép kiểu error về HttpError
+      const err = error as HttpError
+      toast.error(err.response?.data?.message || 'Không thể cập nhật số lượng', {
+        id: `qty-error-${cartDetailId}`
+      })
+    }
   }, [])
 
-  const clear = useCallback(() => setItems([]), [])
+  const clear = useCallback(async () => {
+    try {
+      await clearCartApi()
+      setCart(null)
+    } catch {
+      toast.error('Lỗi khi làm sạch giỏ hàng')
+    }
+  }, [])
 
-  const totalCount = items.reduce((s, i) => s + i.quantity, 0)
-  const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
+  const items = cart?.items || []
+  const totalCount = cart?.totalQuantity || 0
+  const subtotal = cart?.totalCartValue || 0
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clear, totalCount, subtotal }}
+      value={{
+        cart,
+        items,
+        isLoading,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clear,
+        totalCount,
+        subtotal
+      }}
     >
       {children}
     </CartContext.Provider>

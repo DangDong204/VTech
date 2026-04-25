@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-carts-table" author="dongdang">
+        <createTable tableName="carts">
+            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="user_id" type="VARCHAR(36)"><constraints nullable="false" unique="true"/></column>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-cart-details-table" author="dongdang">
+        <createTable tableName="cart_details">
+            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="cart_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+            <column name="variant_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+            <column name="quantity" type="INT"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="cart_details" baseColumnNames="cart_id"
+                                 referencedTableName="carts" referencedColumnNames="id" constraintName="fk_cart_detail_cart"/>
+    </changeSet>
+
+    <changeSet id="create-orders-table" author="dongdang">
+        <createTable tableName="orders">
+            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="order_code" type="VARCHAR(50)"><constraints nullable="false" unique="true"/></column>
+            <column name="user_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+
+            <column name="customer_name" type="VARCHAR(100)"><constraints nullable="false"/></column>
+            <column name="customer_phone" type="VARCHAR(20)"><constraints nullable="false"/></column>
+            <column name="customer_address" type="VARCHAR(500)"><constraints nullable="false"/></column>
+
+            <column name="sub_total" type="DECIMAL(15, 2)"><constraints nullable="false"/></column>
+            <column name="shipping_fee" type="DECIMAL(15, 2)"><constraints nullable="false"/></column>
+            <column name="product_discount" type="DECIMAL(15, 2)" defaultValueNumeric="0"/>
+            <column name="shipping_discount" type="DECIMAL(15, 2)" defaultValueNumeric="0"/>
+            <column name="final_price" type="DECIMAL(15, 2)"><constraints nullable="false"/></column>
+
+            <column name="payment_method" type="VARCHAR(50)"><constraints nullable="false"/></column>
+            <column name="payment_status" type="VARCHAR(50)" defaultValue="PENDING"/>
+            <column name="order_status" type="VARCHAR(50)" defaultValue="PENDING"/>
+            <column name="note" type="VARCHAR(500)"/>
+
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-order-details-table" author="dongdang">
+        <createTable tableName="order_details">
+            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="order_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+            <column name="variant_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+            <column name="quantity" type="INT"><constraints nullable="false"/></column>
+            <column name="price" type="DECIMAL(15, 2)" remarks="Giá chốt lúc mua"><constraints nullable="false"/></column>
+            <column name="total_price" type="DECIMAL(15, 2)"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="order_details" baseColumnNames="order_id"
+                                 referencedTableName="orders" referencedColumnNames="id" constraintName="fk_order_detail_order"/>
+    </changeSet>
+
+    <changeSet id="create-order-history-table" author="dongdang">
+        <createTable tableName="order_history">
+            <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="order_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+            <column name="old_status" type="VARCHAR(50)"/>
+            <column name="new_status" type="VARCHAR(50)"><constraints nullable="false"/></column>
+            <column name="note" type="VARCHAR(255)"/>
+            <column name="created_by" type="VARCHAR(36)"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-order-vouchers-table" author="dongdang">
+        <createTable tableName="order_vouchers">
+            <column name="order_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+            <column name="voucher_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+        </createTable>
+        <addPrimaryKey tableName="order_vouchers" columnNames="order_id, voucher_id" constraintName="pk_order_vouchers"/>
+    </changeSet>
+</databaseChangeLog>

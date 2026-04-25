@@ -86,24 +86,20 @@ export default function ProductDetailPage() {
   }, [product, selectedVersion, selectedColor])
 
   // ---------- Handlers ----------
-  const handleAddToCart = (quantity: number) => {
+  const handleAddToCart = async (quantity: number) => {
     if (!product || !currentVariant) return
-    addItem(
-      {
-        id: currentVariant.id,
-        name: `${product.name} ${currentVariant.version}`,
-        price: currentVariant.price,
-        originalPrice: currentVariant.originalPrice,
-        image: product.images[0],
-        variant: { color: currentVariant.color, storage: currentVariant.version }
-      },
-      quantity
-    )
-    toast.success('Đã thêm sản phẩm vào giỏ hàng!')
+    // Token sẽ được axios interceptor tự động đính kèm
+    if (!localStorage.getItem('access_token')) {
+      toast.error('Vui lòng đăng nhập để mua hàng!')
+      navigate('/login')
+      return
+    }
+
+    await addItem(currentVariant.id, quantity)
   }
 
-  const handleBuyNow = (quantity: number) => {
-    handleAddToCart(quantity)
+  const handleBuyNow = async (quantity: number) => {
+    await handleAddToCart(quantity)
     navigate('/cart')
   }
 

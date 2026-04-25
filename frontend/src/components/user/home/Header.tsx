@@ -20,24 +20,26 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import LanguageSelector from '@/components/common/LanguageSelector'
 import { useCart } from '@/contexts/CartContext'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/store/auth.store' // Import auth store
 
 export function Header() {
   const { t } = useTranslation('common')
-  const { totalCount } = useCart()
-  const navigate = useNavigate()
+  const { cart } = useCart()
+  const totalCount = cart?.totalQuantity || 0
 
-  // --- STATE DEMO ĐĂNG NHẬP ---
-  // Bạn có thể thay thế bằng state xác thực (AuthContext) thực tế của dự án
-  const isLoggedIn = true
-  const userName = 'Đăng Đông'
+  // --- LẤY STATE TỪ ZUSTAND ---
+  const { isAuthenticated, user, logout } = useAuthStore()
+
+  // Tuỳ thuộc vào payload JWT của bạn lưu tên ở field nào (name, sub, username...)
+  // Ở đây tôi lấy user.sub làm ví dụ, fallback về 'Tài khoản'
+  const userName = user?.sub || 'Tài khoản'
 
   // --- LOGIC MENU DROPDOWN ---
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
-  // Tự động đóng menu khi click ra ngoài
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
@@ -49,9 +51,8 @@ export function Header() {
   }, [])
 
   const handleLogout = () => {
-    // TODO: Xử lý logic đăng xuất thực tế tại đây
     setIsUserMenuOpen(false)
-    navigate('/login')
+    logout() // Gọi hàm logout từ Zustand
   }
 
   return (
@@ -111,7 +112,7 @@ export function Header() {
             </Button>
 
             {/* KHU VỰC TÀI KHOẢN & DROPDOWN */}
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <div className='relative' ref={userMenuRef}>
                 <Button
                   variant='ghost'

@@ -1,4 +1,5 @@
 import { ProductStatus } from '@/defines/enum/product.enum'
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/defines/upload-image'
 import i18n from '@/i18n/i18n'
 import { z } from 'zod'
 
@@ -17,7 +18,23 @@ export const variantSchema = z
       ProductStatus.INACTIVE,
       ProductStatus.OUT_OF_STOCK,
       ProductStatus.DISCONTINUED
-    ])
+    ]),
+    image: z
+      .any()
+      .refine(
+        (file) => !file || typeof file === 'string' || file instanceof File,
+        i18n.t('variant:schema.image.invalid')
+      )
+      .refine(
+        (file) => !file || typeof file === 'string' || ACCEPTED_IMAGE_TYPES.includes(file.type),
+        i18n.t('variant:schema.image.invalidType')
+      )
+      .refine(
+        (file) => !file || typeof file === 'string' || file.size <= MAX_FILE_SIZE,
+        i18n.t('variant:schema.image.maxSize')
+      )
+      .optional()
+      .nullable()
   })
   .refine(
     (data) => {

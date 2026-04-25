@@ -26,7 +26,8 @@
     "delete": "Xóa",
     "cancel": "Hủy",
     "submit": "Lưu biến thể",
-    "confirm": "Xác nhận xóa"
+    "confirm": "Xác nhận xóa",
+    "removeImage": "Xóa ảnh"
   },
   "schema": {
     "colorId": { "required": "Vui lòng chọn màu sắc" },
@@ -40,7 +41,12 @@
       "min": "Giá khuyến mãi không được âm",
       "max": "Giá khuyến mãi không được lớn hơn giá gốc"
     },
-    "stockQuantity": { "min": "Số lượng không được âm" }
+    "stockQuantity": { "min": "Số lượng không được âm" },
+    "image": {
+      "invalid": "Ảnh đại diện không hợp lệ",
+      "invalidType": "Chỉ cho phép định dạng JPG, PNG, WEBP",
+      "maxSize": "Dung lượng ảnh tối đa không được vượt quá 5MB"
+    }
   },
   "fields": {
     "colorId": { "label": "Màu sắc", "placeholder": "Chọn màu sắc..." },
@@ -57,6 +63,11 @@
         "OUT_OF_STOCK": "Hết hàng",
         "DISCONTINUED": "Ngừng kinh doanh"
       }
+    },
+    "image": {
+      "label": "Ảnh đại diện biến thể",
+      "placeholder": "Tải ảnh lên",
+      "note": "* Bỏ qua nếu không muốn đổi ảnh"
     }
   },
   "message": {

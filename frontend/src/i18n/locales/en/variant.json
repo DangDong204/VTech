@@ -26,12 +26,19 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "submit": "Save variant",
-    "confirm": "Confirm delete"
+    "confirm": "Confirm delete",
+    "removeImage": "Remove image"
   },
   "schema": {
-    "colorId": { "required": "Please select a color" },
-    "versionId": { "required": "Please select a version" },
-    "sku": { "required": "SKU is required" },
+    "colorId": {
+      "required": "Please select a color"
+    },
+    "versionId": {
+      "required": "Please select a version"
+    },
+    "sku": {
+      "required": "SKU is required"
+    },
     "basePrice": {
       "invalid": "Base price must be a number",
       "min": "Base price cannot be negative"
@@ -40,15 +47,37 @@
       "min": "Sale price cannot be negative",
       "max": "Sale price cannot be greater than base price"
     },
-    "stockQuantity": { "min": "Quantity cannot be negative" }
+    "stockQuantity": {
+      "min": "Quantity cannot be negative"
+    },
+    "image": {
+      "invalid": "Invalid variant thumbnail",
+      "invalidType": "Only JPG, PNG, and WEBP formats are allowed",
+      "maxSize": "Image size must not exceed 5MB"
+    }
   },
   "fields": {
-    "colorId": { "label": "Color", "placeholder": "Select a color..." },
-    "versionId": { "label": "Version", "placeholder": "Select a version..." },
-    "sku": { "label": "SKU", "placeholder": "Enter SKU..." },
-    "basePrice": { "label": "Base Price (VND)" },
-    "salePrice": { "label": "Sale Price (VND) - Optional" },
-    "stockQuantity": { "label": "Stock Quantity" },
+    "colorId": {
+      "label": "Color",
+      "placeholder": "Select a color..."
+    },
+    "versionId": {
+      "label": "Version",
+      "placeholder": "Select a version..."
+    },
+    "sku": {
+      "label": "SKU",
+      "placeholder": "Enter SKU..."
+    },
+    "basePrice": {
+      "label": "Base Price (VND)"
+    },
+    "salePrice": {
+      "label": "Sale Price (VND) - Optional"
+    },
+    "stockQuantity": {
+      "label": "Stock Quantity"
+    },
     "status": {
       "label": "Status",
       "options": {
@@ -57,6 +86,11 @@
         "OUT_OF_STOCK": "Out of Stock",
         "DISCONTINUED": "Discontinued"
       }
+    },
+    "image": {
+      "label": "Variant Thumbnail",
+      "placeholder": "Upload image",
+      "note": "* Skip this if you do not want to change the image"
     }
   },
   "message": {

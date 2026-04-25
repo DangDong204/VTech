@@ -45,6 +45,9 @@ public class ProductVariantEntity extends BaseEntity{
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private ProductStatus status;

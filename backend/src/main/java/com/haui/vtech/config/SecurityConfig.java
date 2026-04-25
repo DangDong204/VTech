@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF vì dùng JWT
                 .authorizeHttpRequests(auth -> auth
                         // 1. Mở toàn bộ cho nhóm API Xác thực
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/client/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
 
                         // 2. Mở cửa CHỈ VỚI METHOD GET cho các API dữ liệu công khai (Storefront)
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
@@ -51,8 +51,14 @@ public class SecurityConfig {
                                 "/api/v1/product-variants/**",
                                 "/api/v1/colors/**",
                                 "/api/v1/versions/**",
-                                "/api/v1/tags/**"
+                                "/api/v1/tags/**",
+                                // Bạn có thể giữ permitAll cho một số API GET tĩnh của client (như home page, list sp)
+                                "/api/v1/client/products/**",
+                                "/api/v1/client/categories/**"
                         ).permitAll()
+
+                        // CÁC ENDPOINT QUAN TRỌNG NHƯ GIỎ HÀNG, THANH TOÁN BẮT BUỘC AUTH
+                        .requestMatchers("/api/v1/client/cart/**", "/api/v1/client/orders/**").authenticated()
 
                         // 3. Các request còn lại (POST, PUT, DELETE của sản phẩm, hoặc mọi request tới users, orders...) BẮT BUỘC ĐĂNG NHẬP
                         .anyRequest().authenticated()

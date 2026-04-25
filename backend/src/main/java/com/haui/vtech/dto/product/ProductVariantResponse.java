@@ -18,5 +18,6 @@ public class ProductVariantResponse {
     private BigDecimal basePrice;
     private BigDecimal salePrice;
     private Integer stockQuantity;
+    private String imageUrl;
     private String status;
 }

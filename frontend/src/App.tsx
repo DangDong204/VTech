@@ -1,4 +1,5 @@
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import ScrollToTop from '@/components/common/ScrollToTop'
 import DashboardHome from '@/pages/admin/dashboard/content/DashBoardHome'
 import LayoutAdmin from '@/pages/admin/LayoutAdmin'
 import BrandPage from '@/pages/admin/manage-brand/page'
@@ -15,7 +16,7 @@ import VoucherPage from '@/pages/admin/manage-voucher/page'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import CartPage from '@/pages/user/cart/CartPage'
-import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
+// import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
 import ClientLayout from '@/pages/user/ClientLayout'
 import HomePage from '@/pages/user/home/HomePage'
 import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
@@ -34,13 +35,14 @@ function App() {
     <>
       <Toaster
         richColors
-        expand={false}
+        expand={true}
         position='bottom-right'
-        duration={5000}
+        duration={3000}
         visibleToasts={5}
         closeButton
       />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* <Route path='*' element={<NotFound404 />} /> */}
           {/* TODO: tạo các public route */}
@@ -49,7 +51,7 @@ function App() {
             <Route path='/cart' element={<CartPage />} />
             <Route path='/products' element={<ProductListPage />} />
             <Route path='/product/:slug' element={<ProductDetailPage />} />
-            <Route path='/checkout' element={<CheckoutPage />} />
+            {/* <Route path='/checkout' element={<CheckoutPage />} /> */}
             <Route element={<ProfileLayout />}>
               <Route path='/profile' element={<OverviewPage />} />
               <Route path='/orders' element={<OrdersPage />} />

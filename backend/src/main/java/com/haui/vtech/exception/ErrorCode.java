@@ -111,6 +111,10 @@ public enum ErrorCode {
     EXCEL_INVALID_FORMAT(11003, "excel.invalid.format", HttpStatus.BAD_REQUEST),
     EXCEL_READ_ERROR(11004, "excel.read.error", HttpStatus.INTERNAL_SERVER_ERROR),
     RECEIPT_DETAIL_EMPTY(110005, "receipt.detail.empty", HttpStatus.BAD_REQUEST),
+
+    CART_NOT_FOUND(12000, "cart.not.found", HttpStatus.NOT_FOUND),
+    CART_ITEM_NOT_FOUND(12001, "cart.item.not.found", HttpStatus.NOT_FOUND),
+    OUT_OF_STOCK(12002, "product.out.of.stock", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
