@@ -116,7 +116,12 @@ public enum ErrorCode {
     CART_ITEM_NOT_FOUND(12001, "cart.item.not.found", HttpStatus.NOT_FOUND),
     OUT_OF_STOCK(12002, "product.out.of.stock", HttpStatus.BAD_REQUEST),
 
-    ADDRESS_NOT_FOUND(13000, "address.not.found", HttpStatus.NOT_FOUND)
+    ADDRESS_NOT_FOUND(13000, "address.not.found", HttpStatus.NOT_FOUND),
+
+    ORDER_NOT_FOUND(14000, "order.not.found", HttpStatus.NOT_FOUND),
+    EMPTY_ORDER_ITEMS(14001, "order.items.empty", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_INVALID(14002, "order.status.invalid", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_CANCEL(14003, "order.cannot.cancel", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

@@ -25,6 +25,7 @@ interface CartContextValue {
   removeItem: (cartDetailId: string) => Promise<void>
   updateQuantity: (cartDetailId: string, qty: number) => Promise<void>
   clear: () => Promise<void>
+  fetchCart: () => Promise<void>
   totalCount: number
   subtotal: number
 }
@@ -121,6 +122,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeItem,
         updateQuantity,
         clear,
+        fetchCart,
         totalCount,
         subtotal
       }}

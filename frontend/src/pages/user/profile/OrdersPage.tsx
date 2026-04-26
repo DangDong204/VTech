@@ -1,62 +1,123 @@
-import { useState } from 'react'
-import { Search, Store } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { Search, Store, Loader2, PackageX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
+import { cancelOrderApi, getMyOrdersApi } from '@/services/order/order.api'
+import type { OrderResponse, OrderStatus } from '@/services/order/order.type'
+import { OrderDetailModal } from '@/pages/user/profile/OrderDetailModal'
 
 const ORDER_TABS = ['Tất cả', 'Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Hoàn thành', 'Đã hủy']
 
-// Mock Data
-const MOCK_ORDERS = [
-  {
-    id: 'VTECH-2404-001',
-    status: 'Đang giao',
-    date: '24/04/2026',
-    total: 34990000,
-    items: [
-      {
-        name: 'iPhone 16 Pro Max',
-        variant: '256GB - Titan Đen',
-        qty: 1,
-        price: 34990000,
-        image:
-          'https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/iphone_16_pro_max_black_1_25ea9476ce.png'
-      }
-    ]
-  },
-  {
-    id: 'VTECH-1002-089',
-    status: 'Hoàn thành',
-    date: '10/02/2026',
-    total: 450000,
-    items: [
-      {
-        name: 'Sạc nhanh Apple 20W Type-C',
-        variant: 'Trắng',
-        qty: 1,
-        price: 450000,
-        image:
-          'https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/sac_nhanh_apple_20w_type_c_1_d61a2db12f.png'
-      }
-    ]
-  }
-]
+// Dictionary dịch trạng thái từ Backend -> UI
+const STATUS_MAP: Record<OrderStatus, string> = {
+  PENDING: 'Chờ xác nhận',
+  CONFIRMED: 'Đang xử lý', // Có thể tách riêng nếu cần
+  PROCESSING: 'Đang xử lý',
+  SHIPPING: 'Đang giao',
+  DELIVERED: 'Hoàn thành',
+  CANCELLED: 'Đã hủy',
+  RETURNED: 'Hoàn trả'
+}
 
 function formatVnd(n: number) {
   return new Intl.NumberFormat('vi-VN').format(n) + '₫'
 }
 
+function formatDate(dateString: string) {
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date)
+}
+
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState('Tất cả')
+  const [orders, setOrders] = useState<OrderResponse[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<OrderResponse | null>(null)
 
-  // Lọc đơn hàng theo tab
-  const filteredOrders = MOCK_ORDERS.filter(
-    (order) => activeTab === 'Tất cả' || order.status === activeTab
-  )
+  // Fetch dữ liệu thật từ Backend
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setIsLoading(true)
+        const data = await getMyOrdersApi()
+        setOrders(data)
+      } catch {
+        toast.error('Không thể tải lịch sử đơn hàng.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchOrders()
+  }, [])
+
+  // Filter: Áp dụng cả Tab + Search
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order) => {
+      // Lọc theo Tab
+      const mappedStatus = STATUS_MAP[order.orderStatus]
+      const passTab = activeTab === 'Tất cả' || mappedStatus === activeTab
+
+      // Lọc theo Text (Tìm theo Mã ĐH hoặc Tên sản phẩm)
+      const keyword = searchTerm.toLowerCase()
+      const passSearch =
+        order.orderCode.toLowerCase().includes(keyword) ||
+        order.orderDetails.some((item) => item.productName.toLowerCase().includes(keyword))
+
+      return passTab && passSearch
+    })
+  }, [orders, activeTab, searchTerm])
+
+  const getStatusBadgeVariant = (status: OrderStatus) => {
+    switch (status) {
+      case 'DELIVERED':
+        return 'default'
+      case 'CANCELLED':
+      case 'RETURNED':
+        return 'destructive'
+      default:
+        return 'secondary'
+    }
+  }
+
+  // THÊM HÀM XỬ LÝ HỦY ĐƠN NÀY
+  const handleCancelOrder = async (orderId: string) => {
+    const reason = window.prompt('Vui lòng nhập lý do hủy đơn (không bắt buộc):')
+    // Nếu người dùng bấm Cancel ở cửa sổ prompt (reason === null) thì không làm gì cả
+    if (reason === null) return
+
+    try {
+      setCancellingId(orderId)
+      const updatedOrder = await cancelOrderApi(orderId, reason)
+      toast.success('Hủy đơn hàng thành công!')
+
+      // Thay thế đơn hàng cũ bằng đơn hàng vừa được cập nhật trạng thái
+      setOrders((prevOrders) => prevOrders.map((o) => (o.id === orderId ? updatedOrder : o)))
+    } catch {
+      toast.error('Có lỗi xảy ra khi hủy đơn!')
+    } finally {
+      setCancellingId(null)
+    }
+  }
+
+  const getStatusBadgeStyle = (status: OrderStatus) => {
+    if (status === 'SHIPPING') return 'bg-blue-50 text-blue-600 border-blue-200'
+    if (status === 'PENDING') return 'bg-amber-50 text-amber-600 border-amber-200'
+    return ''
+  }
 
   return (
     <div className='flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500'>
-      <div className='bg-white rounded-xl border border-border/50 shadow-sm overflow-hidden'>
+      <div className='bg-white rounded-xl border border-border/50 shadow-sm overflow-hidden min-h-[60vh] flex flex-col'>
         {/* Tabs */}
         <div className='flex overflow-x-auto scrollbar-hide border-b'>
           {ORDER_TABS.map((tab) => (
@@ -79,90 +140,144 @@ export default function OrdersPage() {
           <div className='relative max-w-md'>
             <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
             <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder='Tìm theo mã đơn hàng, tên sản phẩm...'
               className='pl-9 bg-white border-slate-200'
             />
           </div>
         </div>
 
-        {/* Danh sách đơn hàng */}
-        <div className='flex flex-col gap-4 p-4'>
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((order) => (
-              <div key={order.id} className='border rounded-xl bg-white overflow-hidden'>
-                {/* Header đơn hàng */}
-                <div className='flex items-center justify-between p-4 border-b bg-slate-50/50'>
-                  <div className='flex items-center gap-4 text-sm'>
-                    <span className='font-bold text-slate-800'>Mã ĐH: {order.id}</span>
-                    <span className='text-slate-500 hidden sm:inline'>Ngày đặt: {order.date}</span>
-                  </div>
-                  <Badge
-                    variant={order.status === 'Hoàn thành' ? 'default' : 'secondary'}
-                    className={
-                      order.status === 'Đang giao' ? 'bg-blue-50 text-blue-600 border-blue-200' : ''
-                    }
-                  >
-                    {order.status}
-                  </Badge>
-                </div>
-
-                {/* Body đơn hàng */}
-                <div className='p-4'>
-                  {order.items.map((item, idx) => (
-                    <div key={idx} className='flex gap-4 mb-4 last:mb-0'>
-                      <div className='h-20 w-20 shrink-0 border rounded-md overflow-hidden bg-white flex items-center justify-center p-2'>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className='max-h-full max-w-full object-contain'
-                        />
-                      </div>
-                      <div className='flex-1 min-w-0'>
-                        <h4 className='text-sm font-semibold text-slate-800 truncate'>
-                          {item.name}
-                        </h4>
-                        <p className='text-xs text-slate-500 mt-1'>Phân loại: {item.variant}</p>
-                        <p className='text-sm font-medium mt-1'>x{item.qty}</p>
-                      </div>
-                      <div className='text-right shrink-0'>
-                        <span className='text-sm font-bold text-destructive'>
-                          {formatVnd(item.price)}
-                        </span>
-                      </div>
+        {/* Trạng thái Loading */}
+        {isLoading ? (
+          <div className='flex-1 flex flex-col items-center justify-center text-slate-400 py-12'>
+            <Loader2 className='h-8 w-8 animate-spin mb-4 text-slate-300' />
+            <p className='text-sm'>Đang tải lịch sử đơn hàng...</p>
+          </div>
+        ) : (
+          /* Danh sách đơn hàng */
+          <div className='flex flex-col gap-4 p-4 bg-slate-50/50 flex-1'>
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className='border rounded-xl bg-white overflow-hidden shadow-sm transition-all duration-300 hover:border-red-500 hover:shadow-md hover:-translate-y-1 hover:scale-[1.01]'
+                >
+                  {/* Header đơn hàng */}
+                  <div className='flex items-center justify-between p-4 border-b bg-slate-50/50'>
+                    <div className='flex items-center gap-4 text-sm'>
+                      <span className='font-bold text-slate-800 uppercase'>
+                        Mã ĐH: {order.orderCode}
+                      </span>
+                      <span className='text-slate-500 hidden sm:inline'>
+                        Ngày đặt: {formatDate(order.createdAt)}
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <Badge
+                      variant={getStatusBadgeVariant(order.orderStatus)}
+                      className={getStatusBadgeStyle(order.orderStatus)}
+                    >
+                      {STATUS_MAP[order.orderStatus]}
+                    </Badge>
+                  </div>
 
-                {/* Footer đơn hàng */}
-                <div className='p-4 border-t flex flex-wrap items-center justify-between gap-4 bg-slate-50/30'>
-                  <div className='flex items-center gap-2'>
-                    <Store className='h-4 w-4 text-slate-400' />
-                    <span className='text-sm text-slate-600'>Thành tiền:</span>
-                    <span className='text-lg font-bold text-destructive'>
-                      {formatVnd(order.total)}
-                    </span>
+                  {/* Body đơn hàng: Danh sách sản phẩm */}
+                  <div className='p-4'>
+                    {order.orderDetails.map((item) => (
+                      <div key={item.id} className='flex gap-4 mb-4 last:mb-0'>
+                        <div className='h-20 w-20 shrink-0 border border-slate-100 rounded-md overflow-hidden bg-white flex items-center justify-center p-1'>
+                          <img
+                            src={item.imageUrl}
+                            alt={item.productName}
+                            className='max-h-full max-w-full object-contain'
+                          />
+                        </div>
+                        <div className='flex-1 min-w-0'>
+                          <h4 className='text-sm font-semibold text-slate-800 truncate'>
+                            {item.productName} {item.variantName}
+                          </h4>
+                          <div className='flex items-center gap-1.5 text-xs text-slate-500 mt-1'>
+                            <span>Màu:</span>
+                            <span className='font-medium'>{item.colorName}</span>
+                          </div>
+                          <p className='text-sm font-medium mt-1'>x{item.quantity}</p>
+                        </div>
+                        <div className='text-right shrink-0 flex flex-col justify-between'>
+                          <span className='text-sm font-bold text-red-600'>
+                            {formatVnd(item.price)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className='flex items-center gap-3'>
-                    <Button variant='outline' size='sm'>
-                      Xem chi tiết
-                    </Button>
-                    {order.status === 'Hoàn thành' && <Button size='sm'>Mua lại</Button>}
+
+                  {/* Footer đơn hàng */}
+                  <div className='p-4 border-t flex flex-wrap items-center justify-between gap-4 bg-slate-50/30'>
+                    <div className='flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2'>
+                      <div className='flex items-center gap-2'>
+                        <Store className='h-4 w-4 text-slate-400' />
+                        <span className='text-sm text-slate-600'>Thành tiền:</span>
+                      </div>
+                      <span className='text-lg font-bold text-red-600'>
+                        {formatVnd(order.finalPrice)}
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-3 w-full sm:w-auto'>
+                      {/* TODO: Huỷ đơn hàng */}
+                      {order.orderStatus === 'PENDING' && (
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          className='flex-1 sm:flex-none text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200'
+                          onClick={() => handleCancelOrder(order.id)}
+                          disabled={cancellingId === order.id}
+                        >
+                          {cancellingId === order.id && (
+                            <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
+                          )}
+                          Hủy đơn
+                        </Button>
+                      )}
+                      {/* TODO: Xem chi tiết đơn hàng */}
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        className='flex-1 sm:flex-none'
+                        onClick={() => setSelectedOrder(order)}
+                      >
+                        Xem chi tiết
+                      </Button>
+                      {(order.orderStatus === 'DELIVERED' || order.orderStatus === 'CANCELLED') && (
+                        <Button size='sm' className='flex-1 sm:flex-none'>
+                          Mua lại
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className='py-20 flex flex-col items-center justify-center text-center'>
+                <div className='h-20 w-20 bg-slate-100 rounded-full flex items-center justify-center mb-4'>
+                  <PackageX className='h-10 w-10 text-slate-300' />
+                </div>
+                <h3 className='text-lg font-bold text-slate-700'>Không tìm thấy đơn hàng</h3>
+                <p className='text-slate-500 text-sm mt-1'>
+                  {searchTerm
+                    ? 'Không có đơn hàng nào khớp với tìm kiếm.'
+                    : 'Bạn chưa có đơn hàng nào trong trạng thái này.'}
+                </p>
               </div>
-            ))
-          ) : (
-            <div className='py-12 text-center'>
-              <img
-                src='/empty-cart.png'
-                alt='Empty'
-                className='h-24 mx-auto mb-4 opacity-50 grayscale'
-              />
-              <p className='text-slate-500'>Không có đơn hàng nào.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
+      <OrderDetailModal
+        order={selectedOrder}
+        isOpen={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        statusMap={STATUS_MAP}
+      />
     </div>
   )
 }
