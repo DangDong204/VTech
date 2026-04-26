@@ -1,0 +1,64 @@
+{
+  "table": {
+    "columns": {
+      "orderCode": "Mã ĐH",
+      "customer": "Khách hàng",
+      "total": "Tổng tiền",
+      "paymentStatus": "Thanh toán",
+      "orderStatus": "Trạng thái",
+      "createdAt": "Ngày đặt",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có đơn hàng nào"
+  },
+  "titles": {
+    "list": "Danh sách đơn hàng"
+  },
+  "filters": {
+    "search": "Tìm mã đơn, SĐT...",
+    "status": {
+      "label": "Trạng thái đơn",
+      "all": "Tất cả trạng thái"
+    },
+    "reset": "Đặt lại"
+  },
+  "status": {
+    "PENDING": "Chờ xác nhận",
+    "CONFIRMED": "Đã xác nhận",
+    "PROCESSING": "Đang đóng gói",
+    "SHIPPING": "Đang giao hàng",
+    "DELIVERED": "Đã giao thành công",
+    "CANCELLED": "Đã hủy",
+    "RETURNED": "Hoàn trả"
+  },
+  "paymentStatus": {
+    "PENDING": "Chưa thanh toán",
+    "PAID": "Đã thanh toán",
+    "REFUNDED": "Đã hoàn tiền",
+    "FAILED": "Thất bại"
+  },
+  "actions": {
+    "view": "Xem chi tiết",
+    "updateStatus": "Cập nhật trạng thái",
+    "cancel": "Hủy",
+    "save": "Lưu thay đổi"
+  },
+  "message": {
+    "updateSuccess": "Cập nhật trạng thái thành công!",
+    "updateError": "Lỗi khi cập nhật trạng thái!"
+  },
+  "updateDialog": {
+    "current": "Hiện tại",
+    "next": "Tiếp theo",
+    "none": "Không có",
+    "confirmTransition": "Xác nhận chuyển trạng thái",
+    "note": "Ghi chú",
+    "optional": "(tùy chọn)",
+    "notePlaceholder": "Nhập ghi chú cho việc chuyển trạng thái này...",
+    "cannotUpdate": "Đơn hàng này không thể cập nhật trạng thái thêm.",
+    "slider": {
+      "confirmed": "Đã xác nhận ✓",
+      "dragToConfirm": "Kéo sang phải để xác nhận →"
+    }
+  }
+}

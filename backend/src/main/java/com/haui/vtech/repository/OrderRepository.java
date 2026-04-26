@@ -15,4 +15,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
 
     // Lấy chi tiết 1 đơn hàng đảm bảo thuộc về user đó (tránh lỗi bảo mật IDOR)
     Optional<OrderEntity> findByIdAndUserId(String id, String userId);
+
+    List<OrderEntity> findAllByOrderByCreatedAtDesc();
 }

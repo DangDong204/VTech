@@ -60,3 +60,8 @@ export interface OrderRequest {
   note: string
   voucherIds: string[]
 }
+
+export interface UpdateOrderStatusPayload {
+  newStatus: OrderStatus
+  note?: string
+}

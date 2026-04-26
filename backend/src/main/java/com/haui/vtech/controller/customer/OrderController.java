@@ -64,4 +64,29 @@ public class OrderController {
                 .message(messageUtil.getMessage("order.cancelled.success"))
                 .build();
     }
+
+    @PutMapping("/{orderId}/confirm-receipt")
+    public ApiResponse<OrderResponse> confirmReceipt(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable String orderId) {
+
+        String userId = userDetails.getUser().getId();
+        return ApiResponse.<OrderResponse>builder()
+                .data(orderService.confirmReceipt(userId, orderId))
+                .message(messageUtil.getMessage("order.receipt.success"))
+                .build();
+    }
+
+    @PutMapping("/{orderId}/return")
+    public ApiResponse<OrderResponse> returnOrder(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable String orderId,
+            @RequestParam(required = false, defaultValue = "Khách hàng yêu cầu hoàn trả") String returnReason) {
+
+        String userId = userDetails.getUser().getId();
+        return ApiResponse.<OrderResponse>builder()
+                .data(orderService.returnOrder(userId, orderId, returnReason))
+                .message(messageUtil.getMessage("order.returned.success"))
+                .build();
+    }
 }

@@ -1,0 +1,64 @@
+{
+  "table": {
+    "columns": {
+      "orderCode": "Order Code",
+      "customer": "Customer",
+      "total": "Total Amount",
+      "paymentStatus": "Payment Status",
+      "orderStatus": "Order Status",
+      "createdAt": "Order Date",
+      "actions": "Actions"
+    },
+    "noResults": "No orders found"
+  },
+  "titles": {
+    "list": "Order List"
+  },
+  "filters": {
+    "search": "Search order code, phone number...",
+    "status": {
+      "label": "Order Status",
+      "all": "All Statuses"
+    },
+    "reset": "Reset"
+  },
+  "status": {
+    "PENDING": "Pending Confirmation",
+    "CONFIRMED": "Confirmed",
+    "PROCESSING": "Processing",
+    "SHIPPING": "Shipping",
+    "DELIVERED": "Delivered Successfully",
+    "CANCELLED": "Cancelled",
+    "RETURNED": "Returned"
+  },
+  "paymentStatus": {
+    "PENDING": "Pending Payment",
+    "PAID": "Paid",
+    "REFUNDED": "Refunded",
+    "FAILED": "Failed"
+  },
+  "actions": {
+    "view": "View Details",
+    "updateStatus": "Update Status",
+    "cancel": "Cancel",
+    "save": "Save Changes"
+  },
+  "message": {
+    "updateSuccess": "Order status updated successfully!",
+    "updateError": "Failed to update order status!"
+  },
+  "updateDialog": {
+    "current": "Current",
+    "next": "Next",
+    "none": "None",
+    "confirmTransition": "Confirm Status Transition",
+    "note": "Note",
+    "optional": "(optional)",
+    "notePlaceholder": "Enter a note for this status transition...",
+    "cannotUpdate": "This order can no longer be updated.",
+    "slider": {
+      "confirmed": "Confirmed ✓",
+      "dragToConfirm": "Drag right to confirm →"
+    }
+  }
+}

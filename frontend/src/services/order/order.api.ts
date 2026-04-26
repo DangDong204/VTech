@@ -1,7 +1,11 @@
 import { api } from '@/utils/axiosCustomize'
 
 import type { ApiResponse } from '@/defines/apiResponse'
-import type { OrderRequest, OrderResponse } from '@/services/order/order.type'
+import type {
+  OrderRequest,
+  OrderResponse,
+  UpdateOrderStatusPayload
+} from '@/services/order/order.type'
 
 export const createOrderApi = async (data: OrderRequest): Promise<OrderResponse> => {
   const res = await api.post<ApiResponse<OrderResponse>>('/client/orders', data)
@@ -22,5 +26,36 @@ export const cancelOrderApi = async (orderId: string, reason?: string): Promise<
   const res = await api.put<ApiResponse<OrderResponse>>(`/client/orders/${orderId}/cancel`, null, {
     params: { cancelReason: reason }
   })
+  return res.data.data
+}
+
+export const confirmReceiptApi = async (orderId: string): Promise<OrderResponse> => {
+  const res = await api.put<ApiResponse<OrderResponse>>(`/client/orders/${orderId}/confirm-receipt`)
+  return res.data.data
+}
+
+export const returnOrderApi = async (orderId: string, reason?: string): Promise<OrderResponse> => {
+  const res = await api.put<ApiResponse<OrderResponse>>(`/client/orders/${orderId}/return`, null, {
+    params: { returnReason: reason }
+  })
+  return res.data.data
+}
+
+// ADMIN
+export const getAllOrdersAdminApi = async (): Promise<OrderResponse[]> => {
+  const res = await api.get<ApiResponse<OrderResponse[]>>('/admin/orders')
+  return res.data.data
+}
+
+export const getOrderDetailAdminApi = async (orderId: string): Promise<OrderResponse> => {
+  const res = await api.get<ApiResponse<OrderResponse>>(`/admin/orders/${orderId}`)
+  return res.data.data
+}
+
+export const updateOrderStatusApi = async (
+  orderId: string,
+  payload: UpdateOrderStatusPayload
+): Promise<OrderResponse> => {
+  const res = await api.put<ApiResponse<OrderResponse>>(`/admin/orders/${orderId}/status`, payload)
   return res.data.data
 }

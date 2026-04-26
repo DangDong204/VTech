@@ -5,6 +5,7 @@ import LayoutAdmin from '@/pages/admin/LayoutAdmin'
 import BrandPage from '@/pages/admin/manage-brand/page'
 import CategoryPage from '@/pages/admin/manage-category/page'
 import ColorPage from '@/pages/admin/manage-color/page'
+import OrderPage from '@/pages/admin/manage-order/page'
 import ProductPage from '@/pages/admin/manage-product/page'
 import PromotionPage from '@/pages/admin/manage-promotion/page'
 import ReceiptPage from '@/pages/admin/manage-receipt/page'
@@ -17,7 +18,6 @@ import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import CartPage from '@/pages/user/cart/CartPage'
 import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
-// import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
 import ClientLayout from '@/pages/user/ClientLayout'
 import HomePage from '@/pages/user/home/HomePage'
 import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
@@ -79,6 +79,7 @@ function App() {
               <Route path='vouchers' element={<VoucherPage />} />
               <Route path='promotions' element={<PromotionPage />} />
               <Route path='receipts' element={<ReceiptPage />} />
+              <Route path='orders' element={<OrderPage />} />
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}

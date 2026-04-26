@@ -75,7 +75,7 @@ const data = {
 
         {
           title: 'Receipt',
-          url: '#'
+          url: '/dashboard/receipt'
         }
       ]
     },
@@ -83,21 +83,14 @@ const data = {
       title: 'Orders',
       url: '#',
       icon: ShoppingCart,
+      isActive: true,
       items: [
         {
-          title: 'Introduction',
-          url: '#'
+          title: 'Quản lý đơn hàng',
+          url: '/dashboard/orders'
         },
         {
-          title: 'Get Started',
-          url: '#'
-        },
-        {
-          title: 'Tutorials',
-          url: '#'
-        },
-        {
-          title: 'Changelog',
+          title: 'Doanh thu',
           url: '#'
         }
       ]

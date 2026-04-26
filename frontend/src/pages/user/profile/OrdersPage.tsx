@@ -1,10 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Store, Loader2, PackageX } from 'lucide-react'
+import { Search, Store, Loader2, PackageX, CheckCircle2, RefreshCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { cancelOrderApi, getMyOrdersApi } from '@/services/order/order.api'
+import {
+  cancelOrderApi,
+  getMyOrdersApi,
+  confirmReceiptApi,
+  returnOrderApi
+} from '@/services/order/order.api'
 import type { OrderResponse, OrderStatus } from '@/services/order/order.type'
 import { OrderDetailModal } from '@/pages/user/profile/OrderDetailModal'
 
@@ -13,7 +18,7 @@ const ORDER_TABS = ['Tất cả', 'Chờ xác nhận', 'Đang xử lý', 'Đang 
 // Dictionary dịch trạng thái từ Backend -> UI
 const STATUS_MAP: Record<OrderStatus, string> = {
   PENDING: 'Chờ xác nhận',
-  CONFIRMED: 'Đang xử lý', // Có thể tách riêng nếu cần
+  CONFIRMED: 'Đang xử lý',
   PROCESSING: 'Đang xử lý',
   SHIPPING: 'Đang giao',
   DELIVERED: 'Hoàn thành',
@@ -41,7 +46,12 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Loading states cho các hành động
   const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  const [returningId, setReturningId] = useState<string | null>(null)
+
   const [selectedOrder, setSelectedOrder] = useState<OrderResponse | null>(null)
 
   // Fetch dữ liệu thật từ Backend
@@ -63,11 +73,9 @@ export default function OrdersPage() {
   // Filter: Áp dụng cả Tab + Search
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
-      // Lọc theo Tab
       const mappedStatus = STATUS_MAP[order.orderStatus]
       const passTab = activeTab === 'Tất cả' || mappedStatus === activeTab
 
-      // Lọc theo Text (Tìm theo Mã ĐH hoặc Tên sản phẩm)
       const keyword = searchTerm.toLowerCase()
       const passSearch =
         order.orderCode.toLowerCase().includes(keyword) ||
@@ -89,19 +97,25 @@ export default function OrdersPage() {
     }
   }
 
-  // THÊM HÀM XỬ LÝ HỦY ĐƠN NÀY
+  const getStatusBadgeStyle = (status: OrderStatus) => {
+    if (status === 'SHIPPING') return 'bg-blue-50 text-blue-600 border-blue-200'
+    if (status === 'PENDING') return 'bg-amber-50 text-amber-600 border-amber-200'
+    if (status === 'RETURNED') return 'bg-slate-100 text-slate-700 border-slate-200'
+    return ''
+  }
+
+  // --- CÁC HÀM XỬ LÝ HÀNH ĐỘNG ĐƠN HÀNG ---
+
+  // 1. Hủy đơn (Khi PENDING)
   const handleCancelOrder = async (orderId: string) => {
     const reason = window.prompt('Vui lòng nhập lý do hủy đơn (không bắt buộc):')
-    // Nếu người dùng bấm Cancel ở cửa sổ prompt (reason === null) thì không làm gì cả
     if (reason === null) return
 
     try {
       setCancellingId(orderId)
       const updatedOrder = await cancelOrderApi(orderId, reason)
       toast.success('Hủy đơn hàng thành công!')
-
-      // Thay thế đơn hàng cũ bằng đơn hàng vừa được cập nhật trạng thái
-      setOrders((prevOrders) => prevOrders.map((o) => (o.id === orderId ? updatedOrder : o)))
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)))
     } catch {
       toast.error('Có lỗi xảy ra khi hủy đơn!')
     } finally {
@@ -109,10 +123,43 @@ export default function OrdersPage() {
     }
   }
 
-  const getStatusBadgeStyle = (status: OrderStatus) => {
-    if (status === 'SHIPPING') return 'bg-blue-50 text-blue-600 border-blue-200'
-    if (status === 'PENDING') return 'bg-amber-50 text-amber-600 border-amber-200'
-    return ''
+  // 2. Xác nhận đã nhận hàng (Khi SHIPPING)
+  const handleConfirmReceipt = async (orderId: string) => {
+    if (!window.confirm('Bạn xác nhận đã nhận được hàng và sản phẩm không có vấn đề gì?')) return
+
+    try {
+      setConfirmingId(orderId)
+      const updatedOrder = await confirmReceiptApi(orderId)
+      toast.success('Cảm ơn bạn đã mua sắm tại VTech!')
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)))
+    } catch {
+      toast.error('Có lỗi xảy ra!')
+    } finally {
+      setConfirmingId(null)
+    }
+  }
+
+  // 3. Hoàn trả (Khi DELIVERED)
+  const handleReturnOrder = async (orderId: string) => {
+    const reason = window.prompt(
+      'Vui lòng nhập lý do hoàn trả (Ví dụ: Hàng lỗi, không đúng mô tả...):'
+    )
+    if (reason === null) return
+    if (reason.trim() === '') {
+      toast.error('Bạn cần nhập lý do hoàn trả để admin xử lý.')
+      return
+    }
+
+    try {
+      setReturningId(orderId)
+      const updatedOrder = await returnOrderApi(orderId, reason)
+      toast.success('Đã gửi yêu cầu hoàn trả thành công!')
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)))
+    } catch {
+      toast.error('Có lỗi xảy ra khi yêu cầu hoàn trả!')
+    } finally {
+      setReturningId(null)
+    }
   }
 
   return (
@@ -222,8 +269,10 @@ export default function OrdersPage() {
                         {formatVnd(order.finalPrice)}
                       </span>
                     </div>
-                    <div className='flex items-center gap-3 w-full sm:w-auto'>
-                      {/* TODO: Huỷ đơn hàng */}
+
+                    {/* CÁC NÚT THAO TÁC */}
+                    <div className='flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end'>
+                      {/* Nút: Hủy đơn hàng */}
                       {order.orderStatus === 'PENDING' && (
                         <Button
                           variant='outline'
@@ -238,7 +287,44 @@ export default function OrdersPage() {
                           Hủy đơn
                         </Button>
                       )}
-                      {/* TODO: Xem chi tiết đơn hàng */}
+
+                      {/* Nút: Đã nhận hàng */}
+                      {order.orderStatus === 'SHIPPING' && (
+                        <Button
+                          variant='default'
+                          size='sm'
+                          className='flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white'
+                          onClick={() => handleConfirmReceipt(order.id)}
+                          disabled={confirmingId === order.id}
+                        >
+                          {confirmingId === order.id ? (
+                            <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
+                          ) : (
+                            <CheckCircle2 className='mr-1.5 h-3.5 w-3.5' />
+                          )}
+                          Đã nhận hàng
+                        </Button>
+                      )}
+
+                      {/* Nút: Hoàn trả */}
+                      {order.orderStatus === 'DELIVERED' && (
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          className='flex-1 sm:flex-none text-slate-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200'
+                          onClick={() => handleReturnOrder(order.id)}
+                          disabled={returningId === order.id}
+                        >
+                          {returningId === order.id ? (
+                            <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
+                          ) : (
+                            <RefreshCcw className='mr-1.5 h-3.5 w-3.5' />
+                          )}
+                          Hoàn trả
+                        </Button>
+                      )}
+
+                      {/* Nút: Xem chi tiết */}
                       <Button
                         variant='outline'
                         size='sm'
@@ -247,8 +333,13 @@ export default function OrdersPage() {
                       >
                         Xem chi tiết
                       </Button>
-                      {(order.orderStatus === 'DELIVERED' || order.orderStatus === 'CANCELLED') && (
-                        <Button size='sm' className='flex-1 sm:flex-none'>
+
+                      {/* Nút: Mua lại (Khi đã hoàn thành, bị hủy hoặc hoàn trả) */}
+                      {['DELIVERED', 'CANCELLED', 'RETURNED'].includes(order.orderStatus) && (
+                        <Button
+                          size='sm'
+                          className='flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white'
+                        >
                           Mua lại
                         </Button>
                       )}

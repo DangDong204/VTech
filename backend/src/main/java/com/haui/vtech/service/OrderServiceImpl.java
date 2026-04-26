@@ -6,6 +6,7 @@ import com.haui.vtech.dto.order.OrderRequest;
 import com.haui.vtech.dto.order.OrderResponse;
 import com.haui.vtech.entity.*;
 import com.haui.vtech.enums.OrderStatus;
+import com.haui.vtech.enums.PaymentStatus;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.repository.*;
@@ -40,17 +41,18 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal subTotal = BigDecimal.ZERO;
         List<OrderDetailEntity> orderDetails = new ArrayList<>();
 
-        // 1. Kiểm tra tồn kho & Tính tiền (ĐÃ BỎ LOGIC TRỪ KHO Ở BƯỚC NÀY)
+        // 1. Kiểm tra tồn kho & TRỪ KHO NGAY LẬP TỨC ĐỂ GIỮ CHỖ
         for (CartDetailEntity cartItem : cartItems) {
             ProductVariantEntity variant = variantRepository.findById(cartItem.getVariantId())
                     .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, cartItem.getVariantId()));
 
-            // Vẫn kiểm tra xem kho có đủ không để báo lỗi ngay lúc đặt
             if (variant.getStockQuantity() < cartItem.getQuantity()) {
                 throw new AppException(ErrorCode.OUT_OF_STOCK, String.valueOf(variant.getStockQuantity()));
             }
 
-            // ĐÃ XÓA đoạn variant.setStockQuantity(...) ở đây!
+            // Trừ tồn kho
+            variant.setStockQuantity(variant.getStockQuantity() - cartItem.getQuantity());
+            variantRepository.save(variant);
 
             BigDecimal itemTotal = variant.getSalePrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
             subTotal = subTotal.add(itemTotal);
@@ -87,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
                 .paymentMethod(request.getPaymentMethod())
                 .note(request.getNote())
                 .voucherIds(request.getVoucherIds())
-                .build(); // PrePersist tự động set PENDING
+                .build();
 
         // Map ngược order vào detail
         orderDetails.forEach(detail -> detail.setOrder(order));
@@ -136,15 +138,161 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_CANNOT_CANCEL);
         }
 
+        // 1. CỘNG LẠI TỒN KHO VÌ KHÁCH HỦY ĐƠN
+        for (OrderDetailEntity detail : order.getOrderDetails()) {
+            ProductVariantEntity variant = variantRepository.findById(detail.getVariantId())
+                    .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, detail.getVariantId()));
+
+            variant.setStockQuantity(variant.getStockQuantity() + detail.getQuantity());
+            variantRepository.save(variant);
+        }
+
+        // 2. Chuyển trạng thái
         OrderStatus oldStatus = order.getOrderStatus();
         order.setOrderStatus(OrderStatus.CANCELLED);
 
-        // Lưu lịch sử hủy đơn
+        // 3. Lưu lịch sử hủy đơn
         OrderHistoryEntity history = OrderHistoryEntity.builder()
                 .order(order)
                 .oldStatus(oldStatus)
                 .newStatus(OrderStatus.CANCELLED)
                 .note(cancelReason != null && !cancelReason.isBlank() ? cancelReason : "Khách hàng tự hủy đơn")
+                .createdBy(userId)
+                .build();
+        order.getOrderHistories().add(history);
+
+        OrderEntity savedOrder = orderRepository.save(order);
+        return mapToOrderResponse(savedOrder);
+    }
+
+    // ======================== PHẦN DÀNH CHO ADMIN ========================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(this::mapToOrderResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderDetailForAdmin(String orderId) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        return mapToOrderResponse(order);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse updateOrderStatus(String adminId, String orderId, OrderStatus newStatus, String note) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        OrderStatus oldStatus = order.getOrderStatus();
+
+        // Validate luồng trạng thái 1 chiều bắt buộc của Admin
+        boolean isValidTransition = false;
+        if (oldStatus == OrderStatus.PENDING && newStatus == OrderStatus.CONFIRMED) isValidTransition = true;
+        if (oldStatus == OrderStatus.CONFIRMED && newStatus == OrderStatus.PROCESSING) isValidTransition = true;
+        if (oldStatus == OrderStatus.PROCESSING && newStatus == OrderStatus.SHIPPING) isValidTransition = true;
+
+        if (!isValidTransition) {
+            throw new AppException(ErrorCode.ORDER_TRANSITION_INVALID);
+        }
+
+        order.setOrderStatus(newStatus);
+
+        OrderHistoryEntity history = OrderHistoryEntity.builder()
+                .order(order)
+                .oldStatus(oldStatus)
+                .newStatus(newStatus)
+                .note(note != null && !note.isBlank() ? note : "Cập nhật trạng thái bởi Admin")
+                .createdBy(adminId)
+                .build();
+        order.getOrderHistories().add(history);
+
+        OrderEntity savedOrder = orderRepository.save(order);
+        return mapToOrderResponse(savedOrder);
+    }
+
+    // ======================== PHẦN DÀNH CHO USER BỔ SUNG ========================
+
+    @Override
+    @Transactional
+    public OrderResponse confirmReceipt(String userId, String orderId) {
+        OrderEntity order = orderRepository.findByIdAndUserId(orderId, userId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getOrderStatus() != OrderStatus.SHIPPING) {
+            throw new AppException(ErrorCode.ORDER_NOT_SHIPPING);
+        }
+
+        OrderStatus oldStatus = order.getOrderStatus();
+        order.setOrderStatus(OrderStatus.DELIVERED);
+
+        // Khi nhận hàng thành công, trạng thái thanh toán chuyển thành PAID (nếu đang là PENDING của COD)
+        if (order.getPaymentStatus() == PaymentStatus.PENDING) {
+            order.setPaymentStatus(PaymentStatus.PAID);
+        }
+
+        OrderHistoryEntity history = OrderHistoryEntity.builder()
+                .order(order)
+                .oldStatus(oldStatus)
+                .newStatus(OrderStatus.DELIVERED)
+                .note("Khách hàng đã xác nhận nhận được hàng")
+                .createdBy(userId)
+                .build();
+        order.getOrderHistories().add(history);
+
+        OrderEntity savedOrder = orderRepository.save(order);
+        return mapToOrderResponse(savedOrder);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse returnOrder(String userId, String orderId, String returnReason) {
+        OrderEntity order = orderRepository.findByIdAndUserId(orderId, userId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getOrderStatus() != OrderStatus.DELIVERED) {
+            throw new AppException(ErrorCode.ORDER_NOT_DELIVERED);
+        }
+
+        // Tìm thời điểm đơn hàng được chuyển sang DELIVERED
+        OrderHistoryEntity deliveryHistory = order.getOrderHistories().stream()
+                .filter(h -> h.getNewStatus() == OrderStatus.DELIVERED)
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
+
+        // Kiểm tra điều kiện 30 ngày
+        if (deliveryHistory.getCreatedAt().plusDays(30).isBefore(java.time.LocalDateTime.now())) {
+            throw new AppException(ErrorCode.ORDER_RETURN_EXPIRED);
+        }
+
+        // 1. Cộng lại tồn kho
+        for (OrderDetailEntity detail : order.getOrderDetails()) {
+            ProductVariantEntity variant = variantRepository.findById(detail.getVariantId())
+                    .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, detail.getVariantId()));
+
+            variant.setStockQuantity(variant.getStockQuantity() + detail.getQuantity());
+            variantRepository.save(variant);
+        }
+
+        // 2. Chuyển trạng thái
+        OrderStatus oldStatus = order.getOrderStatus();
+        order.setOrderStatus(OrderStatus.RETURNED);
+
+        // Hoàn trả tiền
+        if (order.getPaymentStatus() == PaymentStatus.PAID) {
+            order.setPaymentStatus(PaymentStatus.REFUNDED);
+        }
+
+        OrderHistoryEntity history = OrderHistoryEntity.builder()
+                .order(order)
+                .oldStatus(oldStatus)
+                .newStatus(OrderStatus.RETURNED)
+                .note(returnReason != null && !returnReason.isBlank() ? returnReason : "Khách hàng hoàn trả đơn")
                 .createdBy(userId)
                 .build();
         order.getOrderHistories().add(history);
@@ -227,24 +375,12 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_STATUS_INVALID);
         }
 
-        // 1. DUYỆT TỪNG CHI TIẾT ĐƠN ĐỂ TRỪ KHO TẠI ĐÂY
-        for (OrderDetailEntity detail : order.getOrderDetails()) {
-            ProductVariantEntity variant = variantRepository.findById(detail.getVariantId())
-                    .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, detail.getVariantId()));
+        // VÌ ĐÃ TRỪ KHO LÚC KHÁCH ĐẶT RỒI NÊN ADMIN XÁC NHẬN KHÔNG CẦN TRỪ KHO NỮA
 
-            // Lúc này admin xác nhận mới check kho lại lần cuối, nếu đủ thì trừ
-            if (variant.getStockQuantity() < detail.getQuantity()) {
-                throw new AppException(ErrorCode.OUT_OF_STOCK, "Sản phẩm " + variant.getSku() + " không đủ tồn kho!");
-            }
-
-            variant.setStockQuantity(variant.getStockQuantity() - detail.getQuantity());
-            variantRepository.save(variant);
-        }
-
-        // 2. Chuyển trạng thái
+        // 1. Chuyển trạng thái
         order.setOrderStatus(OrderStatus.CONFIRMED);
 
-        // 3. Ghi log lịch sử
+        // 2. Ghi log lịch sử
         OrderHistoryEntity history = OrderHistoryEntity.builder()
                 .order(order)
                 .oldStatus(OrderStatus.PENDING)
