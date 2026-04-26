@@ -59,3 +59,21 @@ export const updateOrderStatusApi = async (
   const res = await api.put<ApiResponse<OrderResponse>>(`/admin/orders/${orderId}/status`, payload)
   return res.data.data
 }
+
+export const exportInvoiceAdminApi = async (orderId: string, orderCode: string): Promise<void> => {
+  const res = await api.get(`/admin/orders/${orderId}/export-invoice`, {
+    responseType: 'blob' // Rất quan trọng để tải file
+  })
+
+  // Xử lý tạo link ảo để trình duyệt tự động tải file xuống
+  const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', `Hoa_Don_${orderCode}.pdf`) // Tên file tải về
+  document.body.appendChild(link)
+  link.click()
+
+  // Dọn dẹp DOM sau khi tải xong
+  link.parentNode?.removeChild(link)
+  window.URL.revokeObjectURL(url)
+}

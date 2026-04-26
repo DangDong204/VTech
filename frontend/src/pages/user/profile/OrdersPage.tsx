@@ -13,13 +13,23 @@ import {
 import type { OrderResponse, OrderStatus } from '@/services/order/order.type'
 import { OrderDetailModal } from '@/pages/user/profile/OrderDetailModal'
 
-const ORDER_TABS = ['Tất cả', 'Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Hoàn thành', 'Đã hủy']
+// ĐÃ THÊM ĐỦ 7 TRẠNG THÁI
+const ORDER_TABS = [
+  'Tất cả',
+  'Chờ xác nhận',
+  'Đã xác nhận',
+  'Đang đóng gói',
+  'Đang giao',
+  'Hoàn thành',
+  'Đã hủy',
+  'Hoàn trả'
+]
 
-// Dictionary dịch trạng thái từ Backend -> UI
+// Dictionary dịch trạng thái từ Backend -> UI (Map chuẩn 1-1 với Tab)
 const STATUS_MAP: Record<OrderStatus, string> = {
   PENDING: 'Chờ xác nhận',
-  CONFIRMED: 'Đang xử lý',
-  PROCESSING: 'Đang xử lý',
+  CONFIRMED: 'Đã xác nhận',
+  PROCESSING: 'Đang đóng gói',
   SHIPPING: 'Đang giao',
   DELIVERED: 'Hoàn thành',
   CANCELLED: 'Đã hủy',
@@ -97,9 +107,14 @@ export default function OrdersPage() {
     }
   }
 
+  // ĐÃ CẬP NHẬT MÀU SẮC CHO ĐỦ 7 TRẠNG THÁI (Đồng bộ với Admin)
   const getStatusBadgeStyle = (status: OrderStatus) => {
-    if (status === 'SHIPPING') return 'bg-blue-50 text-blue-600 border-blue-200'
-    if (status === 'PENDING') return 'bg-amber-50 text-amber-600 border-amber-200'
+    if (status === 'PENDING') return 'bg-amber-50 text-amber-700 border-amber-200'
+    if (status === 'CONFIRMED') return 'bg-blue-50 text-blue-700 border-blue-200'
+    if (status === 'PROCESSING') return 'bg-purple-50 text-purple-700 border-purple-200'
+    if (status === 'SHIPPING') return 'bg-cyan-50 text-cyan-700 border-cyan-200'
+    if (status === 'DELIVERED') return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    if (status === 'CANCELLED') return 'bg-red-50 text-red-700 border-red-200'
     if (status === 'RETURNED') return 'bg-slate-100 text-slate-700 border-slate-200'
     return ''
   }
@@ -171,10 +186,10 @@ export default function OrdersPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`whitespace-nowrap px-6 py-4 text-sm font-medium transition-colors border-b-2 ${
+              className={`whitespace-nowrap px-5 py-4 text-sm font-medium transition-colors border-b-2 ${
                 activeTab === tab
-                  ? 'border-red-600 text-red-600'
-                  : 'border-transparent text-slate-600 hover:text-red-500'
+                  ? 'border-red-600 text-red-600 bg-red-50/30'
+                  : 'border-transparent text-slate-600 hover:text-red-500 hover:bg-slate-50'
               }`}
             >
               {tab}

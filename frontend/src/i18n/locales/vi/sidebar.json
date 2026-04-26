@@ -1,0 +1,27 @@
+{
+  "group": {
+    "dashboard": "Bảng điều khiển",
+    "projects": "Quản lý hệ thống"
+  },
+  "products": {
+    "title": "Sản phẩm",
+    "list": "Danh sách sản phẩm",
+    "colors": "Màu sắc",
+    "versions": "Phiên bản",
+    "receipt": "Nhập kho"
+  },
+  "orders": {
+    "title": "Đơn hàng"
+  },
+  "projects": {
+    "categories": "Danh mục",
+    "brands": "Thương hiệu",
+    "blog": "Bài viết",
+    "users": "Người dùng",
+    "vouchers": "Mã giảm giá",
+    "promotions": "Khuyến mãi",
+    "tags": "Thẻ",
+    "reviews": "Đánh giá",
+    "settings": "Cài đặt"
+  }
+}

@@ -41,7 +41,8 @@
     "view": "View Details",
     "updateStatus": "Update Status",
     "cancel": "Cancel",
-    "save": "Save Changes"
+    "save": "Save Changes",
+    "exportInvoice": "Export Invoice"
   },
   "message": {
     "updateSuccess": "Order status updated successfully!",

@@ -43,7 +43,7 @@ export function OrderDetailModal({ order, isOpen, onClose, statusMap }: OrderDet
       />
 
       {/* Modal */}
-      <div className='fixed left-1/2 top-1/2 z-50 w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] animate-in fade-in slide-in-from-bottom-8 duration-300'>
+      <div className='fixed left-1/2 top-1/2 z-50 w-full max-w-5xl -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] animate-in fade-in slide-in-from-bottom-8 duration-300'>
         {/* Header */}
         <div className='flex items-center justify-between px-6 py-4 border-b shrink-0'>
           <div>
@@ -61,10 +61,88 @@ export function OrderDetailModal({ order, isOpen, onClose, statusMap }: OrderDet
             <X className='h-5 w-5' />
           </button>
         </div>
+
         {/* Body (Scrollable) */}
-        <div className='flex-1 overflow-y-auto p-6 scrollbar-thin flex flex-col md:flex-row gap-8'>
-          {/* CỘT TRÁI: Thông tin đơn & Sản phẩm */}
-          <div className='flex-[2] space-y-6'>
+        <div className='flex-1 overflow-y-auto p-6 scrollbar-thin flex flex-col md:flex-row gap-0'>
+          {/* CỘT TRÁI: Lịch sử đơn hàng (Timeline zigzag) */}
+          <div className='w-full md:w-[340px] shrink-0 md:border-r border-slate-100 md:pr-6 pb-6 md:pb-0'>
+            <h3 className='text-base font-bold text-slate-800 flex items-center gap-2 mb-5'>
+              <Clock className='h-5 w-5 text-violet-600' /> Lịch sử đơn hàng
+            </h3>
+
+            {/* Zigzag Timeline */}
+            <div className='relative'>
+              {/* Đường thẳng ở giữa */}
+              <div className='absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 bg-gradient-to-b from-transparent via-slate-200 to-transparent' />
+
+              <div className='flex flex-col gap-0'>
+                {sortedHistories.map((history, index) => {
+                  const isLatest = index === 0
+                  const isLeft = index % 2 === 0 // chẵn: nội dung bên trái, dot giữa; lẻ: nội dung bên phải
+
+                  return (
+                    <div
+                      key={history.id}
+                      className={cn(
+                        'relative flex items-center mb-5',
+                        isLeft ? 'flex-row' : 'flex-row-reverse'
+                      )}
+                    >
+                      {/* Nội dung */}
+                      <div
+                        className={cn(
+                          'w-[calc(50%-20px)] flex flex-col',
+                          isLeft ? 'items-end text-right pr-3' : 'items-start text-left pl-3'
+                        )}
+                      >
+                        <Badge
+                          variant='outline'
+                          className={cn(
+                            'mb-1 text-xs font-semibold',
+                            isLatest
+                              ? 'border-red-200 bg-red-50 text-red-600'
+                              : 'border-slate-200 bg-slate-50 text-slate-600'
+                          )}
+                        >
+                          {statusMap[history.newStatus]}
+                        </Badge>
+                        {history.note && (
+                          <p className='text-xs font-medium text-slate-700 leading-snug'>
+                            {history.note}
+                          </p>
+                        )}
+                        <p className='text-[11px] text-slate-400 mt-0.5'>
+                          {formatDateTime(history.createdAt)}
+                        </p>
+                      </div>
+
+                      {/* Dot ở giữa */}
+                      <div className='absolute left-1/2 -translate-x-1/2 z-10'>
+                        <div
+                          className={cn(
+                            'flex h-6 w-6 items-center justify-center rounded-full ring-4 ring-white shadow-sm',
+                            isLatest ? 'bg-red-500' : 'bg-slate-300'
+                          )}
+                        >
+                          {isLatest ? (
+                            <CheckCircle2 className='h-3.5 w-3.5 text-white' />
+                          ) : (
+                            <div className='h-2 w-2 rounded-full bg-white' />
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Phần rỗng bên kia để căn đối xứng */}
+                      <div className='w-[calc(50%-20px)]' />
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* CỘT PHẢI: Thông tin đơn & Sản phẩm */}
+          <div className='flex-1 md:pl-6 space-y-6 border-t md:border-t-0 pt-6 md:pt-0'>
             {/* Địa chỉ nhận hàng */}
             <div>
               <h3 className='text-base font-bold text-slate-800 flex items-center gap-2 mb-3'>
@@ -155,52 +233,6 @@ export function OrderDetailModal({ order, isOpen, onClose, statusMap }: OrderDet
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* CỘT PHẢI: Lịch sử đơn hàng (Timeline) */}
-          <div className='flex-1 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8'>
-            <h3 className='text-base font-bold text-slate-800 flex items-center gap-2 mb-4'>
-              <Clock className='h-5 w-5 text-violet-600' /> Lịch sử đơn hàng
-            </h3>
-
-            <div className='relative space-y-6 before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent'>
-              {sortedHistories.map((history, index) => {
-                const isLatest = index === 0
-                return (
-                  <div key={history.id} className='relative flex items-start gap-4'>
-                    <div
-                      className={cn(
-                        'relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-4 ring-white',
-                        isLatest ? 'bg-red-600' : 'bg-slate-300'
-                      )}
-                    >
-                      {isLatest ? (
-                        <CheckCircle2 className='h-3 w-3 text-white' />
-                      ) : (
-                        <div className='h-2 w-2 rounded-full bg-white' />
-                      )}
-                    </div>
-                    <div className='flex-1 min-w-0'>
-                      <Badge
-                        variant='outline'
-                        className={cn(
-                          'mb-1',
-                          isLatest
-                            ? 'border-red-200 bg-red-50 text-red-600'
-                            : 'border-slate-200 text-slate-600'
-                        )}
-                      >
-                        {statusMap[history.newStatus]}
-                      </Badge>
-                      <p className='text-sm font-medium text-slate-800'>{history.note}</p>
-                      <p className='text-xs text-slate-500 mt-1'>
-                        {formatDateTime(history.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
             </div>
           </div>
         </div>

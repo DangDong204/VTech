@@ -41,7 +41,8 @@
     "view": "Xem chi tiết",
     "updateStatus": "Cập nhật trạng thái",
     "cancel": "Hủy",
-    "save": "Lưu thay đổi"
+    "save": "Lưu thay đổi",
+    "exportInvoice": "Xuất hóa đơn"
   },
   "message": {
     "updateSuccess": "Cập nhật trạng thái thành công!",

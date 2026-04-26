@@ -125,7 +125,8 @@ public enum ErrorCode {
     ORDER_TRANSITION_INVALID(14004, "order.transition.invalid", HttpStatus.BAD_REQUEST),
     ORDER_NOT_SHIPPING(14005, "order.not.shipping", HttpStatus.BAD_REQUEST),
     ORDER_NOT_DELIVERED(14006, "order.not.delivered", HttpStatus.BAD_REQUEST),
-    ORDER_RETURN_EXPIRED(14007, "order.return.expired", HttpStatus.BAD_REQUEST)
+    ORDER_RETURN_EXPIRED(14007, "order.return.expired", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_EXPORT_INVOICE(14008, "order.cannot.export.invoice", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
