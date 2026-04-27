@@ -7,6 +7,7 @@ import com.haui.vtech.dto.order.OrderRequest;
 import com.haui.vtech.dto.order.OrderResponse;
 import com.haui.vtech.entity.*;
 import com.haui.vtech.enums.OrderStatus;
+import com.haui.vtech.enums.PaymentMethod;
 import com.haui.vtech.enums.PaymentStatus;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
@@ -32,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
     private final ProductVariantRepository variantRepository;
     private final VnPayConfig vnPayConfig;
     private final VoucherRepository voucherRepository;
+    private final UserRepository userRepository; // THÊM DÒNG NÀY (để lấy email user)
+    private final EmailService emailService;     // THÊM DÒNG NÀY
 
     @Override
     @Transactional
@@ -172,7 +175,21 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity savedOrder = orderRepository.save(order);
         cartDetailRepository.deleteAll(cartItems);
 
-        return mapToOrderResponse(savedOrder);
+        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
+        OrderResponse response = mapToOrderResponse(savedOrder);
+
+        userRepository.findById(userId).ifPresent(user -> {
+            if (user.getEmail() != null && !user.getEmail().isBlank()) {
+                String statusText = request.getPaymentMethod() == PaymentMethod.VNPAY
+                        ? "ĐẶT HÀNG THÀNH CÔNG (Đang chờ thanh toán VNPAY)"
+                        : "ĐẶT HÀNG THÀNH CÔNG (Chờ Shop xác nhận)";
+                // TRUYỀN RESPONSE VÀO HÀM GỬI MAIL
+                emailService.sendOrderStatusEmail(user.getEmail(), response, statusText);
+            }
+        });
+
+        // RETURN LUÔN RESPONSE VỪA MAP
+        return response;
     }
 
     @Override
@@ -225,7 +242,17 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-        return mapToOrderResponse(savedOrder);
+
+        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
+        OrderResponse response = mapToOrderResponse(savedOrder);
+
+        userRepository.findById(userId).ifPresent(user -> {
+            if (user.getEmail() != null && !user.getEmail().isBlank()) {
+                emailService.sendOrderStatusEmail(user.getEmail(), response, "ĐÃ HỦY ĐƠN HÀNG");
+            }
+        });
+
+        return response;
     }
 
     // ======================== PHẦN DÀNH CHO ADMIN ========================
@@ -276,7 +303,18 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-        return mapToOrderResponse(savedOrder);
+
+        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
+        OrderResponse response = mapToOrderResponse(savedOrder);
+
+        userRepository.findById(order.getUserId()).ifPresent(user -> {
+            if (user.getEmail() != null && !user.getEmail().isBlank()) {
+                String statusVn = getTranslatedStatus(newStatus);
+                emailService.sendOrderStatusEmail(user.getEmail(), response, statusVn);
+            }
+        });
+
+        return response;
     }
 
     // ======================== PHẦN DÀNH CHO USER BỔ SUNG ========================
@@ -309,7 +347,16 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-        return mapToOrderResponse(savedOrder);
+        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
+        OrderResponse response = mapToOrderResponse(savedOrder);
+
+        userRepository.findById(userId).ifPresent(user -> {
+            if (user.getEmail() != null && !user.getEmail().isBlank()) {
+                emailService.sendOrderStatusEmail(user.getEmail(), response, "GIAO HÀNG THÀNH CÔNG");
+            }
+        });
+
+        return response;
     }
 
     @Override
@@ -361,7 +408,16 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-        return mapToOrderResponse(savedOrder);
+        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
+        OrderResponse response = mapToOrderResponse(savedOrder);
+
+        userRepository.findById(userId).ifPresent(user -> {
+            if (user.getEmail() != null && !user.getEmail().isBlank()) {
+                emailService.sendOrderStatusEmail(user.getEmail(), response, "ĐÃ HOÀN TRẢ");
+            }
+        });
+
+        return response;
     }
 
     @Override
@@ -494,6 +550,16 @@ public class OrderServiceImpl implements OrderService {
                     order.getOrderHistories().add(history);
 
                     orderRepository.save(order);
+                    // 4. GỌI HÀM GỬI EMAIL NGẦM THÔNG BÁO ĐƠN HÀNG ĐÃ THANH TOÁN VÀ XÁC NHẬN
+                    OrderResponse response = mapToOrderResponse(order);
+
+                    userRepository.findById(order.getUserId()).ifPresent(user -> {
+                        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+                            emailService.sendOrderStatusEmail(user.getEmail(), response, "ĐÃ THANH TOÁN VNPAY & XÁC NHẬN");
+                        }
+                    });
+
+                    return response;
                 }
                 return mapToOrderResponse(order);
             } else {
@@ -606,38 +672,15 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 
-    // =========================================================================================
-    // DƯỚI ĐÂY LÀ LOGIC THAM KHẢO DÀNH CHO ADMIN SAU NÀY KHI XÁC NHẬN ĐƠN (ĐƯA VÀO ADMIN SERVICE)
-    // =========================================================================================
-
-    /*
-    @Transactional
-    public OrderResponse confirmOrder(String orderId, String adminId) {
-        OrderEntity order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-
-        // Chỉ xác nhận nếu đơn đang ở trạng thái PENDING
-        if (order.getOrderStatus() != OrderStatus.PENDING) {
-            throw new AppException(ErrorCode.ORDER_STATUS_INVALID);
-        }
-
-        // VÌ ĐÃ TRỪ KHO LÚC KHÁCH ĐẶT RỒI NÊN ADMIN XÁC NHẬN KHÔNG CẦN TRỪ KHO NỮA
-
-        // 1. Chuyển trạng thái
-        order.setOrderStatus(OrderStatus.CONFIRMED);
-
-        // 2. Ghi log lịch sử
-        OrderHistoryEntity history = OrderHistoryEntity.builder()
-                .order(order)
-                .oldStatus(OrderStatus.PENDING)
-                .newStatus(OrderStatus.CONFIRMED)
-                .note("Admin đã xác nhận đơn hàng")
-                .createdBy(adminId)
-                .build();
-        order.getOrderHistories().add(history);
-
-        OrderEntity savedOrder = orderRepository.save(order);
-        return mapToOrderResponse(savedOrder);
+    private String getTranslatedStatus(OrderStatus status) {
+        return switch (status) {
+            case PENDING -> "Chờ xác nhận";
+            case CONFIRMED -> "Đã xác nhận";
+            case PROCESSING -> "Đang đóng gói";
+            case SHIPPING -> "Đang giao hàng";
+            case DELIVERED -> "Đã giao thành công";
+            case CANCELLED -> "Đã hủy";
+            case RETURNED -> "Hoàn trả";
+        };
     }
-    */
 }
