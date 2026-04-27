@@ -38,6 +38,15 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     --font-sans: 'Be Vietnam Pro', 'Inter', 'system-ui', 'sans-serif';
+
+    /* BỔ SUNG MÀU TRẠNG THÁI ĐƠN HÀNG (Mã HEX cho Recharts) */
+    --status-pending: #f59e0b; /* Vàng cam */
+    --status-confirmed: #8b5cf6; /* Tím */
+    --status-processing: #3b82f6; /* Xanh dương đậm */
+    --status-shipping: #0ea5e9; /* Xanh lơ */
+    --status-delivered: #10b981; /* Xanh lá */
+    --status-cancelled: #ef4444; /* Đỏ */
+    --status-returned: #64748b; /* Xám đậm */
   }
 
   .dark {
@@ -73,6 +82,15 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* BỔ SUNG MÀU TRẠNG THÁI CHO DARK MODE (Sáng hơn 1 chút để nổi trên nền đen) */
+    --status-pending: #fbbf24;
+    --status-confirmed: #a78bfa;
+    --status-processing: #60a5fa;
+    --status-shipping: #38bdf8;
+    --status-delivered: #34d399;
+    --status-cancelled: #f87171;
+    --status-returned: #94a3b8;
   }
 }
 
