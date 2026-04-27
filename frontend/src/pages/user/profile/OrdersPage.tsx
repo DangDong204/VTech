@@ -1,19 +1,21 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Store, Loader2, PackageX, CheckCircle2, RefreshCcw } from 'lucide-react'
+import { Search, Store, Loader2, PackageX, CheckCircle2, RefreshCcw, Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
+import { useNavigate } from 'react-router-dom' // <-- THÊM IMPORT NÀY
 import {
   cancelOrderApi,
   getMyOrdersApi,
   confirmReceiptApi,
   returnOrderApi
 } from '@/services/order/order.api'
+import { api } from '@/utils/axiosCustomize'
 import type { OrderResponse, OrderStatus } from '@/services/order/order.type'
 import { OrderDetailModal } from '@/pages/user/profile/OrderDetailModal'
+import { useCart } from '@/contexts/CartContext' // <-- THÊM IMPORT NÀY
 
-// ĐÃ THÊM ĐỦ 7 TRẠNG THÁI
 const ORDER_TABS = [
   'Tất cả',
   'Chờ xác nhận',
@@ -25,7 +27,6 @@ const ORDER_TABS = [
   'Hoàn trả'
 ]
 
-// Dictionary dịch trạng thái từ Backend -> UI (Map chuẩn 1-1 với Tab)
 const STATUS_MAP: Record<OrderStatus, string> = {
   PENDING: 'Chờ xác nhận',
   CONFIRMED: 'Đã xác nhận',
@@ -57,14 +58,18 @@ export default function OrdersPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Loading states cho các hành động
+  const navigate = useNavigate() // <-- KHỞI TẠO HOOK
+  const { addItem } = useCart() // <-- LẤY HÀM ADD ITEM TỪ CONTEXT
+
+  // Loading states
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
   const [returningId, setReturningId] = useState<string | null>(null)
+  const [payingId, setPayingId] = useState<string | null>(null)
+  const [repurchasingId, setRepurchasingId] = useState<string | null>(null) // <-- STATE CHO MUA LẠI
 
   const [selectedOrder, setSelectedOrder] = useState<OrderResponse | null>(null)
 
-  // Fetch dữ liệu thật từ Backend
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -80,7 +85,6 @@ export default function OrdersPage() {
     fetchOrders()
   }, [])
 
-  // Filter: Áp dụng cả Tab + Search
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
       const mappedStatus = STATUS_MAP[order.orderStatus]
@@ -107,7 +111,6 @@ export default function OrdersPage() {
     }
   }
 
-  // ĐÃ CẬP NHẬT MÀU SẮC CHO ĐỦ 7 TRẠNG THÁI (Đồng bộ với Admin)
   const getStatusBadgeStyle = (status: OrderStatus) => {
     if (status === 'PENDING') return 'bg-amber-50 text-amber-700 border-amber-200'
     if (status === 'CONFIRMED') return 'bg-blue-50 text-blue-700 border-blue-200'
@@ -119,13 +122,11 @@ export default function OrdersPage() {
     return ''
   }
 
-  // --- CÁC HÀM XỬ LÝ HÀNH ĐỘNG ĐƠN HÀNG ---
+  // --- CÁC HÀM XỬ LÝ HÀNH ĐỘNG ---
 
-  // 1. Hủy đơn (Khi PENDING)
   const handleCancelOrder = async (orderId: string) => {
     const reason = window.prompt('Vui lòng nhập lý do hủy đơn (không bắt buộc):')
     if (reason === null) return
-
     try {
       setCancellingId(orderId)
       const updatedOrder = await cancelOrderApi(orderId, reason)
@@ -138,10 +139,8 @@ export default function OrdersPage() {
     }
   }
 
-  // 2. Xác nhận đã nhận hàng (Khi SHIPPING)
   const handleConfirmReceipt = async (orderId: string) => {
     if (!window.confirm('Bạn xác nhận đã nhận được hàng và sản phẩm không có vấn đề gì?')) return
-
     try {
       setConfirmingId(orderId)
       const updatedOrder = await confirmReceiptApi(orderId)
@@ -154,7 +153,6 @@ export default function OrdersPage() {
     }
   }
 
-  // 3. Hoàn trả (Khi DELIVERED)
   const handleReturnOrder = async (orderId: string) => {
     const reason = window.prompt(
       'Vui lòng nhập lý do hoàn trả (Ví dụ: Hàng lỗi, không đúng mô tả...):'
@@ -164,7 +162,6 @@ export default function OrdersPage() {
       toast.error('Bạn cần nhập lý do hoàn trả để admin xử lý.')
       return
     }
-
     try {
       setReturningId(orderId)
       const updatedOrder = await returnOrderApi(orderId, reason)
@@ -177,10 +174,50 @@ export default function OrdersPage() {
     }
   }
 
+  const handleContinuePayment = async (orderId: string) => {
+    try {
+      setPayingId(orderId)
+      toast.loading('Đang kết nối tới VNPAY...', { id: 'payment' })
+      const res = await api.get(`/client/orders/${orderId}/payment-url`)
+      window.location.href = res.data.data
+    } catch {
+      toast.error('Có lỗi xảy ra khi tạo link thanh toán!', {
+        id: 'payment'
+      })
+      setPayingId(null)
+    }
+  }
+
+  // 5. HÀM MUA LẠI ĐƠN HÀNG
+  const handleRepurchase = async (order: OrderResponse) => {
+    try {
+      setRepurchasingId(order.id)
+      toast.loading('Đang chuẩn bị giỏ hàng...', { id: 'repurchase' })
+
+      // Chạy vòng lặp tuần tự thêm từng sản phẩm vào giỏ hàng
+      for (const item of order.orderDetails) {
+        // TRUYỀN THÊM false Ở ĐÂY ĐỂ TẮT TOAST CỦA CONTEXT
+        await addItem(item.variantId, item.quantity, false)
+      }
+
+      // Chỉ giữ lại đúng 1 thông báo tổng này thôi
+      toast.success('Đã đưa sản phẩm vào giỏ hàng!', { id: 'repurchase' })
+
+      // Trích xuất danh sách variantId để truyền sang trang Cart
+      const variantIds = order.orderDetails.map((d) => d.variantId)
+
+      // Chuyển hướng kèm state
+      navigate('/cart', { state: { repurchaseVariantIds: variantIds } })
+    } catch {
+      toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng.', { id: 'repurchase' })
+    } finally {
+      setRepurchasingId(null)
+    }
+  }
+
   return (
     <div className='flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500'>
       <div className='bg-white rounded-xl border border-border/50 shadow-sm overflow-hidden min-h-[60vh] flex flex-col'>
-        {/* Tabs */}
         <div className='flex overflow-x-auto scrollbar-hide border-b'>
           {ORDER_TABS.map((tab) => (
             <button
@@ -197,7 +234,6 @@ export default function OrdersPage() {
           ))}
         </div>
 
-        {/* Thanh tìm kiếm */}
         <div className='p-4 bg-slate-50/50 border-b'>
           <div className='relative max-w-md'>
             <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
@@ -210,14 +246,12 @@ export default function OrdersPage() {
           </div>
         </div>
 
-        {/* Trạng thái Loading */}
         {isLoading ? (
           <div className='flex-1 flex flex-col items-center justify-center text-slate-400 py-12'>
             <Loader2 className='h-8 w-8 animate-spin mb-4 text-slate-300' />
             <p className='text-sm'>Đang tải lịch sử đơn hàng...</p>
           </div>
         ) : (
-          /* Danh sách đơn hàng */
           <div className='flex flex-col gap-4 p-4 bg-slate-50/50 flex-1'>
             {filteredOrders.length > 0 ? (
               filteredOrders.map((order) => (
@@ -225,7 +259,6 @@ export default function OrdersPage() {
                   key={order.id}
                   className='border rounded-xl bg-white overflow-hidden shadow-sm transition-all duration-300 hover:border-red-500 hover:shadow-md hover:-translate-y-1 hover:scale-[1.01]'
                 >
-                  {/* Header đơn hàng */}
                   <div className='flex items-center justify-between p-4 border-b bg-slate-50/50'>
                     <div className='flex items-center gap-4 text-sm'>
                       <span className='font-bold text-slate-800 uppercase'>
@@ -243,7 +276,6 @@ export default function OrdersPage() {
                     </Badge>
                   </div>
 
-                  {/* Body đơn hàng: Danh sách sản phẩm */}
                   <div className='p-4'>
                     {order.orderDetails.map((item) => (
                       <div key={item.id} className='flex gap-4 mb-4 last:mb-0'>
@@ -273,7 +305,6 @@ export default function OrdersPage() {
                     ))}
                   </div>
 
-                  {/* Footer đơn hàng */}
                   <div className='p-4 border-t flex flex-wrap items-center justify-between gap-4 bg-slate-50/30'>
                     <div className='flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2'>
                       <div className='flex items-center gap-2'>
@@ -285,9 +316,24 @@ export default function OrdersPage() {
                       </span>
                     </div>
 
-                    {/* CÁC NÚT THAO TÁC */}
                     <div className='flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end'>
-                      {/* Nút: Hủy đơn hàng */}
+                      {order.orderStatus === 'PENDING' && order.paymentMethod === 'VNPAY' && (
+                        <Button
+                          variant='default'
+                          size='sm'
+                          className='flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white'
+                          onClick={() => handleContinuePayment(order.id)}
+                          disabled={payingId === order.id}
+                        >
+                          {payingId === order.id ? (
+                            <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
+                          ) : (
+                            <Wallet className='mr-1.5 h-3.5 w-3.5' />
+                          )}{' '}
+                          Thanh toán
+                        </Button>
+                      )}
+
                       {order.orderStatus === 'PENDING' && (
                         <Button
                           variant='outline'
@@ -298,12 +344,11 @@ export default function OrdersPage() {
                         >
                           {cancellingId === order.id && (
                             <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
-                          )}
+                          )}{' '}
                           Hủy đơn
                         </Button>
                       )}
 
-                      {/* Nút: Đã nhận hàng */}
                       {order.orderStatus === 'SHIPPING' && (
                         <Button
                           variant='default'
@@ -316,12 +361,11 @@ export default function OrdersPage() {
                             <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
                           ) : (
                             <CheckCircle2 className='mr-1.5 h-3.5 w-3.5' />
-                          )}
+                          )}{' '}
                           Đã nhận hàng
                         </Button>
                       )}
 
-                      {/* Nút: Hoàn trả */}
                       {order.orderStatus === 'DELIVERED' && (
                         <Button
                           variant='outline'
@@ -334,12 +378,11 @@ export default function OrdersPage() {
                             <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
                           ) : (
                             <RefreshCcw className='mr-1.5 h-3.5 w-3.5' />
-                          )}
+                          )}{' '}
                           Hoàn trả
                         </Button>
                       )}
 
-                      {/* Nút: Xem chi tiết */}
                       <Button
                         variant='outline'
                         size='sm'
@@ -349,12 +392,17 @@ export default function OrdersPage() {
                         Xem chi tiết
                       </Button>
 
-                      {/* Nút: Mua lại (Khi đã hoàn thành, bị hủy hoặc hoàn trả) */}
+                      {/* ĐÃ CẬP NHẬT NÚT MUA LẠI */}
                       {['DELIVERED', 'CANCELLED', 'RETURNED'].includes(order.orderStatus) && (
                         <Button
                           size='sm'
                           className='flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white'
+                          onClick={() => handleRepurchase(order)}
+                          disabled={repurchasingId === order.id}
                         >
+                          {repurchasingId === order.id && (
+                            <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
+                          )}
                           Mua lại
                         </Button>
                       )}

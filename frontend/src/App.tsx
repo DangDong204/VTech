@@ -20,6 +20,7 @@ import CartPage from '@/pages/user/cart/CartPage'
 import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
 import ClientLayout from '@/pages/user/ClientLayout'
 import HomePage from '@/pages/user/home/HomePage'
+import VnPayReturnPage from '@/pages/user/payment/VnPayReturnPage'
 import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
 import ProductListPage from '@/pages/user/product-list/ProductListPage'
 import AddressesPage from '@/pages/user/profile/AddressesPage'
@@ -62,6 +63,7 @@ function App() {
 
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignupPage />} />
+          <Route path='/payment/vnpay-return' element={<VnPayReturnPage />} />
 
           {/* TODO: tạo protected route */}
           <Route element={<ProtectedRoute />}>

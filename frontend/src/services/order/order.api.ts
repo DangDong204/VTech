@@ -77,3 +77,10 @@ export const exportInvoiceAdminApi = async (orderId: string, orderCode: string):
   link.parentNode?.removeChild(link)
   window.URL.revokeObjectURL(url)
 }
+
+// Hàm xác thực kết quả trả về từ VNPAY
+export const verifyVnPayReturnApi = async (queryString: string): Promise<OrderResponse> => {
+  // queryString sẽ có dạng: ?vnp_Amount=...&vnp_ResponseCode=00...
+  const res = await api.get<ApiResponse<OrderResponse>>(`/client/orders/vnpay-return${queryString}`)
+  return res.data.data
+}

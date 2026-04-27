@@ -21,7 +21,8 @@ interface CartContextValue {
   cart: CartResponse | null
   items: CartItemResponse[]
   isLoading: boolean
-  addItem: (variantId: string, qty?: number) => Promise<void>
+  // THÊM THAM SỐ showToast VÀO ĐÂY
+  addItem: (variantId: string, qty?: number, showToast?: boolean) => Promise<void>
   removeItem: (cartDetailId: string) => Promise<void>
   updateQuantity: (cartDetailId: string, qty: number) => Promise<void>
   clear: () => Promise<void>
@@ -60,19 +61,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
     fetchCart()
   }, [fetchCart])
 
-  const addItem = useCallback(async (variantId: string, qty = 1) => {
+  const addItem = useCallback(async (variantId: string, qty = 1, showToast = true) => {
     try {
       const updatedCart = await addToCartApi({ variantId, quantity: qty })
       setCart(updatedCart)
-      toast.success('Đã thêm sản phẩm vào giỏ hàng!', {
-        id: 'add-cart-success' // Gắn ID để không bị spam toast thành công
-      })
+
+      // CHỈ HIỆN THÔNG BÁO KHI showToast = true
+      if (showToast) {
+        toast.success('Đã thêm sản phẩm vào giỏ hàng!', {
+          id: 'add-cart-success'
+        })
+      }
     } catch (error: unknown) {
-      // Ép kiểu error về HttpError để lấy đúng structure
       const err = error as HttpError
-      toast.error(err.response?.data?.message || 'Không thể thêm vào giỏ hàng', {
-        id: `add-error-${variantId}`
-      })
+
+      if (showToast) {
+        toast.error(err.response?.data?.message || 'Không thể thêm vào giỏ hàng', {
+          id: `add-error-${variantId}`
+        })
+      }
     }
   }, [])
 

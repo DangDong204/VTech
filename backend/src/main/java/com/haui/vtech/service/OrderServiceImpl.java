@@ -1,5 +1,6 @@
 package com.haui.vtech.service;
 
+import com.haui.vtech.config.VnPayConfig;
 import com.haui.vtech.dto.order.OrderDetailResponse;
 import com.haui.vtech.dto.order.OrderHistoryResponse;
 import com.haui.vtech.dto.order.OrderRequest;
@@ -10,13 +11,16 @@ import com.haui.vtech.enums.PaymentStatus;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.repository.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CartDetailRepository cartDetailRepository;
     private final ProductVariantRepository variantRepository;
+    private final VnPayConfig vnPayConfig;
 
     @Override
     @Transactional
@@ -299,6 +304,189 @@ public class OrderServiceImpl implements OrderService {
 
         OrderEntity savedOrder = orderRepository.save(order);
         return mapToOrderResponse(savedOrder);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String createPaymentUrl(String orderId, HttpServletRequest request) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        // Chỉ cho phép thanh toán nếu đơn hàng đang PENDING và chọn thanh toán VNPAY
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION); // Bạn có thể tạo mã lỗi ORDER_NOT_PENDING
+        }
+
+        // 1. Khởi tạo các tham số bắt buộc
+        long amount = order.getFinalPrice().longValue() * 100L; // Bắt buộc nhân 100
+
+        Map<String, String> vnp_Params = new HashMap<>();
+        vnp_Params.put("vnp_Version", "2.1.0");
+        vnp_Params.put("vnp_Command", "pay");
+        vnp_Params.put("vnp_TmnCode", vnPayConfig.getVnp_TmnCode());
+        vnp_Params.put("vnp_Amount", String.valueOf(amount));
+        vnp_Params.put("vnp_CurrCode", "VND");
+        vnp_Params.put("vnp_TxnRef", order.getOrderCode()); // Dùng mã đơn hàng làm mã giao dịch
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang VTech: " + order.getOrderCode());
+        vnp_Params.put("vnp_OrderType", "other");
+        vnp_Params.put("vnp_Locale", "vn");
+        vnp_Params.put("vnp_ReturnUrl", vnPayConfig.getVnp_ReturnUrl());
+        vnp_Params.put("vnp_IpAddr", VnPayConfig.getIpAddress(request));
+
+        // 2. Format Ngày giờ theo chuẩn GMT+7
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String vnp_CreateDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+
+        // Hạn thanh toán (Cho phép 15 phút)
+        cld.add(Calendar.MINUTE, 15);
+        String vnp_ExpireDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+        // 3. Sắp xếp tham số theo bảng chữ cái (Bắt buộc để băm checksum chuẩn)
+        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
+        Collections.sort(fieldNames);
+
+        StringBuilder hashData = new StringBuilder();
+        StringBuilder query = new StringBuilder();
+
+        try {
+            Iterator<String> itr = fieldNames.iterator();
+            while (itr.hasNext()) {
+                String fieldName = itr.next();
+                String fieldValue = vnp_Params.get(fieldName);
+                if ((fieldValue != null) && (!fieldValue.isEmpty())) {
+                    // Build hash data
+                    hashData.append(fieldName);
+                    hashData.append('=');
+                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    // Build query
+                    query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                    query.append('=');
+                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    if (itr.hasNext()) {
+                        query.append('&');
+                        hashData.append('&');
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi mã hóa URL VNPAY");
+        }
+
+        // 4. Tạo mã băm bảo mật (Secure Hash)
+        String queryUrl = query.toString();
+        String vnp_SecureHash = VnPayConfig.hmacSHA512(vnPayConfig.getSecretKey(), hashData.toString());
+        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+
+        // 5. Nối với URL gốc của VNPAY
+        return vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse processVnPayReturn(HttpServletRequest request) {
+        Map<String, String> fields = new HashMap<>();
+        for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements(); ) {
+            String fieldName = params.nextElement();
+            String fieldValue = request.getParameter(fieldName);
+            if ((fieldValue != null) && (!fieldValue.isEmpty())) {
+                fields.put(fieldName, fieldValue);
+            }
+        }
+
+        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
+        if (fields.containsKey("vnp_SecureHashType")) {
+            fields.remove("vnp_SecureHashType");
+        }
+        if (fields.containsKey("vnp_SecureHash")) {
+            fields.remove("vnp_SecureHash");
+        }
+
+        // Tạo lại mã hash từ các tham số trả về để kiểm tra tính toàn vẹn
+        String signValue = hashAllFields(fields, vnPayConfig.getSecretKey());
+
+        if (signValue.equals(vnp_SecureHash)) {
+            // Mã hash hợp lệ, kiểm tra trạng thái giao dịch
+            String orderCode = request.getParameter("vnp_TxnRef");
+            String responseCode = request.getParameter("vnp_ResponseCode");
+
+            OrderEntity order = orderRepository.findByOrderCode(orderCode)
+                    .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+            if ("00".equals(responseCode)) {
+                // Giao dịch thành công
+                if (order.getPaymentStatus() == PaymentStatus.PENDING) {
+                    // 1. Cập nhật trạng thái thanh toán
+                    order.setPaymentStatus(PaymentStatus.PAID);
+
+                    // 2. TỰ ĐỘNG XÁC NHẬN ĐƠN HÀNG VÌ KHÁCH ĐÃ TRẢ TIỀN TRƯỚC
+                    OrderStatus oldStatus = order.getOrderStatus();
+                    order.setOrderStatus(OrderStatus.CONFIRMED);
+
+                    // 3. Lưu lịch sử đơn hàng với trạng thái mới
+                    OrderHistoryEntity history = OrderHistoryEntity.builder()
+                            .order(order)
+                            .oldStatus(oldStatus)
+                            .newStatus(OrderStatus.CONFIRMED)
+                            .note("Thanh toán VNPAY thành công. Đơn hàng được tự động xác nhận.")
+                            .createdBy("SYSTEM")
+                            .build();
+                    order.getOrderHistories().add(history);
+
+                    orderRepository.save(order);
+                }
+                return mapToOrderResponse(order);
+            } else {
+                // GIAO DỊCH THẤT BẠI (Khách hủy, thẻ lỗi, sai OTP...)
+                // KỊCH BẢN MỚI: Không hủy đơn ngay, cho phép khách hàng thanh toán lại trong 15 phút
+                if (order.getOrderStatus() == OrderStatus.PENDING) {
+
+                    // Chỉ ghi lịch sử để Admin biết khách đã từng thanh toán xịt 1 lần
+                    OrderHistoryEntity history = OrderHistoryEntity.builder()
+                            .order(order)
+                            .oldStatus(order.getOrderStatus()) // Vẫn giữ PENDING
+                            .newStatus(order.getOrderStatus()) // Vẫn giữ PENDING
+                            .note("Thanh toán VNPAY thất bại (Mã lỗi: " + responseCode + "). Đang chờ khách thanh toán lại.")
+                            .createdBy("SYSTEM")
+                            .build();
+                    order.getOrderHistories().add(history);
+                    orderRepository.save(order);
+                }
+
+                // Trả về order bình thường (Frontend sẽ tự đọc URL để biết là xịt)
+                return mapToOrderResponse(order);
+            }
+        } else {
+            // Bị hacker can thiệp URL
+            throw new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION); // Thay bằng lỗi INVALID_HASH
+        }
+    }
+
+    // Hàm hỗ trợ băm lại các tham số (Bạn thêm ngay dưới processVnPayReturn)
+    private String hashAllFields(Map<String, String> fields, String secretKey) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            String fieldName = itr.next();
+            String fieldValue = fields.get(fieldName);
+            if ((fieldValue != null) && (!fieldValue.isEmpty())) {
+                sb.append(fieldName);
+                sb.append("=");
+                try {
+                    sb.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (itr.hasNext()) {
+                sb.append("&");
+            }
+        }
+        return VnPayConfig.hmacSHA512(secretKey, sb.toString());
     }
 
     // --- HÀM MAPPER NỘI BỘ ---

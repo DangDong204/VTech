@@ -6,8 +6,10 @@ import com.haui.vtech.dto.order.OrderResponse;
 import com.haui.vtech.security.CustomUserDetails;
 import com.haui.vtech.service.OrderService;
 import com.haui.vtech.util.MessageUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +43,24 @@ public class OrderController {
                 .build();
     }
 
+    // =========================================================
+    // ĐẶT API VNPAY RETURN LÊN TRÊN API CÓ {orderId}
+    // =========================================================
+    @GetMapping("/vnpay-return")
+    // Lưu ý: Endpoint này không nên đánh @PreAuthorize để chắc chắn gọi được,
+    // vì đôi khi người dùng thanh toán trên app ngân hàng rồi bị văng session
+    public ApiResponse<OrderResponse> vnpayReturn(HttpServletRequest request) {
+        OrderResponse orderResponse = orderService.processVnPayReturn(request);
+
+        return ApiResponse.<OrderResponse>builder()
+                .data(orderResponse)
+                .message("Xử lý thanh toán VNPAY thành công")
+                .build();
+    }
+
+    // =========================================================
+    // ĐẶT API {orderId} XUỐNG DƯỚI CÙNG TRONG CÁC PHƯƠNG THỨC GET
+    // =========================================================
     @GetMapping("/{orderId}")
     public ApiResponse<OrderResponse> getOrderDetail(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -49,6 +69,20 @@ public class OrderController {
         String userId = userDetails.getUser().getId();
         return ApiResponse.<OrderResponse>builder()
                 .data(orderService.getOrderDetail(userId, orderId))
+                .build();
+    }
+
+    @GetMapping("/{orderId}/payment-url")
+    @PreAuthorize("hasRole('USER')") // Hoặc quyền tương ứng của khách hàng
+    public ApiResponse<String> getPaymentUrl(
+            @PathVariable String orderId,
+            HttpServletRequest request) {
+
+        String paymentUrl = orderService.createPaymentUrl(orderId, request);
+
+        return ApiResponse.<String>builder()
+                .data(paymentUrl)
+                .message("Tạo URL thanh toán thành công")
                 .build();
     }
 

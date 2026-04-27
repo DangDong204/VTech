@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react' // <-- Bổ sung useEffect
+import { Link, useNavigate, useLocation } from 'react-router-dom' // <-- Bổ sung useLocation
 import { Minus, Plus, ShieldCheck, ShoppingBag, Tag, Trash2, AlertCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -20,7 +20,7 @@ function formatVnd(n: number) {
   return new Intl.NumberFormat('vi-VN').format(n) + '₫'
 }
 
-// --- 1. CART ITEM ROW ---
+// --- 1. CART ITEM ROW (GIỮ NGUYÊN HOÀN TOÀN) ---
 function CartItemRow({
   item,
   isSelected,
@@ -51,7 +51,6 @@ function CartItemRow({
         isSelected ? 'border-red-500 ring-1 ring-red-500/20' : 'border-slate-200'
       }`}
     >
-      {/* NÚT XOÁ TRÊN MOBILE */}
       <button
         onClick={() => removeItem(item.id)}
         className='absolute right-3 top-3 sm:hidden p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-md transition-colors z-10'
@@ -59,7 +58,6 @@ function CartItemRow({
         <Trash2 className='h-4.5 w-4.5' />
       </button>
 
-      {/* CỘT 1: CHECKBOX + ẢNH SẢN PHẨM */}
       <div className='flex items-center gap-3 w-full sm:w-auto min-w-0'>
         <Checkbox
           checked={isSelected}
@@ -74,7 +72,6 @@ function CartItemRow({
           />
         </div>
 
-        {/* THÔNG TIN TRÊN MOBILE */}
         <div className='flex-1 sm:hidden flex flex-col gap-1 pr-6 min-w-0'>
           <h3 className='text-sm font-medium text-foreground line-clamp-2 break-words leading-snug'>
             {item.productName} {item.versionName}
@@ -105,7 +102,6 @@ function CartItemRow({
         </div>
       </div>
 
-      {/* CỘT 2: TÊN & BIẾN THỂ (Desktop) */}
       <div className='hidden sm:flex flex-1 flex-col gap-1.5 min-w-0 pr-4'>
         <Link
           to={`/product/${item.productSlug}`}
@@ -129,7 +125,6 @@ function CartItemRow({
         </div>
       </div>
 
-      {/* CỘT 3: ĐƠN GIÁ (Desktop) */}
       <div className='hidden sm:flex flex-col items-end justify-center w-[120px] shrink-0'>
         <span className='text-base font-bold text-red-600'>{formatVnd(item.price)}</span>
         {item.originalPrice && item.originalPrice > item.price && (
@@ -139,11 +134,9 @@ function CartItemRow({
         )}
       </div>
 
-      {/* CỘT 4: BỘ ĐẾM SỐ LƯỢNG (Đã sửa lỗi hiển thị input bị lệch) */}
       <div className='w-full sm:w-[130px] shrink-0 flex flex-col items-center justify-center mt-2 sm:mt-0'>
         <div className='w-full flex justify-between sm:justify-center items-center'>
           <span className='text-sm font-medium text-slate-700 sm:hidden ml-8'>Số lượng:</span>
-          {/* Ép chiều cao cố định h-8 cho toàn bộ nhóm nút */}
           <div className='flex items-center h-8 border border-slate-300 rounded overflow-hidden bg-white'>
             <button
               className='h-full w-8 flex items-center justify-center text-slate-600 bg-slate-50 hover:bg-slate-100 disabled:opacity-50 disabled:hover:bg-slate-50 transition-colors focus:outline-none'
@@ -153,7 +146,6 @@ function CartItemRow({
               <Minus className='h-3.5 w-3.5' />
             </button>
             <div className='h-full w-[1px] bg-slate-300'></div>
-            {/* Sử dụng [appearance:textfield] để xoá mũi tên mặc định, bỏ p-0 và đặt lại kích thước */}
             <input
               type='number'
               value={item.quantity}
@@ -171,7 +163,6 @@ function CartItemRow({
           </div>
         </div>
 
-        {/* Báo lỗi tồn kho trên Desktop */}
         <div className='hidden sm:flex mt-1 h-4 items-center justify-center w-full'>
           {isOutOfStock && (
             <span className='text-[11px] text-red-500 font-medium text-center w-full'>
@@ -181,14 +172,12 @@ function CartItemRow({
         </div>
       </div>
 
-      {/* CỘT 5: THÀNH TIỀN (Desktop) */}
       <div className='hidden sm:flex flex-col items-end w-[130px] shrink-0'>
         <span className='text-base font-bold text-red-600'>
           {formatVnd(item.price * item.quantity)}
         </span>
       </div>
 
-      {/* CỘT 6: NÚT XOÁ (Desktop) */}
       <div className='hidden sm:flex w-[40px] shrink-0 justify-end'>
         <Button
           variant='ghost'
@@ -220,16 +209,42 @@ function EmptyCart() {
   )
 }
 
+// --- 2. MAIN COMPONENT ---
 export default function CartPage() {
   const { t } = useTranslation('common')
   const { items, totalCount, clear } = useCart()
   const navigate = useNavigate()
+  const location = useLocation() // <-- SỬ DỤNG USE LOCATION Ở ĐÂY
 
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([])
   const [voucher, setVoucher] = useState('')
   const [appliedVoucher, setAppliedVoucher] = useState('')
 
   const isAllSelected = items.length > 0 && selectedItemIds.length === items.length
+
+  // EFFECT MỚI: Tự động check các item vừa được "Mua lại"
+  useEffect(() => {
+    const repurchaseVariantIds = location.state?.repurchaseVariantIds
+
+    if (repurchaseVariantIds && repurchaseVariantIds.length > 0 && items.length > 0) {
+      // Tìm cartDetailId của những sản phẩm có variantId khớp với danh sách mua lại
+      const idsToSelect = items
+        .filter((item) => repurchaseVariantIds.includes(item.variantId))
+        .map((item) => item.id)
+
+      if (idsToSelect.length > 0) {
+        // Bọc trong setTimeout để tránh lỗi "cascading renders" của React 18
+        setTimeout(() => {
+          setSelectedItemIds(idsToSelect)
+
+          // Xóa state trên URL (history) đi để khi user F5 trình duyệt không bị select lại một cách vô lý
+          const state = { ...location.state }
+          delete state.repurchaseVariantIds
+          navigate(location.pathname, { replace: true, state })
+        }, 0)
+      }
+    }
+  }, [items, location, navigate])
 
   const handleToggleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -313,9 +328,7 @@ export default function CartPage() {
         <EmptyCart />
       ) : (
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8'>
-          {/* CỘT TRÁI: DANH SÁCH SẢN PHẨM */}
           <div className='lg:col-span-8 space-y-4'>
-            {/* Header giả của Table */}
             <div className='flex items-center gap-4 px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm text-sm font-semibold text-slate-600'>
               <div className='flex items-center w-auto'>
                 <Checkbox
@@ -331,7 +344,6 @@ export default function CartPage() {
               <div className='hidden sm:block w-[130px] text-center'>Số lượng</div>
               <div className='hidden sm:block w-[130px] text-right'>Thành tiền</div>
 
-              {/* Nút thùng rác tổng */}
               <div className='flex-1 sm:flex-none sm:w-[40px] flex justify-end'>
                 <Button
                   variant='ghost'
@@ -346,7 +358,6 @@ export default function CartPage() {
               </div>
             </div>
 
-            {/* Render items */}
             {items.map((it) => (
               <CartItemRow
                 key={it.id}
@@ -357,7 +368,6 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* CỘT PHẢI: TÓM TẮT ĐƠN HÀNG */}
           <aside className='lg:col-span-4'>
             <Card className='lg:sticky lg:top-24 border-slate-200 shadow-sm rounded-xl overflow-hidden'>
               <CardHeader className='pb-4 bg-slate-50/80 border-b border-slate-100'>

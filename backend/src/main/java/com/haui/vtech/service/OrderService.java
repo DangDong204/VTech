@@ -3,6 +3,7 @@ package com.haui.vtech.service;
 import com.haui.vtech.dto.order.OrderRequest;
 import com.haui.vtech.dto.order.OrderResponse;
 import com.haui.vtech.enums.OrderStatus;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -26,4 +27,9 @@ public interface OrderService {
     OrderResponse confirmReceipt(String userId, String orderId);
 
     OrderResponse returnOrder(String userId, String orderId, String returnReason);
+
+    // VNPay
+    String createPaymentUrl(String orderId, HttpServletRequest request);
+
+    OrderResponse processVnPayReturn(HttpServletRequest request);
 }

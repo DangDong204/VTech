@@ -23,11 +23,10 @@ import { cn } from '@/lib/utils'
 // API & Types
 import { getMyAddressesApi } from '@/services/address/address.api'
 import { createOrderApi } from '@/services/order/order.api'
+import { api } from '@/utils/axiosCustomize' // Bổ sung để gọi API lấy payment URL
 import type { AddressResponse } from '@/services/address/address.type'
 import type { PaymentMethod as PaymentMethodType } from '@/services/order/order.type'
 import { useCart } from '@/contexts/CartContext'
-
-// THÊM IMPORT TYPE CHO CART ITEM
 import type { CartItemResponse } from '@/services/cart/cart.type'
 
 function formatVnd(n: number) {
@@ -57,7 +56,7 @@ export default function CheckoutPage() {
   const [appliedVoucher, setAppliedVoucher] = useState(initialVoucherCode)
   const [discountAmount, setDiscountAmount] = useState(initialDiscount)
 
-  // Nếu người dùng vào thẳng link /checkout mà không qua giỏ hàng -> Đá về giỏ hàng
+  // Nếu vào thẳng link mà không qua giỏ hàng -> Đá về giỏ hàng
   useEffect(() => {
     if (selectedItems.length === 0) {
       toast.warning('Vui lòng chọn sản phẩm trước khi thanh toán.')
@@ -65,13 +64,11 @@ export default function CheckoutPage() {
     }
   }, [selectedItems, navigate])
 
-  // Lấy danh sách địa chỉ giao hàng
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
         const data = await getMyAddressesApi()
         setAddresses(data)
-        // Tự động chọn địa chỉ mặc định nếu có
         const defaultAddr = data.find((a) => a.isDefault) || data[0]
         if (defaultAddr) setSelectedAddressId(defaultAddr.id)
       } catch {
@@ -83,15 +80,13 @@ export default function CheckoutPage() {
     fetchAddresses()
   }, [])
 
-  // Tính toán tiền (Đã xóa ': any' vì selectedItems đã được định kiểu ở trên)
   const subtotal = useMemo(() => {
     return selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   }, [selectedItems])
 
-  const shippingFee = 0 // Tạm thời miễn phí ship
+  const shippingFee = 0
   const total = Math.max(0, subtotal + shippingFee - discountAmount)
 
-  // Xử lý áp dụng mã giảm giá
   const handleApplyVoucher = () => {
     if (voucherInput.trim().toUpperCase() === 'VTECH10') {
       setAppliedVoucher('VTECH10')
@@ -104,9 +99,9 @@ export default function CheckoutPage() {
     }
   }
 
-  // Xử lý Đặt hàng
   const { fetchCart } = useCart()
 
+  // Xử lý Đặt hàng & Thanh toán
   const handlePlaceOrder = async () => {
     if (!selectedAddressId) {
       toast.error('Vui lòng chọn địa chỉ giao hàng!')
@@ -121,7 +116,6 @@ export default function CheckoutPage() {
     try {
       setIsSubmitting(true)
       const payload = {
-        // Đã xóa ': any' ở đây
         cartDetailIds: selectedItems.map((item) => item.id),
         customerName: selectedAddress.recipientName,
         customerPhone: selectedAddress.phone,
@@ -130,24 +124,35 @@ export default function CheckoutPage() {
         shippingFee: shippingFee,
         productDiscount: discountAmount,
         note: note,
-        voucherIds: appliedVoucher ? [appliedVoucher] : [] // Gửi mã đã áp dụng thành công
+        voucherIds: appliedVoucher ? [appliedVoucher] : []
       }
 
-      await createOrderApi(payload)
-      toast.success('Đặt hàng thành công!')
+      // 1. GỌI API TẠO ĐƠN HÀNG
+      const newOrder = await createOrderApi(payload)
 
-      // GỌI LẠI FETCH CART ĐỂ LÀM TƯƠI SỐ LƯỢNG TRÊN HEADER
+      // Cập nhật lại giỏ hàng trên Header
       await fetchCart()
 
-      navigate('/orders', { replace: true })
-    } catch {
-      toast.error('Có lỗi xảy ra khi đặt hàng!')
-    } finally {
+      // 2. KIỂM TRA PHƯƠNG THỨC THANH TOÁN
+      if (paymentMethod === 'VNPAY') {
+        toast.loading('Đang kết nối tới cổng thanh toán VNPAY...')
+        // Lấy URL thanh toán từ Backend
+        const res = await api.get(`/client/orders/${newOrder.id}/payment-url`)
+        const paymentUrl = res.data.data
+
+        // Chuyển hướng người dùng sang trang của ngân hàng
+        window.location.href = paymentUrl
+      } else {
+        // Nếu là COD hoặc Chuyển khoản thường, báo thành công và về trang đơn hàng
+        toast.success('Đặt hàng thành công!')
+        navigate('/profile/orders', { replace: true })
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi đặt hàng!')
       setIsSubmitting(false)
     }
   }
 
-  // Phương thức thanh toán UI
   const paymentMethodsList = [
     {
       id: 'COD' as PaymentMethodType,
@@ -305,7 +310,6 @@ export default function CheckoutPage() {
               <CardContent className='pt-5'>
                 {/* Danh sách sản phẩm mini */}
                 <div className='space-y-4 max-h-[35vh] overflow-y-auto pr-2 pb-4'>
-                  {/* Đã xóa ': any' ở đây */}
                   {selectedItems.map((item) => (
                     <div key={item.id} className='flex gap-3'>
                       <div className='relative w-16 h-16 bg-white border border-slate-200 rounded-lg p-1 shrink-0'>
@@ -333,7 +337,6 @@ export default function CheckoutPage() {
 
                 <Separator className='my-4 bg-slate-200' />
 
-                {/* VOUCHER BOX MỚI THÊM */}
                 <div className='space-y-2.5'>
                   <label className='text-sm font-medium text-slate-700 flex items-center gap-1.5'>
                     <Tag className='h-4 w-4 text-red-500' />
@@ -358,7 +361,6 @@ export default function CheckoutPage() {
 
                 <Separator className='my-4 bg-slate-200' />
 
-                {/* Tính toán chi phí */}
                 <div className='space-y-3 text-sm'>
                   <div className='flex justify-between'>
                     <span className='text-slate-500 font-medium'>Tạm tính</span>
@@ -393,7 +395,8 @@ export default function CheckoutPage() {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className='mr-2 h-5 w-5 animate-spin' /> Đang xử lý...
+                      <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                      {paymentMethod === 'VNPAY' ? 'Đang chuyển hướng...' : 'Đang xử lý...'}
                     </>
                   ) : (
                     'ĐẶT HÀNG NGAY'
