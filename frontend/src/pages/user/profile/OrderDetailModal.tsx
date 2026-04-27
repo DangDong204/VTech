@@ -29,7 +29,6 @@ function formatDateTime(dateString: string) {
 export function OrderDetailModal({ order, isOpen, onClose, statusMap }: OrderDetailModalProps) {
   if (!isOpen || !order) return null
 
-  // Sắp xếp lịch sử mới nhất lên đầu
   const sortedHistories = [...order.orderHistories].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
@@ -72,13 +71,12 @@ export function OrderDetailModal({ order, isOpen, onClose, statusMap }: OrderDet
 
             {/* Zigzag Timeline */}
             <div className='relative'>
-              {/* Đường thẳng ở giữa */}
               <div className='absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 bg-gradient-to-b from-transparent via-slate-200 to-transparent' />
 
               <div className='flex flex-col gap-0'>
                 {sortedHistories.map((history, index) => {
                   const isLatest = index === 0
-                  const isLeft = index % 2 === 0 // chẵn: nội dung bên trái, dot giữa; lẻ: nội dung bên phải
+                  const isLeft = index % 2 === 0
 
                   return (
                     <div
@@ -132,7 +130,6 @@ export function OrderDetailModal({ order, isOpen, onClose, statusMap }: OrderDet
                         </div>
                       </div>
 
-                      {/* Phần rỗng bên kia để căn đối xứng */}
                       <div className='w-[calc(50%-20px)]' />
                     </div>
                   )
@@ -211,14 +208,25 @@ export function OrderDetailModal({ order, isOpen, onClose, statusMap }: OrderDet
                   <span className='text-slate-500'>Phí vận chuyển</span>
                   <span className='font-medium text-slate-800'>{formatVnd(order.shippingFee)}</span>
                 </div>
+
+                {/* Đã cập nhật 2 trường discount */}
                 {order.productDiscount > 0 && (
                   <div className='flex justify-between'>
-                    <span className='text-slate-500'>Giảm giá</span>
+                    <span className='text-slate-500'>Giảm giá sản phẩm</span>
                     <span className='font-medium text-red-600'>
                       -{formatVnd(order.productDiscount)}
                     </span>
                   </div>
                 )}
+                {order.shippingDiscount > 0 && (
+                  <div className='flex justify-between'>
+                    <span className='text-slate-500'>Giảm giá phí vận chuyển</span>
+                    <span className='font-medium text-emerald-600'>
+                      -{formatVnd(order.shippingDiscount)}
+                    </span>
+                  </div>
+                )}
+
                 <Separator className='bg-slate-200' />
                 <div className='flex justify-between items-center'>
                   <span className='font-bold text-slate-800'>Tổng cộng</span>

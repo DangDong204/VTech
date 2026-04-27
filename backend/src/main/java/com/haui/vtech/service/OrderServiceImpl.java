@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -30,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartDetailRepository cartDetailRepository;
     private final ProductVariantRepository variantRepository;
     private final VnPayConfig vnPayConfig;
+    private final VoucherRepository voucherRepository;
 
     @Override
     @Transactional
@@ -46,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal subTotal = BigDecimal.ZERO;
         List<OrderDetailEntity> orderDetails = new ArrayList<>();
 
-        // 1. Kiểm tra tồn kho & TRỪ KHO NGAY LẬP TỨC ĐỂ GIỮ CHỖ
+        // 1. Kiểm tra tồn kho & TRỪ KHO
         for (CartDetailEntity cartItem : cartItems) {
             ProductVariantEntity variant = variantRepository.findById(cartItem.getVariantId())
                     .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, cartItem.getVariantId()));
@@ -55,14 +57,12 @@ public class OrderServiceImpl implements OrderService {
                 throw new AppException(ErrorCode.OUT_OF_STOCK, String.valueOf(variant.getStockQuantity()));
             }
 
-            // Trừ tồn kho
             variant.setStockQuantity(variant.getStockQuantity() - cartItem.getQuantity());
             variantRepository.save(variant);
 
             BigDecimal itemTotal = variant.getSalePrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
             subTotal = subTotal.add(itemTotal);
 
-            // Tạo chi tiết đơn hàng
             OrderDetailEntity orderDetail = OrderDetailEntity.builder()
                     .variantId(variant.getId())
                     .quantity(cartItem.getQuantity())
@@ -72,16 +72,77 @@ public class OrderServiceImpl implements OrderService {
             orderDetails.add(orderDetail);
         }
 
-        // 2. Tính Final Price
+        // 2. Tính toán phí Ship (Tạm thời lấy từ Request, thực tế nên gọi API GiaoHàngNhanh ở Backend)
         BigDecimal shippingFee = request.getShippingFee() != null ? request.getShippingFee() : BigDecimal.ZERO;
-        BigDecimal discount = request.getProductDiscount() != null ? request.getProductDiscount() : BigDecimal.ZERO;
 
-        BigDecimal finalPrice = subTotal.add(shippingFee).subtract(discount);
+        // 3. TÍNH TOÁN VOUCHER (BẢO MẬT: BACKEND TỰ TÍNH, KHÔNG TIN FRONTEND)
+        BigDecimal productDiscount = BigDecimal.ZERO;
+        BigDecimal shippingDiscount = BigDecimal.ZERO;
+        List<VoucherEntity> appliedVouchers = new ArrayList<>();
+
+        if (request.getVoucherIds() != null && !request.getVoucherIds().isEmpty()) {
+            appliedVouchers = voucherRepository.findAllById(request.getVoucherIds());
+
+            for (VoucherEntity voucher : appliedVouchers) {
+                // a. Validate Voucher (Kiểm tra hợp lệ)
+                if (voucher.getStatus() != com.haui.vtech.enums.VoucherStatus.ACTIVE) {
+                    throw new AppException(ErrorCode.VOUCHER_INACTIVE); // SỬA Ở ĐÂY
+                }
+                if (voucher.getStartDate().isAfter(LocalDateTime.now()) || voucher.getEndDate().isBefore(LocalDateTime.now())) {
+                    throw new AppException(ErrorCode.VOUCHER_EXPIRED); // SỬA Ở ĐÂY
+                }
+                if (voucher.getUsageLimit() != null && voucher.getUsedCount() >= voucher.getUsageLimit()) {
+                    throw new AppException(ErrorCode.VOUCHER_OUT_OF_USAGE); // SỬA Ở ĐÂY
+                }
+                if (subTotal.compareTo(voucher.getMinOrderValue()) < 0) {
+                    throw new AppException(ErrorCode.VOUCHER_CONDITION_NOT_MET); // SỬA Ở ĐÂY
+                }
+
+                // b. Phân loại và tính tiền giảm
+                switch (voucher.getType()) {
+                    case FREE_SHIP:
+                        BigDecimal shipDiscount = voucher.getDiscountValue();
+
+                        if (voucher.getMaxDiscountAmount() != null && voucher.getMaxDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+                            shipDiscount = shipDiscount.min(voucher.getMaxDiscountAmount());
+                        }
+
+                        // Cộng dồn vào tổng tiền giảm ship của đơn
+                        shippingDiscount = shippingDiscount.add(shippingFee.min(shipDiscount));
+                        break;
+
+                    case FIXED_AMOUNT:
+                        productDiscount = productDiscount.add(voucher.getDiscountValue());
+                        break;
+
+                    case PERCENTAGE:
+                        // Tính % giảm: subTotal * discountValue / 100
+                        BigDecimal calcPercent = subTotal.multiply(voucher.getDiscountValue()).divide(BigDecimal.valueOf(100));
+                        // Ép giới hạn Max Discount nếu có (VD: Giảm 10% nhưng tối đa 50k)
+                        if (voucher.getMaxDiscountAmount() != null) {
+                            calcPercent = calcPercent.min(voucher.getMaxDiscountAmount());
+                        }
+                        productDiscount = productDiscount.add(calcPercent);
+                        break;
+                }
+
+                // c. Tăng biến đếm lượt dùng
+                voucher.setUsedCount(voucher.getUsedCount() + 1);
+            }
+            // Lưu lại lượt dùng mới vào DB
+            voucherRepository.saveAll(appliedVouchers);
+        }
+
+        // Chặn trường hợp tiền giảm giá sản phẩm lớn hơn tiền hàng
+        productDiscount = productDiscount.min(subTotal);
+
+        // 4. Tính Final Price cuối cùng
+        BigDecimal finalPrice = subTotal.add(shippingFee).subtract(productDiscount).subtract(shippingDiscount);
         if (finalPrice.compareTo(BigDecimal.ZERO) < 0) {
             finalPrice = BigDecimal.ZERO;
         }
 
-        // 3. Lưu Order (Trạng thái PENDING)
+        // 5. Lưu Order
         OrderEntity order = OrderEntity.builder()
                 .userId(userId)
                 .customerName(request.getCustomerName())
@@ -89,18 +150,17 @@ public class OrderServiceImpl implements OrderService {
                 .customerAddress(request.getCustomerAddress())
                 .subTotal(subTotal)
                 .shippingFee(shippingFee)
-                .productDiscount(discount)
+                .productDiscount(productDiscount) // Đưa tiền giảm thực tế Backend tính được vào
+                .shippingDiscount(shippingDiscount) // Đưa tiền giảm ship vào
                 .finalPrice(finalPrice)
                 .paymentMethod(request.getPaymentMethod())
                 .note(request.getNote())
-                .voucherIds(request.getVoucherIds())
+                .voucherIds(request.getVoucherIds()) // Lưu ID để biết khách dùng mã nào
                 .build();
 
-        // Map ngược order vào detail
         orderDetails.forEach(detail -> detail.setOrder(order));
         order.setOrderDetails(orderDetails);
 
-        // 4. Lưu lịch sử
         OrderHistoryEntity history = OrderHistoryEntity.builder()
                 .order(order)
                 .newStatus(OrderStatus.PENDING)
@@ -110,8 +170,6 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-
-        // 5. Xóa sản phẩm khỏi giỏ hàng
         cartDetailRepository.deleteAll(cartItems);
 
         return mapToOrderResponse(savedOrder);

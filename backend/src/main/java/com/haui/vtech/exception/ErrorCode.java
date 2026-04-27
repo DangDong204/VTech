@@ -96,6 +96,10 @@ public enum ErrorCode {
     VOUCHER_VALUE_INVALID(9005, "voucher.value.invalid", HttpStatus.BAD_REQUEST),
     VOUCHER_MIN_ORDER_INVALID(9006, "voucher.min.order.invalid", HttpStatus.BAD_REQUEST),
     VOUCHER_DATES_INVALID(9007, "voucher.dates.invalid", HttpStatus.BAD_REQUEST),
+    VOUCHER_INACTIVE(9008, "voucher.inactive", HttpStatus.BAD_REQUEST),
+    VOUCHER_EXPIRED(9009, "voucher.expired", HttpStatus.BAD_REQUEST),
+    VOUCHER_OUT_OF_USAGE(9010, "voucher.out.of.usage", HttpStatus.BAD_REQUEST),
+    VOUCHER_CONDITION_NOT_MET(9011, "voucher.condition.not.met", HttpStatus.BAD_REQUEST),
 
     PROMOTION_NOT_FOUND(10000, "promotion.not.found", HttpStatus.NOT_FOUND),
     PROMOTION_NAME_NOTBLANK(10001, "promotion.name.not.blank", HttpStatus.BAD_REQUEST),

@@ -36,7 +36,7 @@ export const columns: ColumnDef<OrderResponse>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={i18n.t('order:table.columns.orderCode')} />
     ),
-    cell: ({ row }) => <span className='font-bold text-slate-700'>{row.getValue('orderCode')}</span>
+    cell: ({ row }) => <span className='font-bold'>{row.getValue('orderCode')}</span>
   },
   {
     id: 'customer',

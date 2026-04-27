@@ -54,4 +54,6 @@ public interface VoucherRepository extends JpaRepository<VoucherEntity, String> 
           AND v.endDate < :now
     """)
     int deactivateExpiredVouchers(@Param("now") LocalDateTime now);
+
+    Optional<VoucherEntity> findByVoucherCode(String voucherCode);
 }

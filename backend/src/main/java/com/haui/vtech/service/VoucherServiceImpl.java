@@ -1,5 +1,7 @@
 package com.haui.vtech.service;
 
+import com.haui.vtech.dto.voucher.CheckVoucherRequest;
+import com.haui.vtech.dto.voucher.CheckVoucherResponse;
 import com.haui.vtech.dto.voucher.VoucherRequest;
 import com.haui.vtech.dto.voucher.VoucherResponse;
 import com.haui.vtech.entity.VoucherEntity;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -105,6 +108,62 @@ public class VoucherServiceImpl implements VoucherService {
             throw new AppException(ErrorCode.VOUCHER_NOT_FOUND, id);
         }
         return voucher.getVoucherCode();
+    }
+
+    @Override
+    public CheckVoucherResponse checkVoucher(CheckVoucherRequest request) {
+        VoucherEntity voucher = voucherRepository.findByVoucherCode(request.getVoucherCode())
+                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+
+        // 1. Kiểm tra các điều kiện hợp lệ
+        if (voucher.getStatus() != VoucherStatus.ACTIVE) {
+            throw new AppException(ErrorCode.VOUCHER_INACTIVE); // SỬA Ở ĐÂY
+        }
+        if (voucher.getStartDate().isAfter(LocalDateTime.now()) || voucher.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new AppException(ErrorCode.VOUCHER_EXPIRED); // SỬA Ở ĐÂY
+        }
+        if (voucher.getUsageLimit() != null && voucher.getUsedCount() >= voucher.getUsageLimit()) {
+            throw new AppException(ErrorCode.VOUCHER_OUT_OF_USAGE); // SỬA Ở ĐÂY
+        }
+        if (request.getSubTotal().compareTo(voucher.getMinOrderValue()) < 0) {
+            throw new AppException(ErrorCode.VOUCHER_CONDITION_NOT_MET); // SỬA Ở ĐÂY
+        }
+
+        // 2. Tính toán số tiền được giảm để trả về cho Frontend hiển thị
+        BigDecimal discountAmount = BigDecimal.ZERO;
+
+        switch (voucher.getType()) {
+            case FREE_SHIP:
+                // Lấy số tiền giảm trực tiếp từ discountValue (VD: 20.000)
+                BigDecimal shipDiscount = voucher.getDiscountValue();
+
+                // Nếu Admin có cài đặt mức giảm tối đa (> 0) thì ép xuống mức tối đa đó
+                if (voucher.getMaxDiscountAmount() != null && voucher.getMaxDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    shipDiscount = shipDiscount.min(voucher.getMaxDiscountAmount());
+                }
+
+                // Số tiền giảm không bao giờ được vượt quá phí ship thực tế (30.000)
+                discountAmount = request.getShippingFee().min(shipDiscount);
+                break;
+            case FIXED_AMOUNT:
+                discountAmount = voucher.getDiscountValue();
+                break;
+            case PERCENTAGE:
+                BigDecimal calcPercent = request.getSubTotal().multiply(voucher.getDiscountValue()).divide(BigDecimal.valueOf(100));
+                if (voucher.getMaxDiscountAmount() != null) {
+                    calcPercent = calcPercent.min(voucher.getMaxDiscountAmount());
+                }
+                discountAmount = calcPercent;
+                break;
+        }
+
+        return CheckVoucherResponse.builder()
+                .voucherId(voucher.getId())
+                .voucherCode(voucher.getVoucherCode())
+                .voucherName(voucher.getVoucherName())
+                .type(voucher.getType())
+                .discountAmount(discountAmount)
+                .build();
     }
 
 }

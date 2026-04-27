@@ -91,9 +91,6 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
 
   return (
     <>
-      {/* SỬ DỤNG GIAO DIỆN TƯƠNG TỰ PRODUCT:
-        Sử dụng flex-wrap để có thể tự xuống dòng nếu bị hẹp.
-      */}
       <div className='flex items-center flex-wrap gap-2 py-4'>
         {/* Ô Tìm kiếm */}
         <Input
@@ -110,14 +107,14 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
             table.getColumn('orderStatus')?.setFilterValue(value === 'all' ? undefined : value)
           }
         >
-          <SelectTrigger className='w-[160px] bg-white h-9'>
+          {/* ĐÃ XÓA bg-white */}
+          <SelectTrigger className='w-[160px] h-9'>
             <SelectValue placeholder={t('filters.status.label')} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value='all'>{t('filters.status.all')}</SelectItem>
             {STATUS_OPTIONS.map((status) => (
               <SelectItem key={status} value={status}>
-                {/* ÉP KIỂU ĐỂ FIX LỖI TYPESCRIPT */}
                 {t(`status.${status}`)}
               </SelectItem>
             ))}
@@ -130,7 +127,7 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
             <Button
               variant='outline'
               className={cn(
-                'w-[260px] justify-start text-left font-normal h-9 bg-white',
+                'w-[260px] justify-start text-left font-normal h-9', // ĐÃ XÓA bg-white
                 !dateFilter?.from && 'text-muted-foreground'
               )}
             >
@@ -150,17 +147,18 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
               )}
             </Button>
           </PopoverTrigger>
-          {/* Thêm class p-3 để tạo khoảng đệm, max-w-[100vw] overflow-x-auto để tránh vỡ layout trên mobile */}
-          <PopoverContent className='w-auto p-3 max-w-[100vw] overflow-x-auto' align='start'>
+          <PopoverContent
+            className='w-auto p-3 max-w-[100vw] overflow-x-auto bg-popover text-popover-foreground border-border'
+            align='start'
+          >
             <Calendar
               initialFocus
               mode='range'
               defaultMonth={dateFilter?.from}
               selected={dateFilter}
               onSelect={(range) => table.getColumn('createdAt')?.setFilterValue(range)}
-              // Dùng 1 tháng trên màn hình nhỏ, 2 tháng trên màn hình lớn
               numberOfMonths={window.innerWidth > 768 ? 2 : 1}
-              locale={currentLocale} // <-- ÁP DỤNG LOCALE Ở ĐÂY
+              locale={currentLocale}
               className='border-none'
             />
           </PopoverContent>
@@ -173,13 +171,14 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
           </Button>
         )}
 
-        {/* Khối bên phải (Đẩy ViewOptions và các nút Create/Trash về bên phải) */}
+        {/* Khối bên phải */}
         <div className='ml-auto flex items-center gap-2'>
           <DataTableViewOptions table={table} />
         </div>
       </div>
 
-      <div className='overflow-hidden rounded-md border mb-5 bg-white'>
+      {/* ĐÃ XÓA bg-white */}
+      <div className='overflow-hidden rounded-md border mb-5 bg-background'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -208,7 +207,6 @@ export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='text-center py-10'>
-                  {/* Ép kiểu cho translation */}
                   {t('table.noResults')}
                 </TableCell>
               </TableRow>
