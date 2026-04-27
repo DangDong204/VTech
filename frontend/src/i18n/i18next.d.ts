@@ -12,6 +12,8 @@ import enVariant from './locales/en/variant.json'
 import enVoucher from './locales/en/voucher.json'
 import enPromotion from './locales/en/promotion.json'
 import enReceipt from './locales/en/receipt.json'
+import enOrder from './locales/en/order.json'
+import enSideBar from './locales/en/sidebar.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -30,6 +32,8 @@ declare module 'i18next' {
       voucher: typeof enVoucher
       promotion: typeof enPromotion
       receipt: typeof enReceipt
+      order: typeof enOrder
+      sidebar: typeof enSideBar
     }
   }
 }

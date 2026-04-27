@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Hóa đơn điện tử</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.5; }
+        .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; background-color: #fff; }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #ea580c; padding-bottom: 20px; margin-bottom: 20px; }
+        .title { font-size: 26px; font-weight: bold; color: #ea580c; margin-bottom: 5px; }
+        .info-table { width: 100%; margin-bottom: 25px; }
+        .info-table td { padding: 6px 0; vertical-align: top; }
+        .info-label { width: 150px; font-weight: bold; color: #555; }
+        .product-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .product-table th, .product-table td { padding: 12px 10px; border: 1px solid #e5e7eb; text-align: left; }
+        .product-table th { background-color: #f9fafb; font-weight: bold; color: #4b5563; }
+        .text-right { text-align: right !important; }
+        .text-center { text-align: center !important; }
+        .text-red { color: #dc2626; }
+        .text-green { color: #059669; }
+
+        /* Định dạng phần tổng tiền */
+        .summary-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .summary-table td { padding: 8px 10px; border: 1px solid #e5e7eb; border-top: none; }
+        .summary-label { text-align: right; font-weight: 500; color: #4b5563; }
+        .summary-value { text-align: right; font-weight: bold; width: 150px; }
+
+        .total-row td { background-color: #fff7ed; padding: 15px 10px; font-size: 16px; border-top: 2px solid #ea580c; }
+        .total-row .summary-label { color: #ea580c; font-weight: bold; }
+        .total-row .summary-value { color: #ea580c; }
+    </style>
+</head>
+<body>
+<div class="invoice-box">
+    <table style="width: 100%; border-bottom: 2px solid #ea580c; padding-bottom: 20px; margin-bottom: 20px;">
+        <tr>
+            <td style="vertical-align: top;">
+                <div class="title">VTECH STORE</div>
+                <div style="color: #666;">Địa chỉ: Bắc Từ Liêm, Hà Nội</div>
+                <div style="color: #666;">Điện thoại: 0123.456.789</div>
+            </td>
+            <td style="vertical-align: top; text-align: right;">
+                <h2 style="margin-top: 0; color: #1f2937;">HÓA ĐƠN BÁN HÀNG</h2>
+                <p style="margin: 5px 0;">Mã đơn: <strong style="color: #ea580c;" th:text="${order.orderCode}">VT12345</strong></p>
+                <p style="margin: 0; color: #666;">Ngày đặt: <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026</span></p>
+            </td>
+        </tr>
+    </table>
+
+    <table class="info-table">
+        <tr>
+            <td class="info-label">Khách hàng:</td>
+            <td th:text="${order.customerName}">Nguyễn Văn A</td>
+            <td class="info-label" style="text-align: right; width: 100px; padding-right: 15px;">Điện thoại:</td>
+            <td th:text="${order.customerPhone}">0987654321</td>
+        </tr>
+        <tr>
+            <td class="info-label">Địa chỉ nhận hàng:</td>
+            <td colspan="3" th:text="${order.customerAddress}">Hà Nội</td>
+        </tr>
+        <tr>
+            <td class="info-label">Phương thức TT:</td>
+            <td colspan="3">
+                <span th:if="${order.paymentMethod.name() == 'COD'}">Tiền mặt (COD)</span>
+                <span th:unless="${order.paymentMethod.name() == 'COD'}" th:text="${order.paymentMethod}">VNPAY</span>
+                - Trạng thái:
+                <span th:if="${order.paymentStatus.name() == 'PAID'}" class="text-green" style="font-weight: bold;">ĐÃ THANH TOÁN</span>
+                <span th:if="${order.paymentStatus.name() == 'PENDING'}" class="text-red" style="font-weight: bold;">CHƯA THANH TOÁN</span>
+            </td>
+        </tr>
+        <tr th:if="${order.note != null and !order.note.isEmpty()}">
+            <td class="info-label">Ghi chú:</td>
+            <td colspan="3" th:text="${order.note}">Giao giờ hành chính</td>
+        </tr>
+    </table>
+
+    <table class="product-table">
+        <thead>
+        <tr>
+            <th class="text-center" width="50px">STT</th>
+            <th>Tên sản phẩm</th>
+            <th class="text-right" width="120px">Đơn giá</th>
+            <th class="text-center" width="60px">SL</th>
+            <th class="text-right" width="130px">Thành tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, iterStat : ${order.orderDetails}">
+            <td class="text-center" th:text="${iterStat.count}">1</td>
+            <td>
+                <div style="font-weight: bold; margin-bottom: 4px;" th:text="${item.productName}">iPhone 15 Pro Max</div>
+                <div style="font-size: 12px; color: #6b7280;" th:text="'Phân loại: ' + ${item.variantName} + ' - Màu: ' + ${item.colorName}">256GB - Màu Titan</div>
+            </td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">29.000.000 đ</td>
+            <td class="text-center" th:text="${item.quantity}">1</td>
+            <td class="text-right" style="font-weight: bold;" th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'">29.000.000 đ</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="summary-table">
+        <tr>
+            <td colspan="4" class="summary-label">Tạm tính:</td>
+            <td class="summary-value" th:text="${#numbers.formatDecimal(order.subTotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">29.000.000 đ</td>
+        </tr>
+        <tr>
+            <td colspan="4" class="summary-label">Phí vận chuyển:</td>
+            <td class="summary-value" th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' đ'">30.000 đ</td>
+        </tr>
+
+        <tr th:if="${order.productDiscount != null and order.productDiscount > 0}">
+            <td colspan="4" class="summary-label">Giảm giá sản phẩm:</td>
+            <td class="summary-value text-red" th:text="'- ' + ${#numbers.formatDecimal(order.productDiscount, 0, 'COMMA', 0, 'POINT')} + ' đ'">- 0 đ</td>
+        </tr>
+
+        <tr th:if="${order.shippingDiscount != null and order.shippingDiscount > 0}">
+            <td colspan="4" class="summary-label">Giảm phí vận chuyển:</td>
+            <td class="summary-value text-green" th:text="'- ' + ${#numbers.formatDecimal(order.shippingDiscount, 0, 'COMMA', 0, 'POINT')} + ' đ'">- 0 đ</td>
+        </tr>
+
+        <tr class="total-row">
+            <td colspan="4" class="summary-label">TỔNG CỘNG CẦN THANH TOÁN:</td>
+            <td class="summary-value" th:text="${#numbers.formatDecimal(order.finalPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'">29.030.000 đ</td>
+        </tr>
+    </table>
+
+    <div style="margin-top: 40px; text-align: center; font-style: italic; color: #666;">
+        Cảm ơn quý khách đã mua sắm tại VTech Store!<br/>
+        Vui lòng giữ lại hóa đơn để được hỗ trợ bảo hành.
+    </div>
+</div>
+</body>
+</html>

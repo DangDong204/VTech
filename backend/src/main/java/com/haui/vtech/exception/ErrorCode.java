@@ -96,6 +96,10 @@ public enum ErrorCode {
     VOUCHER_VALUE_INVALID(9005, "voucher.value.invalid", HttpStatus.BAD_REQUEST),
     VOUCHER_MIN_ORDER_INVALID(9006, "voucher.min.order.invalid", HttpStatus.BAD_REQUEST),
     VOUCHER_DATES_INVALID(9007, "voucher.dates.invalid", HttpStatus.BAD_REQUEST),
+    VOUCHER_INACTIVE(9008, "voucher.inactive", HttpStatus.BAD_REQUEST),
+    VOUCHER_EXPIRED(9009, "voucher.expired", HttpStatus.BAD_REQUEST),
+    VOUCHER_OUT_OF_USAGE(9010, "voucher.out.of.usage", HttpStatus.BAD_REQUEST),
+    VOUCHER_CONDITION_NOT_MET(9011, "voucher.condition.not.met", HttpStatus.BAD_REQUEST),
 
     PROMOTION_NOT_FOUND(10000, "promotion.not.found", HttpStatus.NOT_FOUND),
     PROMOTION_NAME_NOTBLANK(10001, "promotion.name.not.blank", HttpStatus.BAD_REQUEST),
@@ -116,7 +120,17 @@ public enum ErrorCode {
     CART_ITEM_NOT_FOUND(12001, "cart.item.not.found", HttpStatus.NOT_FOUND),
     OUT_OF_STOCK(12002, "product.out.of.stock", HttpStatus.BAD_REQUEST),
 
-    ADDRESS_NOT_FOUND(13000, "address.not.found", HttpStatus.NOT_FOUND)
+    ADDRESS_NOT_FOUND(13000, "address.not.found", HttpStatus.NOT_FOUND),
+
+    ORDER_NOT_FOUND(14000, "order.not.found", HttpStatus.NOT_FOUND),
+    EMPTY_ORDER_ITEMS(14001, "order.items.empty", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_INVALID(14002, "order.status.invalid", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_CANCEL(14003, "order.cannot.cancel", HttpStatus.BAD_REQUEST),
+    ORDER_TRANSITION_INVALID(14004, "order.transition.invalid", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_SHIPPING(14005, "order.not.shipping", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_DELIVERED(14006, "order.not.delivered", HttpStatus.BAD_REQUEST),
+    ORDER_RETURN_EXPIRED(14007, "order.return.expired", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_EXPORT_INVOICE(14008, "order.cannot.export.invoice", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

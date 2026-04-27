@@ -28,148 +28,87 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar'
 import { useAuthStore } from '@/store/auth.store'
+import { useQuery } from '@tanstack/react-query'
+import { getAllOrdersAdminApi } from '@/services/order/order.api'
+import { useTranslation } from 'react-i18next' // <-- IMPORT THÊM HOOK I18N
 
-// This is sample data.
-const data = {
-  user: {
-    name: 'VTech',
-    email: 'vtech@gmail.com',
-    avatar: '/avatars/shadcn.jpg'
-  },
+// Các data tĩnh không cần i18n
+const staticData = {
   teams: [
-    {
-      name: 'Vtech ',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise'
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup'
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free'
-    }
-  ],
-  navMain: [
-    {
-      title: 'Products',
-      url: '#',
-      icon: Box,
-      isActive: true,
-      items: [
-        {
-          title: 'List Products',
-          url: '/dashboard/products'
-        },
-        {
-          title: 'Colors',
-          url: '/dashboard/colors'
-        },
-        {
-          title: 'Versions',
-          url: '/dashboard/versions'
-        },
-
-        {
-          title: 'Receipt',
-          url: '#'
-        }
-      ]
-    },
-    {
-      title: 'Orders',
-      url: '#',
-      icon: ShoppingCart,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#'
-        },
-        {
-          title: 'Get Started',
-          url: '#'
-        },
-        {
-          title: 'Tutorials',
-          url: '#'
-        },
-        {
-          title: 'Changelog',
-          url: '#'
-        }
-      ]
-    }
-  ],
-  projects: [
-    {
-      name: 'Categories',
-      url: '/dashboard/categories',
-      icon: ListCollapseIcon
-    },
-    {
-      name: 'Brands',
-      url: '/dashboard/brands',
-      icon: CircleStar
-    },
-    {
-      name: 'Blog',
-      url: '/dashboard/blogs',
-      icon: StickyNote
-    },
-    {
-      name: 'Users',
-      url: '/dashboard/users',
-      icon: Users2
-    },
-    {
-      name: 'Vouchers',
-      url: '/dashboard/vouchers',
-      icon: TicketPercent
-    },
-    {
-      name: 'Promotions',
-      url: '/dashboard/promotions',
-      icon: BadgeDollarSign
-    },
-    {
-      name: 'Tags',
-      url: '/dashboard/tags',
-      icon: Tags
-    },
-    {
-      name: 'Reviews',
-      url: '/dashboard/reviews',
-      icon: MessageCircleMore
-    },
-    {
-      name: 'Settings',
-      url: '#',
-      icon: Settings
-    }
+    { name: 'Vtech ', logo: GalleryVerticalEnd, plan: 'Enterprise' },
+    { name: 'Acme Corp.', logo: AudioWaveform, plan: 'Startup' },
+    { name: 'Evil Corp.', logo: Command, plan: 'Free' }
   ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthStore()
+  const { t } = useTranslation('sidebar') // <-- KHỞI TẠO TRANSLATION
 
-  // Ưu tiên lấy username từ token, nếu không có thì mới fallback cắt từ email
+  // 1. Fetch toàn bộ đơn hàng ngầm (Polling mỗi 30s 1 lần)
+  const { data: orders } = useQuery({
+    queryKey: ['orders'],
+    queryFn: getAllOrdersAdminApi,
+    refetchInterval: 30000,
+    staleTime: 10000
+  })
+
+  // 2. Tính tổng số đơn hàng đang chờ xác nhận (PENDING)
+  const pendingOrdersCount = orders?.filter((order) => order.orderStatus === 'PENDING').length || 0
+
+  // 3. Mảng Menu Chính (Sử dụng t() để dịch)
+  const navMain = [
+    {
+      title: t('products.title'),
+      url: '#',
+      icon: Box,
+      isActive: true,
+      items: [
+        { title: t('products.list'), url: '/dashboard/products' },
+        { title: t('products.colors'), url: '/dashboard/colors' },
+        { title: t('products.versions'), url: '/dashboard/versions' },
+        { title: t('products.receipt'), url: '/dashboard/receipts' }
+      ]
+    },
+    {
+      title: t('orders.title'),
+      url: '/dashboard/orders',
+      icon: ShoppingCart,
+      isActive: true,
+      badge: pendingOrdersCount
+    }
+  ]
+
+  // 4. Mảng Projects (Sử dụng t() để dịch)
+  const projects = [
+    { name: t('projects.categories'), url: '/dashboard/categories', icon: ListCollapseIcon },
+    { name: t('projects.brands'), url: '/dashboard/brands', icon: CircleStar },
+    { name: t('projects.blog'), url: '/dashboard/blogs', icon: StickyNote },
+    { name: t('projects.users'), url: '/dashboard/users', icon: Users2 },
+    { name: t('projects.vouchers'), url: '/dashboard/vouchers', icon: TicketPercent },
+    { name: t('projects.promotions'), url: '/dashboard/promotions', icon: BadgeDollarSign },
+    { name: t('projects.tags'), url: '/dashboard/tags', icon: Tags },
+    { name: t('projects.reviews'), url: '/dashboard/reviews', icon: MessageCircleMore },
+    { name: t('projects.settings'), url: '#', icon: Settings }
+  ]
+
   const userData = {
     name: user?.username || user?.sub?.split('@')[0] || 'VTech Admin',
     email: user?.sub || 'vtech@gmail.com',
-    avatar: user?.avatar || 'https://ui.shadcn.com/avatars/02.png' // Ưu tiên avatar từ DB
+    avatar: user?.avatar || 'https://ui.shadcn.com/avatars/02.png'
   }
+
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={staticData.teams} />
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+
+      <SidebarContent className='overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300'>
+        <NavMain items={navMain} />
+        <NavProjects projects={projects} />
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser user={userData} />
       </SidebarFooter>

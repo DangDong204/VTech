@@ -1,0 +1,27 @@
+{
+  "group": {
+    "dashboard": "Dashboard",
+    "projects": "System Management"
+  },
+  "products": {
+    "title": "Products",
+    "list": "List Products",
+    "colors": "Colors",
+    "versions": "Versions",
+    "receipt": "Receipts"
+  },
+  "orders": {
+    "title": "Orders"
+  },
+  "projects": {
+    "categories": "Categories",
+    "brands": "Brands",
+    "blog": "Blog",
+    "users": "Users",
+    "vouchers": "Vouchers",
+    "promotions": "Promotions",
+    "tags": "Tags",
+    "reviews": "Reviews",
+    "settings": "Settings"
+  }
+}

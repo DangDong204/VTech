@@ -41,3 +41,12 @@ export const deleteHardVoucherApi = async (voucherId: string) => {
   const res = await api.delete<ApiResponse<void>>(`/vouchers/trash/${voucherId}`)
   return res.data
 }
+
+export const checkVoucherApi = async (payload: {
+  voucherCode: string
+  subTotal: number
+  shippingFee: number
+}) => {
+  const res = await api.post('/client/vouchers/check', payload)
+  return res.data.data
+}
