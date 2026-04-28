@@ -1,0 +1,74 @@
+{
+  "kpi": {
+    "title": "Business Overview",
+    "error_fetch": "Failed to load overview data",
+    "compared_to": "vs",
+    "filter": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month"
+    },
+    "period": {
+      "yesterday": "Yesterday",
+      "lastWeek": "Last Week",
+      "lastMonth": "Last Month"
+    },
+    "labels": {
+      "revenue": "Revenue",
+      "orders": "Orders",
+      "productsSold": "Products Sold",
+      "newCustomers": "New Customers"
+    }
+  },
+  "status_chart": {
+    "title": "Order Status",
+    "total": "Total",
+    "orders": "orders",
+    "select_period": "Select period",
+    "no_data": "No order data available",
+    "error_fetch": "Failed to load order status chart",
+    "period": {
+      "yesterday": "Yesterday",
+      "last_week": "Last Week",
+      "this_month": "This Month"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "PROCESSING": "Processing",
+      "SHIPPING": "Shipping",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled",
+      "RETURNED": "Returned"
+    }
+  },
+  "revenue_chart": {
+    "title": "Revenue",
+    "subtitle": "Comparison",
+    "period": {
+      "day": "by hour (today)",
+      "week": "by day (this week)",
+      "month": "by month (this year)"
+    },
+    "filter": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month"
+    },
+    "series": {
+      "this_period": "This Period",
+      "last_period": "Previous Period"
+    },
+    "no_data": "No data available",
+    "error_fetch": "Unable to load revenue chart"
+  },
+  "top_products": {
+    "title": "Top Products",
+    "subtitle_revenue": "By Revenue",
+    "subtitle_orders": "By Quantity Sold",
+    "revenue": "Revenue",
+    "orders": "Orders",
+    "no_data": "No data available",
+    "error_fetch": "Unable to load top products list"
+  }
+}

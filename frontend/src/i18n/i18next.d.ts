@@ -14,6 +14,7 @@ import enPromotion from './locales/en/promotion.json'
 import enReceipt from './locales/en/receipt.json'
 import enOrder from './locales/en/order.json'
 import enSideBar from './locales/en/sidebar.json'
+import enDashboard from './locales/en/dashboard.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -34,6 +35,7 @@ declare module 'i18next' {
       receipt: typeof enReceipt
       order: typeof enOrder
       sidebar: typeof enSideBar
+      dashboard: typeof enDashboard
     }
   }
 }

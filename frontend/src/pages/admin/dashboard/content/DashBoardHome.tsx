@@ -1,25 +1,30 @@
-import AppAreaChart from '@/pages/admin/dashboard/charts/AppAreaChart'
-import AppBarChart from '@/pages/admin/dashboard/charts/AppBarChart'
-import AppPieChart from '@/pages/admin/dashboard/charts/AppPieChart'
+import RevenueAreaChart from '@/pages/admin/dashboard/content/Revenueareachart'
+import KpiCards from './KpiCards'
+
+import OrderStatusPieChart from '@/pages/admin/dashboard/content/Orderstatuspiechart'
+import TopProductsBarChart from './TopProductsBarChart'
 
 export default function DashboardHome() {
   return (
-    <>
-      <div className='grid auto-rows-min gap-4 md:grid-cols-4'>
-        <div className='bg-primary-foreground p-4 rounded-sm lg:col-span-2 xl:col-span-1 2xl:col-span-2'>
-          <AppBarChart />
+    <div className='flex flex-col gap-4 p-4 md:p-6'>
+      {/* Row 1: KPI Cards với bộ lọc ngày/tuần/tháng */}
+      <KpiCards />
+
+      {/* Row 2: Biểu đồ doanh thu (2/3) + Trạng thái đơn hàng (1/3) */}
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
+        <div className='lg:col-span-2'>
+          <RevenueAreaChart />
         </div>
-        <div className='bg-primary-foreground p-4 rounded-sm'>Test</div>
-        <div className='bg-primary-foreground p-4 rounded-sm'>
-          <AppPieChart />
+        <div className='lg:col-span-1'>
+          <OrderStatusPieChart />
         </div>
-        <div className='bg-primary-foreground p-4 rounded-sm'>Test</div>
-        <div className='bg-primary-foreground p-4 rounded-sm lg:col-span-2 xl:col-span-1 2xl:col-span-2'>
-          <AppAreaChart />
-        </div>
-        <div className='bg-primary-foreground p-4 rounded-sm'>Test</div>
       </div>
-      <div className='bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min' />
-    </>
+
+      {/* Row 3: Top sản phẩm (full width hoặc 1/2 + 1/2 nếu muốn thêm chart) */}
+      <TopProductsBarChart />
+
+      {/* Row 4: Bảng đơn hàng gần đây — full width */}
+      {/* <RecentOrdersTable /> */}
+    </div>
   )
 }

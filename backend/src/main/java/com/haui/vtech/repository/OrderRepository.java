@@ -27,4 +27,20 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
             "AND o.paymentMethod = 'VNPAY' " +
             "AND o.createdAt < :timeoutLimit")
     List<OrderEntity> findAbandonedVnPayOrders(@org.springframework.data.repository.query.Param("timeoutLimit") java.time.LocalDateTime timeoutLimit);
+
+    // KPI: Tính tổng doanh thu của các đơn đã giao thành công
+    @Query("SELECT SUM(o.finalPrice) FROM OrderEntity o WHERE o.orderStatus = 'DELIVERED' AND o.createdAt >= :startDate AND o.createdAt <= :endDate")
+    java.math.BigDecimal calculateTotalRevenue(@org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
+
+    // KPI: Đếm tổng số đơn hàng (không tính đơn nháp/giỏ hàng)
+    @Query("SELECT COUNT(o) FROM OrderEntity o WHERE o.createdAt >= :startDate AND o.createdAt <= :endDate")
+    long countTotalOrders(@org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
+
+    // ORDER_STATUS: Đếm số lượng đơn hàng theo từng trạng thái trong một khoảng thời gian
+    @Query("SELECT o.orderStatus, COUNT(o) FROM OrderEntity o WHERE o.createdAt >= :startDate AND o.createdAt <= :endDate GROUP BY o.orderStatus")
+    List<Object[]> countOrdersByStatus(@org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
+
+    // BIỂU ĐỒ ĐƯỜNG: Lấy danh sách ngày tạo và tổng tiền của các đơn hàng thành công
+    @Query("SELECT o.createdAt, o.finalPrice FROM OrderEntity o WHERE o.orderStatus = 'DELIVERED' AND o.createdAt >= :startDate AND o.createdAt <= :endDate")
+    List<Object[]> getDeliveredOrdersForRevenue(@org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
 }

@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ['class'],
-  // content: [],
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     container: {
@@ -56,6 +55,16 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
           shadow: 'hsl(var(--card-shadow))'
+        },
+        // BỔ SUNG MÀU STATUS VÀO ĐÂY
+        status: {
+          pending: 'var(--status-pending)',
+          confirmed: 'var(--status-confirmed)',
+          processing: 'var(--status-processing)',
+          shipping: 'var(--status-shipping)',
+          delivered: 'var(--status-delivered)',
+          cancelled: 'var(--status-cancelled)',
+          returned: 'var(--status-returned)'
         },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',

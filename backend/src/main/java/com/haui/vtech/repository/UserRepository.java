@@ -49,4 +49,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     int restore(@Param("id") String id);
 
     List<UserEntity> findAllByStatusAndDeletedAtIsNotNullOrderByDeletedAtDesc(UserStatus status);
+
+    // Đếm khách hàng đăng ký mới (sửa r.roleName thành r.name, và 'ROLE_USER' thành 'USER')
+    @Query("SELECT COUNT(u) FROM UserEntity u JOIN u.roles r WHERE r.name = 'USER' AND u.createdAt >= :startDate AND u.createdAt <= :endDate")
+    long countNewCustomers(@org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
 }

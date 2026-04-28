@@ -1,0 +1,74 @@
+{
+  "kpi": {
+    "title": "Tổng quan kinh doanh",
+    "error_fetch": "Lỗi khi tải dữ liệu tổng quan",
+    "compared_to": "so với",
+    "filter": {
+      "day": "Ngày",
+      "week": "Tuần",
+      "month": "Tháng"
+    },
+    "period": {
+      "yesterday": "Hôm qua",
+      "lastWeek": "Tuần trước",
+      "lastMonth": "Tháng trước"
+    },
+    "labels": {
+      "revenue": "Doanh thu",
+      "orders": "Đơn hàng",
+      "productsSold": "Sản phẩm đã bán",
+      "newCustomers": "Khách hàng mới"
+    }
+  },
+  "status_chart": {
+    "title": "Trạng thái đơn hàng",
+    "total": "Tổng",
+    "orders": "đơn",
+    "select_period": "Chọn kỳ",
+    "no_data": "Chưa có dữ liệu đơn hàng",
+    "error_fetch": "Không thể tải biểu đồ trạng thái đơn hàng",
+    "period": {
+      "yesterday": "Hôm qua",
+      "last_week": "Tuần trước",
+      "this_month": "Tháng này"
+    },
+    "status": {
+      "PENDING": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "PROCESSING": "Đang đóng gói",
+      "SHIPPING": "Đang giao",
+      "DELIVERED": "Hoàn thành",
+      "CANCELLED": "Đã huỷ",
+      "RETURNED": "Hoàn trả"
+    }
+  },
+  "revenue_chart": {
+    "title": "Doanh thu",
+    "subtitle": "So sánh",
+    "period": {
+      "day": "theo giờ (hôm nay)",
+      "week": "theo ngày (tuần này)",
+      "month": "theo tháng (năm nay)"
+    },
+    "filter": {
+      "day": "Ngày",
+      "week": "Tuần",
+      "month": "Tháng"
+    },
+    "series": {
+      "this_period": "Kỳ này",
+      "last_period": "Kỳ trước"
+    },
+    "no_data": "Chưa có dữ liệu",
+    "error_fetch": "Không thể tải biểu đồ doanh thu"
+  },
+  "top_products": {
+    "title": "Top sản phẩm",
+    "subtitle_revenue": "Theo doanh thu",
+    "subtitle_orders": "Theo số lượng bán",
+    "revenue": "Doanh thu",
+    "orders": "Đơn hàng",
+    "no_data": "Chưa có dữ liệu",
+    "error_fetch": "Không thể tải danh sách top sản phẩm"
+  }
+}
