@@ -1,9 +1,8 @@
 import RevenueAreaChart from '@/pages/admin/dashboard/content/Revenueareachart'
 import KpiCards from './KpiCards'
 
-import TopProductsBarChart from './TopProductsBarChart'
 import OrderStatusPieChart from '@/pages/admin/dashboard/content/Orderstatuspiechart'
-import RecentOrdersTable from '@/pages/admin/dashboard/content/Recentorderstable'
+import TopProductsBarChart from './TopProductsBarChart'
 
 export default function DashboardHome() {
   return (
@@ -25,7 +24,7 @@ export default function DashboardHome() {
       <TopProductsBarChart />
 
       {/* Row 4: Bảng đơn hàng gần đây — full width */}
-      <RecentOrdersTable />
+      {/* <RecentOrdersTable /> */}
     </div>
   )
 }
