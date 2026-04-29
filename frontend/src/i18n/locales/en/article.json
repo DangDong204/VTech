@@ -1,0 +1,125 @@
+{
+  "table": {
+    "columns": {
+      "title": "Title",
+      "author": "Author",
+      "views": "Views",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noResults": "No articles found"
+  },
+  "titles": {
+    "list": "Article List",
+    "create": "Write New Article",
+    "edit": "Edit Article",
+    "trash": "Article Trash"
+  },
+  "filters": {
+    "search": "Search by title...",
+    "status": {
+      "label": "Status",
+      "all": "All",
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "HIDDEN": "Hidden"
+    }
+  },
+  "form": {
+    "title": "Article Title",
+    "titlePlaceholder": "Enter article title...",
+    "summary": "Summary",
+    "summaryPlaceholder": "Enter a short summary (optional)...",
+    "content": "Content",
+    "contentPlaceholder": "Start writing article content...",
+    "thumbnail": "Thumbnail",
+    "thumbnailUpload": "Click to select a thumbnail image",
+    "status": "Status",
+    "submit": "Publish Article",
+    "submitEdit": "Save Changes",
+    "saving": "Saving..."
+  },
+  "fields": {
+    "title": {
+      "label": "Title",
+      "placeholder": "Enter article title..."
+    },
+    "summary": {
+      "label": "Short Description",
+      "placeholder": "Enter a summary description..."
+    },
+    "content": {
+      "label": "Detailed Content"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status"
+    },
+    "deletedAt": "Deleted At"
+  },
+  "schema": {
+    "title": {
+      "required": "Title is required"
+    },
+    "content": {
+      "required": "Content is required"
+    }
+  },
+  "detail": {
+    "title": "Article Details",
+    "back": "Back to List",
+    "views": "views",
+    "linkedProducts": "Related Products",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "notFound": "Article not found"
+  },
+  "trash": {
+    "trashEmpty": "Trash is currently empty",
+    "remainingDays": "{{days}} days remaining before permanent deletion"
+  },
+  "actions": {
+    "label": "Actions",
+    "view": "View Details",
+    "create": "Write New Article",
+    "edit": "Edit",
+    "delete": "Move to Trash",
+    "restore": "Restore",
+    "hardDelete": "Delete Permanently",
+    "cancel": "Cancel",
+    "submit": "Save Article",
+    "submitting": "Saving...",
+    "deleteConfirm": {
+      "title": "Confirm Article Deletion",
+      "description": "The article \"{{title}}\" will be moved to trash. You can restore it later.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting..."
+    },
+    "hardDeleteConfirm": {
+      "title": "Danger Warning!",
+      "description": "You are about to PERMANENTLY delete the article '{{title}}'. This action CANNOT be undone!",
+      "cancel": "Cancel",
+      "confirm": "Delete Permanently",
+      "deleting": "Deleting permanently..."
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Article created successfully!",
+      "created": "Article created successfully!",
+      "updated": "Article updated successfully!",
+      "deleted": "Article moved to trash successfully",
+      "restore": "Article restored successfully!",
+      "hardDelete": "Article permanently deleted!"
+    },
+    "error": {
+      "fetch": "Error fetching article list",
+      "create": "Failed to create article, please try again",
+      "update": "Failed to update article, please try again",
+      "delete": "Failed to delete article, please try again",
+      "restore": "Failed to restore article",
+      "hardDelete": "Error permanently deleting article"
+    }
+  }
+}

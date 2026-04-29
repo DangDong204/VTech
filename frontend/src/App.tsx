@@ -1,7 +1,11 @@
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import ScrollToTop from '@/components/common/ScrollToTop'
+import ClientArticleDetailPage from '@/components/user/article/ClientArticleDetailPage'
+import ClientArticleListPage from '@/components/user/article/ClientArticleListPage'
 import DashboardHome from '@/pages/admin/dashboard/content/DashBoardHome'
 import LayoutAdmin from '@/pages/admin/LayoutAdmin'
+import ArticleDetailPage from '@/pages/admin/manage-article/detail/ArticleDetailPage'
+import ArticlePage from '@/pages/admin/manage-article/page'
 import BrandPage from '@/pages/admin/manage-brand/page'
 import CategoryPage from '@/pages/admin/manage-category/page'
 import ColorPage from '@/pages/admin/manage-color/page'
@@ -53,6 +57,8 @@ function App() {
             <Route path='/products' element={<ProductListPage />} />
             <Route path='/product/:slug' element={<ProductDetailPage />} />
             <Route path='/checkout' element={<CheckoutPage />} />
+            <Route path='/articles' element={<ClientArticleListPage />} />
+            <Route path='/articles/:slug' element={<ClientArticleDetailPage />} />
             <Route element={<ProfileLayout />}>
               <Route path='/profile' element={<OverviewPage />} />
               <Route path='/orders' element={<OrdersPage />} />
@@ -82,6 +88,8 @@ function App() {
               <Route path='promotions' element={<PromotionPage />} />
               <Route path='receipts' element={<ReceiptPage />} />
               <Route path='orders' element={<OrderPage />} />
+              <Route path='articles' element={<ArticlePage />} />
+              <Route path='articles/:id' element={<ArticleDetailPage />} />
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}

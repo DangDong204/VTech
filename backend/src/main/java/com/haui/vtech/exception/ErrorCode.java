@@ -131,6 +131,13 @@ public enum ErrorCode {
     ORDER_NOT_DELIVERED(14006, "order.not.delivered", HttpStatus.BAD_REQUEST),
     ORDER_RETURN_EXPIRED(14007, "order.return.expired", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_EXPORT_INVOICE(14008, "order.cannot.export.invoice", HttpStatus.BAD_REQUEST),
+
+    ARTICLE_NOT_FOUND(15000, "article.not.found", HttpStatus.NOT_FOUND),
+    ARTICLE_TITLE_NOTBLANK(15001, "article.title.not.blank", HttpStatus.BAD_REQUEST),
+    ARTICLE_CONTENT_NOTBLANK(15002, "article.content.not.blank", HttpStatus.BAD_REQUEST),
+    ARTICLE_SLUG_EXISTED(15003, "article.slug.exists", HttpStatus.BAD_REQUEST),
+
+    AI_SERVICE_UNAVAILABLE(503, "ai.service.unavailable", HttpStatus.SERVICE_UNAVAILABLE),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
