@@ -1,11 +1,13 @@
 package com.haui.vtech.controller.admin;
 
 import com.haui.vtech.dto.ApiResponse;
+import com.haui.vtech.dto.article.AiGenerateRequest;
 import com.haui.vtech.dto.article.ArticleRequest;
 import com.haui.vtech.dto.article.ArticleResponse;
 import com.haui.vtech.enums.ImageFolder;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
+import com.haui.vtech.service.AiService;
 import com.haui.vtech.service.ArticleService;
 import com.haui.vtech.service.S3Service;
 import com.haui.vtech.util.MessageUtil;
@@ -26,6 +28,7 @@ public class AdminArticleController {
     private final ArticleService articleService;
     private final MessageUtil messageUtil;
     private final S3Service s3Service;
+    private final AiService aiService;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
@@ -114,6 +117,17 @@ public class AdminArticleController {
         String url = s3Service.uploadImage(file, ImageFolder.ARTICLE);
         return ApiResponse.<String>builder()
                 .data(url)
+                .build();
+    }
+
+    @PostMapping("/generate-ai")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ApiResponse<String> generateContentByAi(@RequestBody @Valid AiGenerateRequest request) {
+        String htmlContent = aiService.generateArticleContent(request.getPrompt());
+
+        return ApiResponse.<String>builder()
+                .message("Tạo bài viết bằng AI thành công")
+                .data(htmlContent)
                 .build();
     }
 }

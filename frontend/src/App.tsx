@@ -1,5 +1,7 @@
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import ScrollToTop from '@/components/common/ScrollToTop'
+import ClientArticleDetailPage from '@/components/user/article/ClientArticleDetailPage'
+import ClientArticleListPage from '@/components/user/article/ClientArticleListPage'
 import DashboardHome from '@/pages/admin/dashboard/content/DashBoardHome'
 import LayoutAdmin from '@/pages/admin/LayoutAdmin'
 import ArticleDetailPage from '@/pages/admin/manage-article/detail/ArticleDetailPage'
@@ -55,6 +57,8 @@ function App() {
             <Route path='/products' element={<ProductListPage />} />
             <Route path='/product/:slug' element={<ProductDetailPage />} />
             <Route path='/checkout' element={<CheckoutPage />} />
+            <Route path='/articles' element={<ClientArticleListPage />} />
+            <Route path='/articles/:slug' element={<ClientArticleDetailPage />} />
             <Route element={<ProfileLayout />}>
               <Route path='/profile' element={<OverviewPage />} />
               <Route path='/orders' element={<OrdersPage />} />

@@ -18,7 +18,7 @@ public class ClientArticleController {
     @GetMapping
     public ApiResponse<List<ArticleResponse>> getPublishedArticles () {
         return ApiResponse.<List<ArticleResponse>>builder()
-                .data(articleService.getTrashedArticles())
+                .data(articleService.getClientArticles())
                 .build();
     }
 

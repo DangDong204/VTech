@@ -2,9 +2,10 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { ImageIcon, Loader2, X, Send, ShoppingBag, Check } from 'lucide-react'
+import { ImageIcon, Loader2, X, Send, ShoppingBag, Check, Sparkles } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { useMutation } from '@tanstack/react-query' // <-- Import hook này
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,7 +32,7 @@ import { Separator } from '@/components/ui/separator'
 import { ArticleEditor } from './ArticleEditor'
 import { ArticleStatus } from '@/defines/enum/article.enum'
 import type { CreateArticlePayload } from '@/services/article/article.type'
-import { uploadArticleImageApi } from '@/services/article/article.api'
+import { uploadArticleImageApi, generateArticleByAIApi } from '@/services/article/article.api' // <-- Thêm hàm API AI
 import { cn } from '@/lib/utils'
 import { useFetchData } from '@/hooks/useFetchData'
 import { getAllProductsApi } from '@/services/product/product.api'
@@ -72,6 +73,7 @@ export function CreateArticleForm({
     control,
     handleSubmit,
     setValue,
+    getValues, // <-- Thêm getValues để lấy tiêu đề khi ấn nút AI
     formState: { errors }
   } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema),
@@ -85,6 +87,31 @@ export function CreateArticleForm({
       ...defaultValues
     }
   })
+
+  const { data: products = [] } = useFetchData('products', getAllProductsApi)
+
+  // ====================== XỬ LÝ AI GENERATE ======================
+  const { mutate: generateAI, isPending: isGeneratingAI } = useMutation({
+    mutationFn: (prompt: string) => generateArticleByAIApi(prompt),
+    onSuccess: (htmlContent) => {
+      // Đổ HTML nhận được vào form field 'content'
+      setValue('content', htmlContent, { shouldValidate: true, shouldDirty: true })
+      toast.success('AI đã soạn thảo xong bài viết!', { icon: '✨' })
+    },
+    onError: () => {
+      toast.error('Lỗi khi gọi AI. Vui lòng kiểm tra lại cấu hình API Key.')
+    }
+  })
+
+  const handleGenerateAI = () => {
+    const currentTitle = getValues('title')
+    if (!currentTitle || currentTitle.trim() === '') {
+      toast.warning('Vui lòng nhập Tiêu đề trước để AI có chủ đề viết bài nhé!')
+      return
+    }
+    generateAI(currentTitle)
+  }
+  // ===============================================================
 
   const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -125,17 +152,35 @@ export function CreateArticleForm({
     })
   }
 
-  const { data: products = [] } = useFetchData('products', getAllProductsApi)
-
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
         {/* CỘT TRÁI: CONTENT (Col span 8) */}
         <div className='lg:col-span-8 space-y-6'>
           <div className='flex flex-col gap-2'>
-            <Label htmlFor='title' className='text-base font-semibold'>
-              {t('form.title')} <span className='text-destructive'>*</span>
-            </Label>
+            <div className='flex items-center justify-between'>
+              <Label htmlFor='title' className='text-base font-semibold'>
+                {t('form.title')} <span className='text-destructive'>*</span>
+              </Label>
+
+              {/* NÚT AI MAGIC */}
+              <Button
+                type='button'
+                variant='outline'
+                size='sm'
+                onClick={handleGenerateAI}
+                disabled={isGeneratingAI}
+                className='h-7 text-xs font-medium bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white hover:opacity-90 hover:text-white border-0 shadow-sm transition-all hover:scale-105'
+              >
+                {isGeneratingAI ? (
+                  <Loader2 className='mr-1.5 h-3 w-3 animate-spin' />
+                ) : (
+                  <Sparkles className='mr-1.5 h-3 w-3' />
+                )}
+                {isGeneratingAI ? 'AI đang viết...' : 'Viết bằng AI'}
+              </Button>
+            </div>
+
             <Input
               id='title'
               placeholder={t('form.titlePlaceholder')}
@@ -161,7 +206,10 @@ export function CreateArticleForm({
                   onChange={field.onChange}
                   placeholder={t('form.contentPlaceholder')}
                   error={!!errors.content}
-                  className='min-h-[450px]'
+                  className={cn(
+                    'min-h-[450px] transition-all',
+                    isGeneratingAI && 'opacity-50 pointer-events-none'
+                  )}
                 />
               )}
             />
@@ -204,7 +252,7 @@ export function CreateArticleForm({
             <Separator />
             <Button
               type='submit'
-              disabled={isLoading || isUploadingThumbnail}
+              disabled={isLoading || isUploadingThumbnail || isGeneratingAI}
               className='w-full h-11 text-base'
             >
               {isLoading ? (
@@ -269,7 +317,7 @@ export function CreateArticleForm({
             )}
           </div>
 
-          {/* Gắn sản phẩm (Linked Products) */}
+          {/* Gắn sản phẩm */}
           <div className='rounded-lg border bg-card p-4 space-y-4 shadow-sm'>
             <div className='flex items-center gap-2'>
               <div className='w-1 h-4 bg-primary rounded-full' />
@@ -302,10 +350,8 @@ export function CreateArticleForm({
                       >
                         <Command>
                           <CommandInput placeholder='Tìm kiếm sản phẩm...' />
-                          {/* SỬA Ở ĐÂY: Chuyển max-h-80 lên CommandList */}
                           <CommandList className='max-h-80'>
                             <CommandEmpty>Không tìm thấy sản phẩm.</CommandEmpty>
-                            {/* SỬA Ở ĐÂY: Bỏ overflow-auto và max-h ở CommandGroup đi */}
                             <CommandGroup>
                               {products.map((product) => {
                                 const isSelected = field.value?.includes(product.id)
@@ -320,7 +366,6 @@ export function CreateArticleForm({
                                       field.onChange(newValue)
                                     }}
                                   >
-                                    {/* ... Code UI bên trong giữ nguyên ... */}
                                     <div className='flex items-center gap-3 w-full'>
                                       {product.images?.thumbnail ? (
                                         <img
@@ -349,7 +394,6 @@ export function CreateArticleForm({
                       </PopoverContent>
                     </Popover>
 
-                    {/* Mở rộng max-w của viên Badge để không bị cắt xén quá mức */}
                     {selectedProducts.length > 0 && (
                       <div className='flex flex-wrap gap-2 pt-2'>
                         {selectedProducts.map((product) => (
@@ -377,10 +421,6 @@ export function CreateArticleForm({
                         ))}
                       </div>
                     )}
-
-                    <p className='text-[10.5px] leading-tight text-muted-foreground italic mt-1'>
-                      Khách hàng có thể nhấn vào các sản phẩm này ngay dưới bài viết.
-                    </p>
                   </div>
                 )
               }}
@@ -406,9 +446,6 @@ export function CreateArticleForm({
               )}
             />
             {errors.summary && <p className='text-xs text-destructive'>{errors.summary.message}</p>}
-            <p className='text-[10px] text-muted-foreground text-right italic'>
-              Gợi ý: Tóm tắt khoảng 150-200 ký tự sẽ hiển thị đẹp nhất trên trang danh sách.
-            </p>
           </div>
         </div>
       </div>

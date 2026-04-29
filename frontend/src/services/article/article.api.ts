@@ -67,3 +67,20 @@ export const deleteHardArticleApi = async (articleId: string) => {
   const res = await api.delete<ApiResponse<void>>(`/admin/articles/${articleId}/hard`)
   return res.data
 }
+
+// Trang client:
+export const getClientArticlesApi = async () => {
+  const res = await api.get<ApiResponse<ArticleResponse[]>>('/client/articles')
+  return res.data.data
+}
+
+export const getClientArticleBySlugApi = async (slug: string) => {
+  const res = await api.get<ApiResponse<ArticleResponse>>(`/client/articles/${slug}`)
+  return res.data.data
+}
+
+// Gọi API sinh bài viết bằng AI của Backend
+export const generateArticleByAIApi = async (prompt: string) => {
+  const res = await api.post<ApiResponse<string>>('/admin/articles/generate-ai', { prompt })
+  return res.data.data
+}
