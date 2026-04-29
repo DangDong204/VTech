@@ -4,7 +4,8 @@ public enum ImageFolder {
     PRODUCT("product"),
     CATEGORY("category"),
     USER("user"),
-    BRAND("brand")
+    BRAND("brand"),
+    ARTICLE("article")
     ;
 
     private final String folder;

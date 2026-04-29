@@ -83,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const projects = [
     { name: t('projects.categories'), url: '/dashboard/categories', icon: ListCollapseIcon },
     { name: t('projects.brands'), url: '/dashboard/brands', icon: CircleStar },
-    { name: t('projects.blog'), url: '/dashboard/blogs', icon: StickyNote },
+    { name: t('projects.blog'), url: '/dashboard/articles', icon: StickyNote },
     { name: t('projects.users'), url: '/dashboard/users', icon: Users2 },
     { name: t('projects.vouchers'), url: '/dashboard/vouchers', icon: TicketPercent },
     { name: t('projects.promotions'), url: '/dashboard/promotions', icon: BadgeDollarSign },

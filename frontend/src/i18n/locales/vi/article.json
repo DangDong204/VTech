@@ -1,0 +1,125 @@
+{
+  "table": {
+    "columns": {
+      "title": "Tiêu đề",
+      "author": "Tác giả",
+      "views": "Lượt xem",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có bài viết nào"
+  },
+  "titles": {
+    "list": "Danh sách bài viết",
+    "create": "Viết bài mới",
+    "edit": "Chỉnh sửa bài viết",
+    "trash": "Thùng rác bài viết"
+  },
+  "filters": {
+    "search": "Tìm kiếm theo tiêu đề...",
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả",
+      "DRAFT": "Bản nháp",
+      "PUBLISHED": "Đã xuất bản",
+      "HIDDEN": "Đang ẩn"
+    }
+  },
+  "form": {
+    "title": "Tiêu đề bài viết",
+    "titlePlaceholder": "Nhập tiêu đề bài viết...",
+    "summary": "Tóm tắt",
+    "summaryPlaceholder": "Nhập tóm tắt ngắn gọn (tùy chọn)...",
+    "content": "Nội dung",
+    "contentPlaceholder": "Bắt đầu viết nội dung bài viết...",
+    "thumbnail": "Ảnh đại diện",
+    "thumbnailUpload": "Nhấn để chọn ảnh đại diện",
+    "status": "Trạng thái",
+    "submit": "Đăng bài",
+    "submitEdit": "Lưu thay đổi",
+    "saving": "Đang lưu..."
+  },
+  "fields": {
+    "title": {
+      "label": "Tiêu đề",
+      "placeholder": "Nhập tiêu đề bài viết..."
+    },
+    "summary": {
+      "label": "Mô tả ngắn",
+      "placeholder": "Nhập mô tả tóm tắt..."
+    },
+    "content": {
+      "label": "Nội dung chi tiết"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái"
+    },
+    "deletedAt": "Thời gian xóa"
+  },
+  "schema": {
+    "title": {
+      "required": "Tiêu đề không được để trống"
+    },
+    "content": {
+      "required": "Nội dung không được để trống"
+    }
+  },
+  "detail": {
+    "title": "Chi tiết bài viết",
+    "back": "Quay lại danh sách",
+    "views": "lượt xem",
+    "linkedProducts": "Sản phẩm liên quan",
+    "createdAt": "Tạo lúc",
+    "updatedAt": "Cập nhật lúc",
+    "notFound": "Không tìm thấy bài viết"
+  },
+  "trash": {
+    "trashEmpty": "Thùng rác hiện đang trống",
+    "remainingDays": "Còn {{days}} ngày trước khi xoá vĩnh viễn"
+  },
+  "actions": {
+    "label": "Hành động",
+    "view": "Xem chi tiết",
+    "create": "Viết bài mới",
+    "edit": "Chỉnh sửa",
+    "delete": "Chuyển vào thùng rác",
+    "restore": "Khôi phục",
+    "hardDelete": "Xóa vĩnh viễn",
+    "cancel": "Hủy",
+    "submit": "Lưu bài viết",
+    "submitting": "Đang lưu...",
+    "deleteConfirm": {
+      "title": "Xác nhận xóa bài viết",
+      "description": "Bài viết \"{{title}}\" sẽ được chuyển vào thùng rác. Bạn có thể khôi phục sau.",
+      "cancel": "Hủy",
+      "confirm": "Xóa",
+      "deleting": "Đang xóa..."
+    },
+    "hardDeleteConfirm": {
+      "title": "Cảnh báo nguy hiểm!",
+      "description": "Bạn chuẩn bị xóa VĨNH VIỄN bài viết '{{title}}'. Thao tác này KHÔNG THỂ hoàn tác!",
+      "cancel": "Hủy",
+      "confirm": "Xóa vĩnh viễn",
+      "deleting": "Đang tiêu hủy..."
+    }
+  },
+  "message": {
+    "success": {
+      "create": "Tạo bài viết thành công!",
+      "created": "Tạo bài viết thành công!",
+      "updated": "Cập nhật bài viết thành công!",
+      "deleted": "Đã chuyển bài viết vào thùng rác",
+      "restore": "Khôi phục bài viết thành công!",
+      "hardDelete": "Đã xóa vĩnh viễn bài viết!"
+    },
+    "error": {
+      "fetch": "Lỗi khi lấy danh sách bài viết",
+      "create": "Tạo bài viết thất bại, vui lòng thử lại",
+      "update": "Cập nhật bài viết thất bại, vui lòng thử lại",
+      "delete": "Xóa bài viết thất bại, vui lòng thử lại",
+      "restore": "Khôi phục thất bại",
+      "hardDelete": "Lỗi khi xóa vĩnh viễn bài viết"
+    }
+  }
+}

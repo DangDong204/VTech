@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-articles-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="articles"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="articles" remarks="Bảng lưu trữ bài viết, tin tức">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="title" type="VARCHAR(255)" remarks="Tiêu đề bài viết">
+                <constraints nullable="false"/>
+            </column>
+            <column name="slug" type="VARCHAR(255)" remarks="Đường dẫn SEO">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_article_slug"/>
+            </column>
+            <column name="summary" type="VARCHAR(500)" remarks="Mô tả ngắn"/>
+
+            <column name="content" type="LONGTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="thumbnail" type="VARCHAR(500)" remarks="Ảnh bìa bài viết"/>
+
+            <column name="author_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="view_count" type="INT" defaultValue="0" remarks="Lượt xem"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="DRAFT" remarks="DRAFT, PUBLISHED, HIDDEN">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="articles" indexName="idx_article_slug">
+            <column name="slug"/>
+        </createIndex>
+        <createIndex tableName="articles" indexName="idx_article_status">
+            <column name="status"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="articles" baseColumnNames="author_id"
+                                 constraintName="fk_article_author"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <rollback>
+            <dropTable tableName="articles" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create-article-products-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="article_products"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="article_products" remarks="Bảng trung gian N-N giữa bài viết và sản phẩm">
+            <column name="article_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="article_products" columnNames="article_id, product_id" constraintName="pk_article_products"/>
+
+        <addForeignKeyConstraint baseTableName="article_products" baseColumnNames="article_id"
+                                 constraintName="fk_ap_article"
+                                 referencedTableName="articles" referencedColumnNames="id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="article_products" baseColumnNames="product_id"
+                                 constraintName="fk_ap_product"
+                                 referencedTableName="products" referencedColumnNames="id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <rollback>
+            <dropTable tableName="article_products" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
