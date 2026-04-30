@@ -1,24 +1,19 @@
 import { useState } from 'react'
-import { Star, User, Send, ThumbsUp } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Star, User, ThumbsUp, ShieldCheck, PlayCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import { useTranslation } from 'react-i18next'
-
-export interface Review {
-  id: string | number
-  userName: string
-  rating: number
-  date: string
-  content: string
-}
+import { format } from 'date-fns'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { getProductReviewsApi, voteHelpfulReviewApi } from '@/services/review/review.api'
+import type { ReviewResponse } from '@/services/review/review.type'
+import { Dialog, DialogContent } from '@/components/ui/dialog' // Bổ sung import Dialog
+import { useLocation, useNavigate } from 'react-router'
+import type { AxiosError } from 'axios'
 
 interface ProductReviewsProps {
-  ratingAvg: number
-  totalReviews: number
-  reviews: Review[]
+  productId: string
 }
 
-// Rating bar row
+// Rating bar row component
 function RatingBar({ star, count, total }: { star: number; count: number; total: number }) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0
   return (
@@ -36,14 +31,46 @@ function RatingBar({ star, count, total }: { star: number; count: number; total:
   )
 }
 
-export function ProductReviews({ ratingAvg, totalReviews, reviews }: ProductReviewsProps) {
-  const { t } = useTranslation('common')
-  const [newRating, setNewRating] = useState(0)
-  const [hoverRating, setHoverRating] = useState(0)
-  const [newContent, setNewContent] = useState('')
+export function ProductReviews({ productId }: ProductReviewsProps) {
   const [activeFilter, setActiveFilter] = useState<number | null>(null)
 
-  // Tính distribution (mock nếu chưa có reviews thật)
+  // State quản lý việc phóng to Media (Ảnh/Video)
+  const [selectedMedia, setSelectedMedia] = useState<{
+    url: string
+    type: 'IMAGE' | 'VIDEO'
+  } | null>(null)
+
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // 1. Fetch dữ liệu đánh giá thực tế
+  const { data: reviews = [], isLoading } = useQuery({
+    queryKey: ['product-reviews', productId],
+    queryFn: () => getProductReviewsApi(productId),
+    enabled: !!productId
+  })
+
+  // 2. Mutation cho nút "Hữu ích"
+  const voteHelpfulMutation = useMutation({
+    mutationFn: (reviewId: string) => voteHelpfulReviewApi(reviewId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['product-reviews', productId] })
+    },
+    onError: (error: AxiosError<{ message?: string }>) => {
+      if (error.response?.status === 401) {
+        toast.error('Vui lòng đăng nhập để thực hiện chức năng này.')
+      } else {
+        toast.error(error.response?.data?.message || 'Có lỗi xảy ra.')
+      }
+    }
+  })
+
+  // Tính toán thống kê
+  const totalReviews = reviews.length
+  const ratingAvg =
+    totalReviews > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews : 0
+
   const dist: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
   reviews.forEach((r) => {
     const s = Math.min(5, Math.max(1, Math.round(r.rating)))
@@ -56,18 +83,12 @@ export function ProductReviews({ ratingAvg, totalReviews, reviews }: ProductRevi
 
   const STAR_LABELS = ['', 'Rất tệ', 'Tệ', 'Bình thường', 'Tốt', 'Xuất sắc']
 
-  const handleSubmit = () => {
-    if (newRating === 0) {
-      toast.error(t('productDetail.errorNoStar'))
-      return
-    }
-    if (!newContent.trim()) {
-      toast.error(t('productDetail.errorNoContent'))
-      return
-    }
-    toast.success(t('productDetail.reviewSuccess'))
-    setNewRating(0)
-    setNewContent('')
+  if (isLoading) {
+    return (
+      <div className='py-10 text-center text-muted-foreground animate-pulse'>
+        Đang tải đánh giá...
+      </div>
+    )
   }
 
   return (
@@ -131,27 +152,47 @@ export function ProductReviews({ ratingAvg, totalReviews, reviews }: ProductRevi
       </div>
 
       {/* ---- Danh sách reviews ---- */}
-      <div className='space-y-4 mb-8'>
+      <div className='space-y-4'>
         {filteredReviews.length === 0 ? (
           <div className='text-center py-10 text-slate-400 text-sm'>
             <Star className='h-10 w-10 mx-auto mb-2 text-slate-200' />
-            Chưa có đánh giá nào. Hãy là người đầu tiên!
+            Chưa có đánh giá nào cho bộ lọc này.
           </div>
         ) : (
-          filteredReviews.map((rv) => (
+          filteredReviews.map((rv: ReviewResponse) => (
             <div
               key={rv.id}
               className='flex gap-3 p-4 bg-white rounded-xl border border-border/60 hover:border-border transition-colors'
             >
-              <div className='h-10 w-10 shrink-0 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center text-blue-600'>
-                <User className='h-5 w-5' />
+              {/* Avatar User */}
+              <div className='h-10 w-10 shrink-0 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center overflow-hidden border'>
+                {rv.avatarUrl ? (
+                  <img
+                    src={rv.avatarUrl}
+                    alt={rv.fullName}
+                    className='h-full w-full object-cover'
+                  />
+                ) : (
+                  <User className='h-5 w-5 text-blue-600' />
+                )}
               </div>
+
               <div className='flex-1 min-w-0'>
+                {/* Header User info */}
                 <div className='flex items-center justify-between gap-2 flex-wrap mb-1'>
-                  <span className='font-semibold text-sm text-foreground'>{rv.userName}</span>
-                  <span className='text-xs text-muted-foreground'>{rv.date}</span>
+                  <div className='flex items-center gap-2'>
+                    <span className='font-semibold text-sm text-foreground'>{rv.fullName}</span>
+                    <span className='text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-sm flex items-center gap-0.5 font-medium'>
+                      <ShieldCheck className='h-3 w-3' /> Đã mua hàng
+                    </span>
+                  </div>
+                  <span className='text-xs text-muted-foreground'>
+                    {format(new Date(rv.createdAt), 'dd/MM/yyyy HH:mm')}
+                  </span>
                 </div>
-                <div className='flex items-center gap-1 mb-2'>
+
+                {/* Stars */}
+                <div className='flex items-center gap-1 mb-1'>
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
@@ -162,9 +203,83 @@ export function ProductReviews({ ratingAvg, totalReviews, reviews }: ProductRevi
                     {STAR_LABELS[Math.round(rv.rating)]}
                   </span>
                 </div>
-                <p className='text-sm text-foreground leading-relaxed'>{rv.content}</p>
-                <button className='flex items-center gap-1 mt-2 text-xs text-slate-400 hover:text-blue-500 transition-colors'>
-                  <ThumbsUp className='h-3 w-3' /> Hữu ích
+
+                {/* Variant Name */}
+                {rv.variantName && (
+                  <div className='text-xs text-muted-foreground mb-2'>
+                    Phân loại hàng: {rv.variantName}
+                  </div>
+                )}
+
+                {/* Content */}
+                <p className='text-sm text-foreground leading-relaxed mb-3'>{rv.comment}</p>
+
+                {/* Media (Images/Videos) - ĐÃ CẬP NHẬT GIAO DIỆN VÀ SỰ KIỆN CLICK */}
+                {rv.mediaList && rv.mediaList.length > 0 && (
+                  <div className='flex flex-wrap gap-2 mb-3'>
+                    {rv.mediaList.map((media) => (
+                      <div
+                        key={media.id}
+                        onClick={() =>
+                          setSelectedMedia({ url: media.mediaUrl, type: media.mediaType })
+                        }
+                        className='h-16 w-16 rounded-md border border-border/60 bg-black overflow-hidden cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center relative'
+                      >
+                        {media.mediaType === 'IMAGE' ? (
+                          <img
+                            src={media.mediaUrl}
+                            alt='Review media'
+                            className='h-full w-full object-cover'
+                          />
+                        ) : (
+                          <>
+                            {/* Thẻ video không có controls để làm thumbnail mờ */}
+                            <video
+                              src={media.mediaUrl}
+                              className='h-full w-full object-cover opacity-70'
+                            />
+                            <PlayCircle className='absolute text-white/90 h-6 w-6' />
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Admin Reply */}
+                {rv.reply && (
+                  <div className='mt-3 p-3 bg-slate-50 rounded-lg border border-slate-100 relative'>
+                    <div className='absolute -top-1.5 left-4 w-3 h-3 bg-slate-50 border-l border-t border-slate-100 transform rotate-45'></div>
+                    <div className='flex items-center gap-1.5 mb-1'>
+                      <span className='font-semibold text-xs text-red-600'>
+                        Phản hồi từ VTech Store
+                      </span>
+                      <span className='text-[10px] text-muted-foreground'>
+                        - {format(new Date(rv.reply.createdAt), 'dd/MM/yyyy')}
+                      </span>
+                    </div>
+                    <p className='text-sm text-slate-700'>{rv.reply.replyText}</p>
+                  </div>
+                )}
+
+                {/* Nút Hữu ích */}
+                <button
+                  onClick={() => {
+                    if (!localStorage.getItem('access_token')) {
+                      toast.error('Vui lòng đăng nhập để thực hiện chức năng này.')
+                      // TRUYỀN URL HIỆN TẠI VÀO STATE
+                      navigate('/login', { state: { from: location.pathname } })
+                      return
+                    }
+                    voteHelpfulMutation.mutate(rv.id)
+                  }}
+                  disabled={voteHelpfulMutation.isPending}
+                  className='flex items-center gap-1.5 mt-3 text-xs text-slate-500 hover:text-blue-600 transition-colors disabled:opacity-50'
+                >
+                  <ThumbsUp
+                    className={`h-3.5 w-3.5 ${rv.helpfulCount > 0 ? 'fill-blue-100 text-blue-600' : ''}`}
+                  />
+                  Hữu ích {rv.helpfulCount > 0 && `(${rv.helpfulCount})`}
                 </button>
               </div>
             </div>
@@ -172,53 +287,25 @@ export function ProductReviews({ ratingAvg, totalReviews, reviews }: ProductRevi
         )}
       </div>
 
-      {/* ---- Form viết đánh giá ---- */}
-      <div className='bg-slate-50 rounded-2xl border border-border p-5'>
-        <h3 className='font-bold text-base mb-4'>Viết đánh giá của bạn</h3>
-
-        <div className='flex items-center gap-3 mb-4'>
-          <span className='text-sm text-slate-500 shrink-0'>Chất lượng sản phẩm</span>
-          <div className='flex items-center gap-1'>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => setNewRating(star)}
-                onMouseEnter={() => setHoverRating(star)}
-                onMouseLeave={() => setHoverRating(0)}
-                className='focus:outline-none transition-transform hover:scale-125'
-              >
-                <Star
-                  className={`h-7 w-7 transition-colors ${
-                    star <= (hoverRating || newRating)
-                      ? 'fill-amber-400 text-amber-400'
-                      : 'text-slate-200'
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-          {(hoverRating || newRating) > 0 && (
-            <span className='text-sm font-medium text-amber-600'>
-              {STAR_LABELS[hoverRating || newRating]}
-            </span>
+      {/* MODAL PHÓNG TO ẢNH / VIDEO */}
+      <Dialog open={!!selectedMedia} onOpenChange={(open) => !open && setSelectedMedia(null)}>
+        <DialogContent className='max-w-4xl w-fit p-1 bg-black/95 border-none shadow-none flex items-center justify-center'>
+          {selectedMedia?.type === 'IMAGE' ? (
+            <img
+              src={selectedMedia.url}
+              alt='Enlarged review media'
+              className='max-h-[85vh] max-w-[90vw] object-contain rounded-md'
+            />
+          ) : (
+            <video
+              src={selectedMedia?.url}
+              controls
+              autoPlay
+              className='max-h-[85vh] max-w-[90vw] rounded-md outline-none'
+            />
           )}
-        </div>
-
-        <textarea
-          value={newContent}
-          onChange={(e) => setNewContent(e.target.value)}
-          placeholder='Chia sẻ trải nghiệm thực tế của bạn về sản phẩm này...'
-          className='flex min-h-[100px] w-full rounded-xl border border-input bg-white px-4 py-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 mb-3 resize-none'
-        />
-
-        <Button
-          onClick={handleSubmit}
-          className='gap-2 bg-red-500 hover:bg-red-600 text-white rounded-xl'
-        >
-          <Send className='h-4 w-4' />
-          Gửi đánh giá
-        </Button>
-      </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

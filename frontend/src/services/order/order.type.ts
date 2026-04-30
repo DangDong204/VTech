@@ -19,6 +19,7 @@ export interface OrderDetailResponse {
   quantity: number
   price: number
   totalPrice: number
+  reviewed: boolean
 }
 
 export interface OrderHistoryResponse {

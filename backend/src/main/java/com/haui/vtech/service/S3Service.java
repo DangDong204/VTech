@@ -91,4 +91,22 @@ public class S3Service {
             throw new AppException(ErrorCode.UPLOAD_IMAGE_FAILED);
         }
     }
+
+    public String uploadMedia(MultipartFile file, ImageFolder folder) {
+        try {
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String key = folder.getFolder() + "/" + fileName;
+
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .contentType(file.getContentType())
+                    .build();
+
+            s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
+            return "https://" + bucketName + ".s3.amazonaws.com/" + key;
+        } catch (IOException e) {
+            throw new AppException(ErrorCode.UPLOAD_IMAGE_FAILED);
+        }
+    }
 }

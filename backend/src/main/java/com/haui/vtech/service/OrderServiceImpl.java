@@ -35,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final VoucherRepository voucherRepository;
     private final UserRepository userRepository; // THÊM DÒNG NÀY (để lấy email user)
     private final EmailService emailService;     // THÊM DÒNG NÀY
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -380,6 +381,14 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_RETURN_EXPIRED);
         }
 
+        // ================= THÊM LOGIC CHẶN HOÀN TRẢ Ở ĐÂY =================
+        boolean hasReviewedItem = order.getOrderDetails().stream()
+                .anyMatch(detail -> reviewRepository.existsByOrderDetailId(detail.getId()));
+
+        if (hasReviewedItem) {
+            throw new AppException(ErrorCode.ORDER_CANNOT_RETURN_REVIEWED);
+        }
+
         // 1. Cộng lại tồn kho
         for (OrderDetailEntity detail : order.getOrderDetails()) {
             ProductVariantEntity variant = variantRepository.findById(detail.getVariantId())
@@ -638,6 +647,7 @@ public class OrderServiceImpl implements OrderService {
                     .quantity(detail.getQuantity())
                     .price(detail.getPrice())
                     .totalPrice(detail.getTotalPrice())
+                    .reviewed(reviewRepository.existsByOrderDetailId(detail.getId()))
                     .build();
         }).toList();
 

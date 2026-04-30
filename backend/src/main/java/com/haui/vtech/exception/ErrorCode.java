@@ -131,6 +131,7 @@ public enum ErrorCode {
     ORDER_NOT_DELIVERED(14006, "order.not.delivered", HttpStatus.BAD_REQUEST),
     ORDER_RETURN_EXPIRED(14007, "order.return.expired", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_EXPORT_INVOICE(14008, "order.cannot.export.invoice", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_RETURN_REVIEWED(14009, "order.cannot.return.reviewed", HttpStatus.BAD_REQUEST),
 
     ARTICLE_NOT_FOUND(15000, "article.not.found", HttpStatus.NOT_FOUND),
     ARTICLE_TITLE_NOTBLANK(15001, "article.title.not.blank", HttpStatus.BAD_REQUEST),
@@ -138,6 +139,15 @@ public enum ErrorCode {
     ARTICLE_SLUG_EXISTED(15003, "article.slug.exists", HttpStatus.BAD_REQUEST),
 
     AI_SERVICE_UNAVAILABLE(503, "ai.service.unavailable", HttpStatus.SERVICE_UNAVAILABLE),
+
+    REVIEW_NOT_FOUND(16000, "review.not.found", HttpStatus.NOT_FOUND),
+    REVIEW_EXISTS_FOR_ORDER(16001, "review.exists.for.order", HttpStatus.BAD_REQUEST),
+    RATING_INVALID(16002, "review.rating.invalid", HttpStatus.BAD_REQUEST),
+    RATING_NOTNULL(16003, "review.rating.not.null", HttpStatus.BAD_REQUEST),
+    ORDER_DETAIL_ID_NOTBLANK(16004, "review.order.detail.not.blank", HttpStatus.BAD_REQUEST),
+    REPLY_ALREADY_EXISTS(16005, "review.reply.exists", HttpStatus.BAD_REQUEST),
+    REPLY_TEXT_NOTBLANK(16006, "review.reply.text.not.blank", HttpStatus.BAD_REQUEST),
+    ALREADY_VOTED_HELPFUL(16007, "review.already.voted", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

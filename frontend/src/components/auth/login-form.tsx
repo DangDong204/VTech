@@ -15,7 +15,7 @@ import type { ApiErrorResponse } from '@/defines/error.type'
 import { loginApi } from '@/services/auth/auth.api'
 import { parseJwt, useAuthStore } from '@/store/auth.store'
 import { AxiosError } from 'axios'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import type z from 'zod'
 
@@ -23,6 +23,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const { t } = useTranslation('auth')
   type LogInFormValue = z.infer<typeof logInSchema>
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from || '/'
 
   const {
     register,
@@ -52,7 +54,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_STAFF')) {
           navigate('/dashboard')
         } else {
-          navigate('/')
+          navigate(from) // <-- Trả khách hàng về đúng nơi họ vừa rời đi!
         }
       }
     } catch (error: unknown) {

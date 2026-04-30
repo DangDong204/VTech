@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="create-reviews-table" author="vtech">
+        <createTable tableName="reviews">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_variant_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_detail_id" type="VARCHAR(36)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uc_reviews_order_detail"/>
+            </column>
+
+            <column name="rating" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment" type="TEXT"/>
+
+            <column name="helpful_count" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(20)" defaultValue="APPROVED">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="user_id"
+                                 constraintName="fk_reviews_user" referencedTableName="users" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="product_id"
+                                 constraintName="fk_reviews_product" referencedTableName="products" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="product_variant_id"
+                                 constraintName="fk_reviews_variant" referencedTableName="product_variants" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="order_detail_id"
+                                 constraintName="fk_reviews_order_detail" referencedTableName="order_details" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="create-review-media-table" author="vtech">
+        <createTable tableName="review_media">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="review_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="media_url" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="media_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="review_media" baseColumnNames="review_id"
+                                 constraintName="fk_review_media_review" referencedTableName="reviews" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="create-review-replies-table" author="vtech">
+        <createTable tableName="review_replies">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="review_id" type="VARCHAR(36)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uc_replies_review"/>
+            </column>
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reply_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="review_replies" baseColumnNames="review_id"
+                                 constraintName="fk_review_replies_review" referencedTableName="reviews" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="review_replies" baseColumnNames="user_id"
+                                 constraintName="fk_review_replies_user" referencedTableName="users" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="create-review-helpful-votes-table" author="vtech">
+        <createTable tableName="review_helpful_votes">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="review_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="review_helpful_votes" columnNames="review_id, user_id" constraintName="uc_helpful_vote_user_review"/>
+
+        <addForeignKeyConstraint baseTableName="review_helpful_votes" baseColumnNames="review_id"
+                                 constraintName="fk_helpful_votes_review" referencedTableName="reviews" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="review_helpful_votes" baseColumnNames="user_id"
+                                 constraintName="fk_helpful_votes_user" referencedTableName="users" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

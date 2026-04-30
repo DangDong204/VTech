@@ -1,0 +1,48 @@
+{
+  "table": {
+    "columns": {
+      "customer": "Khách hàng",
+      "product": "Sản phẩm",
+      "rating": "Đánh giá",
+      "comment": "Nội dung",
+      "status": "Trạng thái",
+      "createdAt": "Thời gian",
+      "actions": "Thao tác"
+    },
+    "noResults": "Không có dữ liệu đánh giá"
+  },
+  "titles": {
+    "list": "Quản lý đánh giá sản phẩm"
+  },
+  "filters": {
+    "search": "Tìm theo tên khách hàng...",
+    "status": {
+      "label": "Trạng thái",
+      "all": "Tất cả trạng thái",
+      "APPROVED": "Hiển thị",
+      "PENDING": "Chờ duyệt",
+      "HIDDEN": "Đã ẩn"
+    },
+    "replyStatus": {
+      "label": "Phản hồi",
+      "all": "Tất cả phản hổi",
+      "replied": "Đã phản hồi",
+      "not_replied": "Chưa phản hồi"
+    },
+    "rating": {
+      "label": "Số sao",
+      "all": "Tất cả",
+      "5": "5 Sao",
+      "4": "4 Sao",
+      "3": "3 Sao",
+      "2": "2 Sao",
+      "1": "1 Sao"
+    },
+    "reset": "Đặt lại"
+  },
+  "actions": {
+    "view": "Chi tiết & Phản hồi",
+    "hide": "Ẩn đánh giá",
+    "show": "Hiện đánh giá"
+  }
+}

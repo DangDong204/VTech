@@ -1,0 +1,48 @@
+{
+  "table": {
+    "columns": {
+      "customer": "Customer",
+      "product": "Product",
+      "rating": "Rating",
+      "comment": "Comment",
+      "status": "Status",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "noResults": "No review data available"
+  },
+  "titles": {
+    "list": "Product Review Management"
+  },
+  "filters": {
+    "search": "Search by customer name...",
+    "status": {
+      "label": "Status",
+      "all": "All statuses",
+      "APPROVED": "Visible",
+      "PENDING": "Pending approval",
+      "HIDDEN": "Hidden"
+    },
+    "replyStatus": {
+      "label": "Reply status",
+      "all": "All replies",
+      "replied": "Replied",
+      "not_replied": "Not replied"
+    },
+    "rating": {
+      "label": "Star Rating",
+      "all": "All",
+      "5": "5 Stars",
+      "4": "4 Stars",
+      "3": "3 Stars",
+      "2": "2 Stars",
+      "1": "1 Star"
+    },
+    "reset": "Reset"
+  },
+  "actions": {
+    "view": "Details & Reply",
+    "hide": "Hide Review",
+    "show": "Show Review"
+  }
+}
