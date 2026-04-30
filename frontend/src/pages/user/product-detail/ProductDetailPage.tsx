@@ -103,6 +103,16 @@ export default function ProductDetailPage() {
     navigate('/cart')
   }
 
+  // Hàm tự động cuộn trang xuống phần đánh giá
+  const scrollToReviews = () => {
+    const section = document.getElementById('reviews-section')
+    if (section) {
+      // Offset một chút để không bị che bởi fixed header (nếu có)
+      const y = section.getBoundingClientRect().top + window.scrollY - 80
+      window.scrollTo({ top: y, behavior: 'smooth' })
+    }
+  }
+
   // ---------- Render states ----------
   if (loading) {
     return (
@@ -163,16 +173,30 @@ export default function ProductDetailPage() {
                 <h1 className='text-2xl font-bold text-foreground mb-2 leading-tight'>
                   {product.name} {selectedVersion && <span>{selectedVersion}</span>}
                 </h1>
+
+                {/* ĐÃ CẬP NHẬT: THÊM ĐIỂM TB VÀ SỰ KIỆN CLICK CUỘN TRANG */}
                 <div className='flex items-center gap-3 text-sm'>
-                  <div className='flex items-center text-amber-500'>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-4 w-4 ${i < Math.round(product.rating) ? 'fill-current' : 'text-muted-foreground/30'}`}
-                      />
-                    ))}
+                  <div
+                    className='flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity'
+                    onClick={scrollToReviews}
+                    title='Bấm để xem đánh giá chi tiết'
+                  >
+                    <span className='font-bold text-base text-amber-500 mt-0.5'>
+                      {product.rating > 0 ? product.rating.toFixed(1) : 0}
+                    </span>
+                    <div className='flex items-center text-amber-500'>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < Math.round(product.rating) ? 'fill-current' : 'text-muted-foreground/30'}`}
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <span className='text-blue-600 hover:underline cursor-pointer font-medium'>
+                  <span
+                    onClick={scrollToReviews}
+                    className='text-blue-600 hover:underline cursor-pointer font-medium'
+                  >
                     {t('productDetail.reviews', { count: product.reviews })} đánh giá
                   </span>
                 </div>
@@ -274,7 +298,6 @@ export default function ProductDetailPage() {
                     {t('productDetail.exchange')} miễn phí 30 ngày nếu có lỗi từ nhà sản xuất.
                   </span>
                 </div>
-                {/* DÒNG MỚI ĐƯỢC THÊM VÀO ĐÂY */}
                 <div className='flex items-start gap-3'>
                   <Headset className='h-5 w-5 text-purple-600 shrink-0' />
                   <span>Kỹ thuật viên hỗ trợ trực tuyến, giải đáp mọi thắc mắc về sản phẩm.</span>
@@ -284,9 +307,8 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Bottom section (Tách thành 2 card trắng) */}
+        {/* Bottom section */}
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-6'>
-          {/* Mô tả & đánh giá */}
           <div className='lg:col-span-8 space-y-6'>
             <div className='bg-white rounded-xl shadow-sm border border-border/50 p-4 sm:p-6'>
               <h2 className='text-xl font-bold mb-4 pb-2 border-b border-border/50'>
@@ -295,12 +317,12 @@ export default function ProductDetailPage() {
               <ProductDescription content={product.description} />
             </div>
 
-            <div className='bg-white rounded-xl shadow-sm border border-border/50 p-4 sm:p-6'>
-              <ProductReviews
-                ratingAvg={product.rating}
-                totalReviews={product.reviews}
-                reviews={[]}
-              />
+            {/* ĐÃ CẬP NHẬT: Bổ sung ID 'reviews-section' để neo (anchor) khi người dùng click */}
+            <div
+              id='reviews-section'
+              className='bg-white rounded-xl shadow-sm border border-border/50 p-4 sm:p-6'
+            >
+              <ProductReviews productId={product.id} />
             </div>
           </div>
 

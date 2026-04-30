@@ -55,7 +55,8 @@ public class SecurityConfig {
                                 // Bạn có thể giữ permitAll cho một số API GET tĩnh của client (như home page, list sp)
                                 "/api/v1/client/products/**",
                                 "/api/v1/client/categories/**",
-                                "/api/v1/client/articles/**"
+                                "/api/v1/client/articles/**",
+                                "/api/v1/client/reviews/product/**"
                         ).permitAll()
 
                         // CÁC ENDPOINT CẦN LOGIN

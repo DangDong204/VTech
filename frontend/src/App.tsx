@@ -13,6 +13,7 @@ import OrderPage from '@/pages/admin/manage-order/page'
 import ProductPage from '@/pages/admin/manage-product/page'
 import PromotionPage from '@/pages/admin/manage-promotion/page'
 import ReceiptPage from '@/pages/admin/manage-receipt/page'
+import ReviewPage from '@/pages/admin/manage-review/page'
 import TagPage from '@/pages/admin/manage-tag/page'
 import UserPage from '@/pages/admin/manage-user/page'
 import VariantPage from '@/pages/admin/manage-variant/page'
@@ -90,6 +91,7 @@ function App() {
               <Route path='orders' element={<OrderPage />} />
               <Route path='articles' element={<ArticlePage />} />
               <Route path='articles/:id' element={<ArticleDetailPage />} />
+              <Route path='reviews' element={<ReviewPage />} />
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}

@@ -67,6 +67,10 @@ cleanup-data:
   expire-minutes: 43200
   cleanup-rate-ms: 3600000
 
+app:
+  review:
+    sensitive-words: lừa đảo,chó,mẹ,địt,đm,vl,cc,vãi,cứt,cặc,lồn
+
 #security:
 #  public:
 #    post-endpoints:

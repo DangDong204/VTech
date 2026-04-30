@@ -1,10 +1,19 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Store, Loader2, PackageX, CheckCircle2, RefreshCcw, Wallet } from 'lucide-react'
+import {
+  Search,
+  Store,
+  Loader2,
+  PackageX,
+  CheckCircle2,
+  RefreshCcw,
+  Wallet,
+  MessageSquarePlus
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { useNavigate } from 'react-router-dom' // <-- THÊM IMPORT NÀY
+import { useNavigate } from 'react-router-dom'
 import {
   cancelOrderApi,
   getMyOrdersApi,
@@ -14,7 +23,8 @@ import {
 import { api } from '@/utils/axiosCustomize'
 import type { OrderResponse, OrderStatus } from '@/services/order/order.type'
 import { OrderDetailModal } from '@/pages/user/profile/OrderDetailModal'
-import { useCart } from '@/contexts/CartContext' // <-- THÊM IMPORT NÀY
+import { useCart } from '@/contexts/CartContext'
+import { CreateReviewModal } from '@/pages/user/product-detail/CreateReviewModal'
 
 const ORDER_TABS = [
   'Tất cả',
@@ -58,15 +68,22 @@ export default function OrdersPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const navigate = useNavigate() // <-- KHỞI TẠO HOOK
-  const { addItem } = useCart() // <-- LẤY HÀM ADD ITEM TỪ CONTEXT
+  const navigate = useNavigate()
+  const { addItem } = useCart()
 
   // Loading states
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
   const [returningId, setReturningId] = useState<string | null>(null)
   const [payingId, setPayingId] = useState<string | null>(null)
-  const [repurchasingId, setRepurchasingId] = useState<string | null>(null) // <-- STATE CHO MUA LẠI
+  const [repurchasingId, setRepurchasingId] = useState<string | null>(null)
+
+  const [reviewingItem, setReviewingItem] = useState<{
+    orderDetailId: string
+    productName: string
+    variantName: string
+    imageUrl: string
+  } | null>(null)
 
   const [selectedOrder, setSelectedOrder] = useState<OrderResponse | null>(null)
 
@@ -122,7 +139,19 @@ export default function OrdersPage() {
     return ''
   }
 
-  // --- CÁC HÀM XỬ LÝ HÀNH ĐỘNG ---
+  // --- HÀM MỚI: CẬP NHẬT STATE NGAY LẬP TỨC KHI ĐÁNH GIÁ THÀNH CÔNG ---
+  const handleReviewSuccess = (orderDetailId: string) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) => ({
+        ...order,
+        orderDetails: order.orderDetails.map((item) =>
+          item.id === orderDetailId ? { ...item, reviewed: true } : item
+        )
+      }))
+    )
+  }
+
+  // --- CÁC HÀM XỬ LÝ HÀNH ĐỘNG KHÁC ---
 
   const handleCancelOrder = async (orderId: string) => {
     const reason = window.prompt('Vui lòng nhập lý do hủy đơn (không bắt buộc):')
@@ -188,25 +217,17 @@ export default function OrdersPage() {
     }
   }
 
-  // 5. HÀM MUA LẠI ĐƠN HÀNG
   const handleRepurchase = async (order: OrderResponse) => {
     try {
       setRepurchasingId(order.id)
       toast.loading('Đang chuẩn bị giỏ hàng...', { id: 'repurchase' })
 
-      // Chạy vòng lặp tuần tự thêm từng sản phẩm vào giỏ hàng
       for (const item of order.orderDetails) {
-        // TRUYỀN THÊM false Ở ĐÂY ĐỂ TẮT TOAST CỦA CONTEXT
         await addItem(item.variantId, item.quantity, false)
       }
 
-      // Chỉ giữ lại đúng 1 thông báo tổng này thôi
       toast.success('Đã đưa sản phẩm vào giỏ hàng!', { id: 'repurchase' })
-
-      // Trích xuất danh sách variantId để truyền sang trang Cart
       const variantIds = order.orderDetails.map((d) => d.variantId)
-
-      // Chuyển hướng kèm state
       navigate('/cart', { state: { repurchaseVariantIds: variantIds } })
     } catch {
       toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng.', { id: 'repurchase' })
@@ -296,10 +317,35 @@ export default function OrdersPage() {
                           </div>
                           <p className='text-sm font-medium mt-1'>x{item.quantity}</p>
                         </div>
-                        <div className='text-right shrink-0 flex flex-col justify-between'>
+                        <div className='text-right shrink-0 flex flex-col justify-between items-end'>
                           <span className='text-sm font-bold text-red-600'>
                             {formatVnd(item.price)}
                           </span>
+
+                          {order.orderStatus === 'DELIVERED' && !item.reviewed && (
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              className='mt-2 h-7 px-2 text-xs text-amber-600 border-amber-200 hover:bg-amber-50 hover:text-amber-700'
+                              onClick={() =>
+                                setReviewingItem({
+                                  orderDetailId: item.id,
+                                  productName: item.productName,
+                                  variantName: `${item.colorName} ${item.variantName ? '- ' + item.variantName : ''}`,
+                                  imageUrl: item.imageUrl
+                                })
+                              }
+                            >
+                              <MessageSquarePlus className='h-3 w-3 mr-1.5' />
+                              Đánh giá
+                            </Button>
+                          )}
+
+                          {order.orderStatus === 'DELIVERED' && item.reviewed && (
+                            <span className='mt-2 text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100'>
+                              Đã đánh giá
+                            </span>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -366,22 +412,23 @@ export default function OrdersPage() {
                         </Button>
                       )}
 
-                      {order.orderStatus === 'DELIVERED' && (
-                        <Button
-                          variant='outline'
-                          size='sm'
-                          className='flex-1 sm:flex-none text-slate-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200'
-                          onClick={() => handleReturnOrder(order.id)}
-                          disabled={returningId === order.id}
-                        >
-                          {returningId === order.id ? (
-                            <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
-                          ) : (
-                            <RefreshCcw className='mr-1.5 h-3.5 w-3.5' />
-                          )}{' '}
-                          Hoàn trả
-                        </Button>
-                      )}
+                      {order.orderStatus === 'DELIVERED' &&
+                        !order.orderDetails.some((item) => item.reviewed) && (
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            className='flex-1 sm:flex-none text-slate-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200'
+                            onClick={() => handleReturnOrder(order.id)}
+                            disabled={returningId === order.id}
+                          >
+                            {returningId === order.id ? (
+                              <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
+                            ) : (
+                              <RefreshCcw className='mr-1.5 h-3.5 w-3.5' />
+                            )}{' '}
+                            Hoàn trả
+                          </Button>
+                        )}
 
                       <Button
                         variant='outline'
@@ -392,7 +439,6 @@ export default function OrdersPage() {
                         Xem chi tiết
                       </Button>
 
-                      {/* ĐÃ CẬP NHẬT NÚT MUA LẠI */}
                       {['DELIVERED', 'CANCELLED', 'RETURNED'].includes(order.orderStatus) && (
                         <Button
                           size='sm'
@@ -426,12 +472,25 @@ export default function OrdersPage() {
           </div>
         )}
       </div>
+
       <OrderDetailModal
         order={selectedOrder}
         isOpen={!!selectedOrder}
         onClose={() => setSelectedOrder(null)}
         statusMap={STATUS_MAP}
       />
+
+      {reviewingItem && (
+        <CreateReviewModal
+          isOpen={!!reviewingItem}
+          onClose={() => setReviewingItem(null)}
+          onSuccess={() => handleReviewSuccess(reviewingItem.orderDetailId)} // <-- GỌI HÀM CẬP NHẬT Ở ĐÂY
+          orderDetailId={reviewingItem.orderDetailId}
+          productName={reviewingItem.productName}
+          variantName={reviewingItem.variantName}
+          imageUrl={reviewingItem.imageUrl}
+        />
+      )}
     </div>
   )
 }

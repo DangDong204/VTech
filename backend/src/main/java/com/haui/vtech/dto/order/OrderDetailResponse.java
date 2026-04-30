@@ -20,4 +20,6 @@ public class OrderDetailResponse {
     private Integer quantity;
     private BigDecimal price;
     private BigDecimal totalPrice;
+
+    private boolean reviewed;
 }

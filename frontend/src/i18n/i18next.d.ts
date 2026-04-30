@@ -16,6 +16,7 @@ import enOrder from './locales/en/order.json'
 import enSideBar from './locales/en/sidebar.json'
 import enDashboard from './locales/en/dashboard.json'
 import enArticle from './locales/en/article.json'
+import enReview from './locales/en/review.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -38,6 +39,7 @@ declare module 'i18next' {
       sidebar: typeof enSideBar
       dashboard: typeof enDashboard
       article: typeof enArticle
+      review: typeof enReview
     }
   }
 }

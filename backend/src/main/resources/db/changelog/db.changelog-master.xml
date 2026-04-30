@@ -26,5 +26,6 @@
     <include file="classpath:db/changelog/changes/019-create-cart-order-table.xml"/>
     <include file="classpath:db/changelog/changes/020-create-user-addresses-table.xml"/>
     <include file="classpath:db/changelog/changes/021-create-articles-table.xml"/>
+    <include file="classpath:db/changelog/changes/022-create-reviews-table.xml"/>
 
 </databaseChangeLog>
