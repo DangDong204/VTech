@@ -14,21 +14,29 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import { useQuery } from '@tanstack/react-query'
+import { getMyProfileApi } from '@/services/user/user.api'
 
 export default function ProfileLayout() {
   const { t } = useTranslation('common')
   const location = useLocation()
   const navigate = useNavigate()
 
+  // Lấy data User để hiển thị lên Layout
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['my-profile'],
+    queryFn: getMyProfileApi
+  })
+
   // Danh sách menu đồng bộ với Header
   const menuItems = [
     { path: '/profile', icon: Home, label: t('profile.overview', 'Tổng quan') },
     { path: '/orders', icon: Package, label: t('profile.orders', 'Đơn hàng của tôi') },
-    { path: '/notifications', icon: Bell, label: t('profile.notifications', 'Thông báo của tôi') },
-    { path: '/offers', icon: Gift, label: t('profile.offers', 'Ưu đãi của tôi') },
+    // { path: '/notifications', icon: Bell, label: t('profile.notifications', 'Thông báo của tôi') },
+    // { path: '/offers', icon: Gift, label: t('profile.offers', 'Ưu đãi của tôi') },
     { path: '/rewards', icon: History, label: t('profile.rewards', 'Lịch sử điểm thưởng') },
-    { path: '/services', icon: ReceiptText, label: t('profile.services', 'Dịch vụ thu hộ') },
-    { path: '/warranty', icon: ShieldCheck, label: t('profile.warranty', 'Thông tin bảo hành') },
+    // { path: '/services', icon: ReceiptText, label: t('profile.services', 'Dịch vụ thu hộ') },
+    // { path: '/warranty', icon: ShieldCheck, label: t('profile.warranty', 'Thông tin bảo hành') },
     { path: '/addresses', icon: MapPin, label: t('profile.addresses', 'Sổ địa chỉ nhận hàng') },
     { path: '/change-password', icon: KeyRound, label: t('profile.changePassword', 'Đổi mật khẩu') }
   ]
@@ -37,6 +45,9 @@ export default function ProfileLayout() {
     // Xử lý logic logout ở đây
     navigate('/login')
   }
+
+  const displayName = user?.fullName || user?.username || 'Khách hàng'
+  const initial = displayName.charAt(0).toUpperCase()
 
   return (
     <div className='bg-slate-50 min-h-screen pb-12 pt-4'>
@@ -58,14 +69,30 @@ export default function ProfileLayout() {
           <div className='lg:col-span-1 bg-white rounded-xl border border-border/50 shadow-sm overflow-hidden sticky top-20'>
             {/* Thông tin User tóm tắt */}
             <div className='p-4 border-b border-slate-100 flex items-center gap-3'>
-              <div className='h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-lg shrink-0'>
-                Đ
-              </div>
+              {isLoading ? (
+                <div className='h-12 w-12 rounded-full bg-slate-200 animate-pulse shrink-0' />
+              ) : user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt='avatar'
+                  className='h-12 w-12 rounded-full object-cover border border-slate-200 shrink-0'
+                />
+              ) : (
+                <div className='h-12 w-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-lg shrink-0'>
+                  {initial}
+                </div>
+              )}
+
               <div className='flex flex-col min-w-0'>
                 <span className='text-xs text-muted-foreground'>
                   {t('profile.greeting', 'Xin chào')},
                 </span>
-                <span className='text-sm font-bold text-slate-800 truncate'>Nguyễn Đăng Đông</span>
+
+                {isLoading ? (
+                  <div className='h-4 w-24 bg-slate-200 animate-pulse rounded mt-1' />
+                ) : (
+                  <span className='text-sm font-bold text-slate-800 truncate'>{displayName}</span>
+                )}
               </div>
             </div>
 

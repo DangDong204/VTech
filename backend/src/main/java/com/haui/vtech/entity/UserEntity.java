@@ -1,5 +1,6 @@
 package com.haui.vtech.entity;
 
+import com.haui.vtech.enums.MemberTier;
 import com.haui.vtech.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -52,6 +53,19 @@ public class UserEntity extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<RoleEntity> roles;
+
+    @Column(name = "dob")
+    private java.time.LocalDate dob;
+
+    @Column(name = "current_vpoint", nullable = false)
+    private Integer currentVpoint = 0;
+
+    @Column(name = "total_vpoint", nullable = false)
+    private Integer totalVpoint = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "member_tier", nullable = false, length = 20)
+    private MemberTier memberTier = MemberTier.MEMBER;
 
     @PrePersist
     public void prePersist() {

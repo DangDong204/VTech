@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <!-- 1. Thêm các cột phục vụ V-Point vào bảng users -->
+    <changeSet id="023-1-add-vpoint-columns-to-users" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="current_vpoint"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="users">
+            <!-- Ngày sinh để chạy CronJob tặng điểm sinh nhật -->
+            <column name="dob" type="DATE"/>
+
+            <!-- Điểm hiện tại để tiêu -->
+            <column name="current_vpoint" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Tổng điểm tích lũy từ trước đến nay (Dùng để xếp hạng) -->
+            <column name="total_vpoint" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Hạng thành viên (MEMBER, SILVER, GOLD, DIAMOND) -->
+            <column name="member_tier" type="VARCHAR(20)" defaultValue="MEMBER">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="users" columnName="dob"/>
+            <dropColumn tableName="users" columnName="current_vpoint"/>
+            <dropColumn tableName="users" columnName="total_vpoint"/>
+            <dropColumn tableName="users" columnName="member_tier"/>
+        </rollback>
+    </changeSet>
+
+    <!-- 2. Tạo bảng Sổ cái lịch sử điểm (Kế thừa BaseEntity) -->
+    <changeSet id="023-2-create-vpoint-history-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="vpoint_history"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="vpoint_history" remarks="Sổ cái ghi log biến động V-Point">
+            <!-- KẾ THỪA BASE ENTITY -->
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <!-- =================== -->
+
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Số lượng điểm biến động (VD: +1000, -500) -->
+            <column name="amount" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Loại giao dịch: EARN_ORDER, EARN_REVIEW, SPEND_VOUCHER, REFUND_ORDER... -->
+            <column name="transaction_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- ID tham chiếu tới thực thể khác. VD: id của Đơn hàng, id của Review -->
+            <column name="reference_id" type="VARCHAR(36)"/>
+
+            <!-- Mô tả chi tiết giao dịch -->
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+
+        <!-- Tạo khóa ngoại liên kết với bảng users -->
+        <addForeignKeyConstraint baseTableName="vpoint_history"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_vpointhistory_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+        <!-- Tạo index cho user_id để truy vấn lịch sử nhanh hơn -->
+        <createIndex tableName="vpoint_history" indexName="idx_vpointhistory_user">
+            <column name="user_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="vpoint_history" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -9,11 +9,13 @@ import com.haui.vtech.entity.*;
 import com.haui.vtech.enums.OrderStatus;
 import com.haui.vtech.enums.PaymentMethod;
 import com.haui.vtech.enums.PaymentStatus;
+import com.haui.vtech.enums.VpointTransactionType;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,10 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository; // THÊM DÒNG NÀY (để lấy email user)
     private final EmailService emailService;     // THÊM DÒNG NÀY
     private final ReviewRepository reviewRepository;
+    private final VpointService vpointService;
+
+    @Value("${app.vpoint.exchange-rate:10000}")
+    private int vpointExchangeRate;
 
     @Override
     @Transactional
@@ -281,18 +287,28 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         OrderStatus oldStatus = order.getOrderStatus();
-
-        // Validate luồng trạng thái 1 chiều bắt buộc của Admin
         boolean isValidTransition = false;
         if (oldStatus == OrderStatus.PENDING && newStatus == OrderStatus.CONFIRMED) isValidTransition = true;
         if (oldStatus == OrderStatus.CONFIRMED && newStatus == OrderStatus.PROCESSING) isValidTransition = true;
         if (oldStatus == OrderStatus.PROCESSING && newStatus == OrderStatus.SHIPPING) isValidTransition = true;
+        if (oldStatus == OrderStatus.SHIPPING && newStatus == OrderStatus.DELIVERED) isValidTransition = true;
 
         if (!isValidTransition) {
             throw new AppException(ErrorCode.ORDER_TRANSITION_INVALID);
         }
 
         order.setOrderStatus(newStatus);
+
+        if (newStatus == OrderStatus.DELIVERED) {
+            if (order.getPaymentStatus() == PaymentStatus.PENDING) {
+                order.setPaymentStatus(PaymentStatus.PAID);
+            }
+            // SỬA Ở ĐÂY: Sử dụng biến cấu hình
+            int earnedPoints = order.getFinalPrice().intValue() / vpointExchangeRate;
+            if (earnedPoints > 0) {
+                vpointService.addPoints(order.getUserId(), earnedPoints, VpointTransactionType.EARN_ORDER, order.getId(), "Tích điểm tự động (Mua đơn: " + order.getOrderCode() + ")");
+            }
+        }
 
         OrderHistoryEntity history = OrderHistoryEntity.builder()
                 .order(order)
@@ -304,8 +320,6 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-
-        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
         OrderResponse response = mapToOrderResponse(savedOrder);
 
         userRepository.findById(order.getUserId()).ifPresent(user -> {
@@ -333,9 +347,13 @@ public class OrderServiceImpl implements OrderService {
         OrderStatus oldStatus = order.getOrderStatus();
         order.setOrderStatus(OrderStatus.DELIVERED);
 
-        // Khi nhận hàng thành công, trạng thái thanh toán chuyển thành PAID (nếu đang là PENDING của COD)
         if (order.getPaymentStatus() == PaymentStatus.PENDING) {
             order.setPaymentStatus(PaymentStatus.PAID);
+        }
+
+        int earnedPoints = order.getFinalPrice().intValue() / vpointExchangeRate;
+        if (earnedPoints > 0) {
+            vpointService.addPoints(userId, earnedPoints, VpointTransactionType.EARN_ORDER, order.getId(), "Tích điểm tự động (Mua đơn: " + order.getOrderCode() + ")");
         }
 
         OrderHistoryEntity history = OrderHistoryEntity.builder()
@@ -348,7 +366,6 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
         OrderResponse response = mapToOrderResponse(savedOrder);
 
         userRepository.findById(userId).ifPresent(user -> {
@@ -370,18 +387,15 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_NOT_DELIVERED);
         }
 
-        // Tìm thời điểm đơn hàng được chuyển sang DELIVERED
         OrderHistoryEntity deliveryHistory = order.getOrderHistories().stream()
                 .filter(h -> h.getNewStatus() == OrderStatus.DELIVERED)
                 .findFirst()
                 .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
 
-        // Kiểm tra điều kiện 30 ngày
         if (deliveryHistory.getCreatedAt().plusDays(30).isBefore(java.time.LocalDateTime.now())) {
             throw new AppException(ErrorCode.ORDER_RETURN_EXPIRED);
         }
 
-        // ================= THÊM LOGIC CHẶN HOÀN TRẢ Ở ĐÂY =================
         boolean hasReviewedItem = order.getOrderDetails().stream()
                 .anyMatch(detail -> reviewRepository.existsByOrderDetailId(detail.getId()));
 
@@ -389,7 +403,6 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_CANNOT_RETURN_REVIEWED);
         }
 
-        // 1. Cộng lại tồn kho
         for (OrderDetailEntity detail : order.getOrderDetails()) {
             ProductVariantEntity variant = variantRepository.findById(detail.getVariantId())
                     .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, detail.getVariantId()));
@@ -398,13 +411,23 @@ public class OrderServiceImpl implements OrderService {
             variantRepository.save(variant);
         }
 
-        // 2. Chuyển trạng thái
         OrderStatus oldStatus = order.getOrderStatus();
         order.setOrderStatus(OrderStatus.RETURNED);
 
-        // Hoàn trả tiền
         if (order.getPaymentStatus() == PaymentStatus.PAID) {
             order.setPaymentStatus(PaymentStatus.REFUNDED);
+        }
+
+        // SỬA Ở ĐÂY: Sử dụng biến cấu hình
+        int earnedPoints = order.getFinalPrice().intValue() / vpointExchangeRate;
+        if (earnedPoints > 0) {
+            vpointService.deductPoints(
+                    userId,
+                    earnedPoints,
+                    VpointTransactionType.DEDUCT_RETURN,
+                    order.getId(),
+                    "Thu hồi điểm do hoàn trả đơn hàng: " + order.getOrderCode()
+            );
         }
 
         OrderHistoryEntity history = OrderHistoryEntity.builder()
@@ -417,7 +440,6 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderHistories().add(history);
 
         OrderEntity savedOrder = orderRepository.save(order);
-        // GỌI HÀM GỬI EMAIL NGẦM (Lấy email từ bảng User)
         OrderResponse response = mapToOrderResponse(savedOrder);
 
         userRepository.findById(userId).ifPresent(user -> {

@@ -57,3 +57,9 @@ export const signUpApi = async (data: SignUpRequest) => {
   const res = await api.post<ApiResponse<UserResponse>>('/auth/register', data)
   return res.data
 }
+
+// Get My-Info
+export const getMyProfileApi = async (): Promise<UserResponse> => {
+  const res = await api.get<ApiResponse<UserResponse>>('/users/my-profile')
+  return res.data.data
+}

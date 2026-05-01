@@ -33,6 +33,7 @@ import ChangePasswordPage from '@/pages/user/profile/ChangePasswordPage'
 import OrdersPage from '@/pages/user/profile/OrdersPage'
 import OverviewPage from '@/pages/user/profile/OverviewPage'
 import ProfileLayout from '@/pages/user/profile/ProfileLayout'
+import RewardsPage from '@/pages/user/profile/RewardsPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
@@ -65,6 +66,7 @@ function App() {
               <Route path='/orders' element={<OrdersPage />} />
               <Route path='/addresses' element={<AddressesPage />} />
               <Route path='/change-password' element={<ChangePasswordPage />} />
+              <Route path='/rewards' element={<RewardsPage />} />
             </Route>
           </Route>
 

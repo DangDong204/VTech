@@ -1,4 +1,5 @@
 import type { UserStatus } from '@/defines/enum/user.enum'
+import type { MemberTier } from '@/services/vpoint/vpoint.type'
 
 export interface UserResponse {
   id: string
@@ -9,6 +10,12 @@ export interface UserResponse {
   avatar?: string | null
   status: UserStatus
   roles: string[]
+
+  dob?: string | null
+  currentVpoint: number
+  totalVpoint: number
+  memberTier: MemberTier
+
   createdAt: string
   updatedAt: string
   deletedAt?: string | null

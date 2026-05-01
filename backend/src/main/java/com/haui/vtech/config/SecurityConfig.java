@@ -63,7 +63,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/client/cart/**",
                                 "/api/v1/client/orders/**",
-                                "/api/v1/client/addresses/**")
+                                "/api/v1/client/addresses/**",
+                                "/api/v1/vpoint/**")
                         .authenticated()
                         // 3. Các request còn lại (POST, PUT, DELETE của sản phẩm, hoặc mọi request tới users, orders...) BẮT BUỘC ĐĂNG NHẬP
                         .anyRequest().authenticated()

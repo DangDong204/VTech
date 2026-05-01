@@ -148,6 +148,9 @@ public enum ErrorCode {
     REPLY_ALREADY_EXISTS(16005, "review.reply.exists", HttpStatus.BAD_REQUEST),
     REPLY_TEXT_NOTBLANK(16006, "review.reply.text.not.blank", HttpStatus.BAD_REQUEST),
     ALREADY_VOTED_HELPFUL(16007, "review.already.voted", HttpStatus.BAD_REQUEST),
+
+    VPOINT_NOT_ENOUGH(17000, "vpoint.not.enough", HttpStatus.BAD_REQUEST),
+    VPOINT_INVALID_AMOUNT(17001, "vpoint.invalid.amount", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
