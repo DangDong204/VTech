@@ -55,6 +55,16 @@ public interface ProductRepository extends JpaRepository<ProductEntity, String> 
 
     List<ProductEntity> findByCategoryIdAndStatus(String categoryId, ProductStatus status);
 
+    // Lấy các sản phẩm có ít nhất 1 biến thể đang nằm trong chương trình khuyến mãi (Bao gồm cả SẮP DIỄN RA)
+    @Query("SELECT DISTINCT p FROM ProductEntity p " +
+            "JOIN p.variants v " +
+            "JOIN PromotionEntity pr ON v.id IN elements(pr.variantIds) " +
+            "WHERE pr.id = :promotionId " +
+            "AND pr.status IN ('ACTIVE', 'UPCOMING') " +
+            "AND pr.endDate >= CURRENT_TIMESTAMP " +
+            "AND p.status = 'ACTIVE'")
+    List<ProductEntity> findProductsByPromotionId(@Param("promotionId") String promotionId);
+
     @Modifying
     @Query("""
         update ProductEntity p

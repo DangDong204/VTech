@@ -1,4 +1,4 @@
-import { PromotionStatus, PromotionType } from '@/defines/enum/promotion.enum'
+import { PromotionType } from '@/defines/enum/promotion.enum'
 import i18n from '@/i18n/i18n'
 import { z } from 'zod'
 
@@ -7,7 +7,6 @@ export const createPromotionSchema = z
     promotionName: z.string().min(1, i18n.t('promotion:schema.promotionName.required')).trim(),
     promotionDesc: z.string().optional().nullable(),
     discountType: z.nativeEnum(PromotionType),
-    status: z.nativeEnum(PromotionStatus),
 
     discountValue: z
       .number({ message: i18n.t('promotion:schema.discountValue.invalid') })

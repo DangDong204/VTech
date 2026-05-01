@@ -22,6 +22,5 @@ export interface PromotionPayload {
   discountValue: number
   startDate: string
   endDate: string
-  status: PromotionStatus
   variantIds?: string[] | null
 }

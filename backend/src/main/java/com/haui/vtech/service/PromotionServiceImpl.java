@@ -42,6 +42,14 @@ public class PromotionServiceImpl implements PromotionService {
         validateVariantIds(request.getVariantIds());
 
         PromotionEntity entity = promotionMapper.toEntity(request);
+        LocalDateTime now = LocalDateTime.now();
+        if (entity.getEndDate().isBefore(now)) {
+            entity.setStatus(PromotionStatus.INACTIVE);
+        } else if (entity.getStartDate().isAfter(now)) {
+            entity.setStatus(PromotionStatus.UPCOMING);
+        } else {
+            entity.setStatus(PromotionStatus.ACTIVE);
+        }
         PromotionEntity savedPromotion = promotionRepository.save(entity);
 
         // Áp dụng giá khuyến mãi cho các biến thể được chọn
@@ -87,6 +95,14 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.getVariantIds().clear();
         promotion.getVariantIds().addAll(newVariantIds);
 
+        LocalDateTime now = LocalDateTime.now();
+        if (promotion.getEndDate().isBefore(now)) {
+            promotion.setStatus(PromotionStatus.INACTIVE);
+        } else if (promotion.getStartDate().isAfter(now)) {
+            promotion.setStatus(PromotionStatus.UPCOMING);
+        } else {
+            promotion.setStatus(PromotionStatus.ACTIVE);
+        }
         // Lưu bản cập nhật vào DB
         PromotionEntity updatedPromotion = promotionRepository.saveAndFlush(promotion);
 
@@ -151,6 +167,14 @@ public class PromotionServiceImpl implements PromotionService {
             throw new AppException(ErrorCode.PROMOTION_NOT_FOUND, id);
         }
         return promotion.getPromotionName();
+    }
+
+    @Override
+    public List<PromotionResponse> getActivePromotionsForClient() {
+        return promotionRepository.findAllActivePromotionsClient()
+                .stream()
+                .map(promotionMapper::toResponse)
+                .toList();
     }
 
     // Hàm kiểm tra tính hợp lệ của ngày bắt đầu và kết thúc khuyến mãi

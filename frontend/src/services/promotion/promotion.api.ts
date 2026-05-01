@@ -42,3 +42,13 @@ export const deleteHardPromotionApi = async (promotionId: string) => {
   const res = await api.delete<ApiResponse<void>>(`/promotions/trash/${promotionId}`)
   return res.data
 }
+
+// ========================
+// CLIENT API (KHÁCH HÀNG)
+// ========================
+
+// API lấy danh sách các chương trình khuyến mãi đang diễn ra
+export const getClientActivePromotionsApi = async () => {
+  const res = await api.get<ApiResponse<PromotionResponse[]>>('/client/promotions/active')
+  return res.data.data
+}

@@ -4,6 +4,7 @@ export const PromotionType = {
 } as const
 
 export const PromotionStatus = {
+  UPCOMING: 'UPCOMING',
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE'
 } as const

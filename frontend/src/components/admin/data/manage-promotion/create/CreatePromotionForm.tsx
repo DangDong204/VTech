@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { PromotionStatus, PromotionType } from '@/defines/enum/promotion.enum'
+import { PromotionType } from '@/defines/enum/promotion.enum'
 import { IMGAE_NOT_FOUND } from '@/defines/upload-image'
 import { useAppMutation } from '@/hooks/useAppMutation'
 import { useFetchData } from '@/hooks/useFetchData'
@@ -26,7 +26,7 @@ import { getAllProductsApi } from '@/services/product/product.api'
 import { createPromotionApi } from '@/services/promotion/promotion.api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Megaphone, Search, X } from 'lucide-react'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
@@ -87,7 +87,6 @@ export function CreatePromotionForm({ onSuccess }: CreatePromotionFormProps) {
       promotionName: '',
       promotionDesc: '',
       discountType: PromotionType.PERCENTAGE,
-      status: PromotionStatus.ACTIVE,
       discountValue: 0,
       startDate: '',
       endDate: '',
@@ -149,29 +148,6 @@ export function CreatePromotionForm({ onSuccess }: CreatePromotionFormProps) {
                     <Input
                       placeholder={t('fields.promotionDesc.placeholder')}
                       {...register('promotionDesc')}
-                    />
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label>{t('fields.status.label')}</Label>
-                    <Controller
-                      control={control}
-                      name='status'
-                      render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('fields.status.placeholder')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={PromotionStatus.ACTIVE}>
-                              {t('fields.status.options.ACTIVE')}
-                            </SelectItem>
-                            <SelectItem value={PromotionStatus.INACTIVE}>
-                              {t('fields.status.options.INACTIVE')}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
                     />
                   </div>
                 </div>

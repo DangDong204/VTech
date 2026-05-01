@@ -346,6 +346,15 @@ public class ProductServiceImpl implements ProductService {
         return responseList;
     }
 
+    @Override
+    public List<ClientProductResponse> getProductsByPromotion(String promotionId) {
+        List<ProductEntity> products = productRepository.findProductsByPromotionId(promotionId);
+        return products.stream()
+                .map(productMapper::toClientResponse)
+                .collect(Collectors.toList());
+    }
+
+
     // Helper method tính giá nhỏ nhất để sort
     private BigDecimal getMinPriceOfClientProduct(ClientProductResponse p) {
         if (p.getVariants() == null || p.getVariants().isEmpty()) return BigDecimal.ZERO;

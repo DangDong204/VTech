@@ -27,3 +27,10 @@ export const searchClientProductsApi = async (params: SearchProductParams) => {
   })
   return res.data.data
 }
+
+export const getProductsByPromotionIdApi = async (promotionId: string) => {
+  const res = await api.get<ApiResponse<ClientProductResponse[]>>(
+    `/client/products/promotions/${promotionId}`
+  )
+  return res.data.data
+}

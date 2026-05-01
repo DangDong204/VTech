@@ -33,8 +33,6 @@ public class PromotionRequest {
     @NotNull(message = "PROMOTION_DATES_INVALID")
     private LocalDateTime endDate;
 
-    private PromotionStatus status;
-
     // Danh sách ID các biến thể (Product Variants) áp dụng khuyến mãi
     private Set<String> variantIds;
 }
