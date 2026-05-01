@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { PromotionStatus, PromotionType } from '@/defines/enum/promotion.enum'
+import { PromotionType } from '@/defines/enum/promotion.enum'
 import { IMGAE_NOT_FOUND } from '@/defines/upload-image'
 import { useAppMutation } from '@/hooks/useAppMutation'
 import { useFetchData } from '@/hooks/useFetchData'
@@ -27,7 +27,7 @@ import {
 import type { ProductVariantResponse } from '@/services/product-variant/variant.type'
 import { getAllProductsApi } from '@/services/product/product.api'
 import { updatePromotionApi } from '@/services/promotion/promotion.api'
-import type { PromotionResponse } from '@/services/promotion/promotion.type'
+import type { PromotionPayload, PromotionResponse } from '@/services/promotion/promotion.type' // Import thêm PromotionPayload
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Save, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -137,7 +137,6 @@ export function EditPromotionForm({ promotion, onSuccess }: EditPromotionFormPro
       promotionName: promotion.promotionName,
       promotionDesc: promotion.promotionDesc ?? '',
       discountType: promotion.discountType,
-      status: promotion.status,
       discountValue: promotion.discountValue,
       startDate: parseDateForInput(promotion.startDate),
       endDate: parseDateForInput(promotion.endDate),
@@ -145,8 +144,9 @@ export function EditPromotionForm({ promotion, onSuccess }: EditPromotionFormPro
     }
   })
 
+  // ĐÃ SỬA: Sửa lại type đầu vào của mutation.mutate thành PromotionPayload thay vì EditPromotionFormValues
   const mutation = useAppMutation(
-    (values: EditPromotionFormValues) => updatePromotionApi(promotion.id, values),
+    (payload: PromotionPayload) => updatePromotionApi(promotion.id, payload),
     'promotions',
     t('message.success.update'),
     t('message.error.update'),
@@ -154,10 +154,18 @@ export function EditPromotionForm({ promotion, onSuccess }: EditPromotionFormPro
   )
 
   const onSubmit = async (data: EditPromotionFormValues) => {
-    mutation.mutate({
-      ...data,
+    // ĐÃ SỬA: Ép kiểu và gán mặc định để đảm bảo payload thỏa mãn PromotionPayload
+    const payload: PromotionPayload = {
+      promotionName: data.promotionName,
+      promotionDesc: data.promotionDesc,
+      discountType: data.discountType,
+      discountValue: data.discountValue,
+      startDate: data.startDate,
+      endDate: data.endDate,
       variantIds: data.variantIds?.length ? data.variantIds : null
-    })
+    }
+
+    mutation.mutate(payload)
   }
 
   return (
@@ -198,29 +206,6 @@ export function EditPromotionForm({ promotion, onSuccess }: EditPromotionFormPro
                     <Input
                       placeholder={t('fields.promotionDesc.placeholder')}
                       {...register('promotionDesc')}
-                    />
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label>{t('fields.status.label')}</Label>
-                    <Controller
-                      control={control}
-                      name='status'
-                      render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('fields.status.placeholder')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={PromotionStatus.ACTIVE}>
-                              {t('fields.status.options.ACTIVE')}
-                            </SelectItem>
-                            <SelectItem value={PromotionStatus.INACTIVE}>
-                              {t('fields.status.options.INACTIVE')}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
                     />
                   </div>
                 </div>

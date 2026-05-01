@@ -22,4 +22,6 @@ public interface PromotionService {
     List<PromotionResponse> getAllInTrash();
 
     String restore(String id);
+
+    List<PromotionResponse> getActivePromotionsForClient();
 }

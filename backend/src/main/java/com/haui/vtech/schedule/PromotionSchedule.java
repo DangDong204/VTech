@@ -3,9 +3,9 @@ package com.haui.vtech.schedule;
 import com.haui.vtech.entity.ProductVariantEntity;
 import com.haui.vtech.entity.PromotionEntity;
 import com.haui.vtech.enums.PromotionStatus;
+import com.haui.vtech.enums.PromotionType;
 import com.haui.vtech.repository.ProductVariantRepository;
 import com.haui.vtech.repository.PromotionRepository;
-import com.haui.vtech.enums.PromotionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,56 +24,63 @@ public class PromotionSchedule {
     private final PromotionRepository promotionRepository;
     private final ProductVariantRepository productVariantRepository;
 
-    @Scheduled(cron = "0 * * * * ?") // Quét mỗi phút 1 lần
+    @Scheduled(cron = "0 * * * * ?") // Quét tự động mỗi khi sang phút mới
     @Transactional
-    public void deactivateExpiredPromotions() {
-        LocalDateTime now = LocalDateTime.now();
-
-        List<PromotionEntity> expiredPromotions = promotionRepository.findAll().stream()
-                .filter(p -> p.getStatus() == PromotionStatus.ACTIVE)
-                .filter(p -> p.getEndDate() != null && p.getEndDate().isBefore(now))
-                .toList();
-
-        if (expiredPromotions.isEmpty()) return;
-
-        log.info("Tìm thấy {} chương trình khuyến mãi đã hết hạn. Đang tiến hành cập nhật...", expiredPromotions.size());
-
+    public void processPromotions() {
         Set<String> affectedVariantIds = new HashSet<>();
 
-        for (PromotionEntity promotion : expiredPromotions) {
-            promotion.setStatus(PromotionStatus.INACTIVE);
-            if (promotion.getVariantIds() != null) {
-                affectedVariantIds.addAll(promotion.getVariantIds());
-            }
+        // 1. TÌM VÀ TẮT CÁC CHƯƠNG TRÌNH HẾT HẠN (ACTIVE -> INACTIVE)
+        List<PromotionEntity> expiredPromotions = promotionRepository.findExpiredPromotions();
+        for (PromotionEntity p : expiredPromotions) {
+            p.setStatus(PromotionStatus.INACTIVE);
+            if (p.getVariantIds() != null) affectedVariantIds.addAll(p.getVariantIds());
         }
 
-        // Phải lưu trạng thái INACTIVE trước khi tính lại giá
-        promotionRepository.saveAllAndFlush(expiredPromotions);
+        // 2. TÌM VÀ BẬT CÁC CHƯƠNG TRÌNH ĐẾN GIỜ (UPCOMING -> ACTIVE)
+        List<PromotionEntity> startingPromotions = promotionRepository.findStartingPromotions();
+        for (PromotionEntity p : startingPromotions) {
+            p.setStatus(PromotionStatus.ACTIVE);
+            if (p.getVariantIds() != null) affectedVariantIds.addAll(p.getVariantIds());
+        }
 
-        // Tính lại giá cho các Variant bị ảnh hưởng
-        if (!affectedVariantIds.isEmpty()) {
-            List<ProductVariantEntity> variants = productVariantRepository.findAllById(affectedVariantIds);
-            // Query này giờ đây sẽ KHÔNG chứa các Promotion vừa bị set thành INACTIVE nữa
-            List<PromotionEntity> remainingActivePromos = promotionRepository.findActivePromotionsByVariantIds(affectedVariantIds);
+        // 3. FIX LỖI DATA CŨ (Nếu lỡ có CT nào đang ACTIVE nhưng thời gian ở tương lai)
+        List<PromotionEntity> invalidActivePromotions = promotionRepository.findInvalidActivePromotions();
+        for (PromotionEntity p : invalidActivePromotions) {
+            p.setStatus(PromotionStatus.UPCOMING);
+            if (p.getVariantIds() != null) affectedVariantIds.addAll(p.getVariantIds());
+        }
 
-            for (ProductVariantEntity variant : variants) {
-                BigDecimal basePrice = variant.getBasePrice();
-                BigDecimal minSalePrice = basePrice;
+        if (affectedVariantIds.isEmpty()) return; // Không có biến động thì dừng
 
-                for (PromotionEntity promo : remainingActivePromos) {
-                    if (promo.getVariantIds() != null && promo.getVariantIds().contains(variant.getId())) {
-                        BigDecimal calcPrice = calculateDiscountPrice(basePrice, promo.getDiscountType(), promo.getDiscountValue());
-                        if (calcPrice.compareTo(minSalePrice) < 0) {
-                            minSalePrice = calcPrice;
-                        }
+        log.info("CronJob: Cập nhật trạng thái cho {} promotion và đồng bộ giá cho {} biến thể.",
+                (expiredPromotions.size() + startingPromotions.size() + invalidActivePromotions.size()),
+                affectedVariantIds.size());
+
+        // Lưu trạng thái mới vào DB trước
+        promotionRepository.saveAll(expiredPromotions);
+        promotionRepository.saveAll(startingPromotions);
+        promotionRepository.saveAll(invalidActivePromotions);
+        promotionRepository.flush();
+
+        // 4. TÍNH TOÁN VÀ ĐỒNG BỘ LẠI GIÁ CHO SẢN PHẨM
+        List<ProductVariantEntity> variants = productVariantRepository.findAllById(affectedVariantIds);
+        List<PromotionEntity> activePromos = promotionRepository.findActivePromotionsByVariantIds(affectedVariantIds);
+
+        for (ProductVariantEntity variant : variants) {
+            BigDecimal basePrice = variant.getBasePrice();
+            BigDecimal minSalePrice = basePrice;
+
+            for (PromotionEntity promo : activePromos) {
+                if (promo.getVariantIds() != null && promo.getVariantIds().contains(variant.getId())) {
+                    BigDecimal calcPrice = calculateDiscountPrice(basePrice, promo.getDiscountType(), promo.getDiscountValue());
+                    if (calcPrice.compareTo(minSalePrice) < 0) {
+                        minSalePrice = calcPrice;
                     }
                 }
-                variant.setSalePrice(minSalePrice);
             }
-            productVariantRepository.saveAll(variants);
+            variant.setSalePrice(minSalePrice);
         }
-
-        log.info("Đã hoàn tất xử lý khuyến mãi hết hạn và đồng bộ lại giá cho {} biến thể.", affectedVariantIds.size());
+        productVariantRepository.saveAll(variants);
     }
 
     private BigDecimal calculateDiscountPrice(BigDecimal basePrice, PromotionType type, BigDecimal discountValue) {

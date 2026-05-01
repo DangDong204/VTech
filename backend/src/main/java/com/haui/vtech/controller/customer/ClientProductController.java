@@ -46,4 +46,12 @@ public class ClientProductController {
                 .message("Tìm kiếm sản phẩm thành công")
                 .build();
     }
+
+    @GetMapping("/promotions/{promotionId}")
+    public ApiResponse<List<ClientProductResponse>> getProductsByPromotionId(@PathVariable String promotionId) {
+        return ApiResponse.<List<ClientProductResponse>>builder()
+                .data(productService.getProductsByPromotion(promotionId))
+                .message("Lấy danh sách sản phẩm theo ID khuyến mãi thành công")
+                .build();
+    }
 }

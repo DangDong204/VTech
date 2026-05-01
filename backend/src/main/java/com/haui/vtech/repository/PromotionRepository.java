@@ -41,6 +41,30 @@ public interface PromotionRepository extends JpaRepository<PromotionEntity, Stri
 
     List<PromotionEntity> findAllByStatusAndDeletedAtIsNotNullOrderByDeletedAtDesc(PromotionStatus status);
 
-    @Query("SELECT DISTINCT p FROM PromotionEntity p JOIN p.variantIds v WHERE p.status = 'ACTIVE' AND v IN :variantIds")
+    @Query("SELECT DISTINCT p FROM PromotionEntity p JOIN p.variantIds v " +
+            "WHERE p.status = 'ACTIVE' " +
+            "AND p.startDate <= CURRENT_TIMESTAMP " +
+            "AND p.endDate >= CURRENT_TIMESTAMP " +
+            "AND v IN :variantIds")
     List<PromotionEntity> findActivePromotionsByVariantIds(@Param("variantIds") Set<String> variantIds);
+
+    // Khách hàng được xem cả chương trình ACTIVE & UPCOMING
+    @Query("SELECT p FROM PromotionEntity p " +
+            "WHERE p.status IN ('ACTIVE', 'UPCOMING') " +
+            "AND p.endDate >= CURRENT_TIMESTAMP " +
+            "ORDER BY p.startDate ASC")
+    List<PromotionEntity> findAllActivePromotionsClient();
+
+    // ==========================================
+    // CÁC QUERY DÀNH RIÊNG CHO CRON JOB (SCHEDULE)
+    // ==========================================
+    @Query("SELECT p FROM PromotionEntity p WHERE p.status = 'ACTIVE' AND p.endDate < CURRENT_TIMESTAMP")
+    List<PromotionEntity> findExpiredPromotions();
+
+    @Query("SELECT p FROM PromotionEntity p WHERE p.status = 'UPCOMING' AND p.startDate <= CURRENT_TIMESTAMP AND p.endDate >= CURRENT_TIMESTAMP")
+    List<PromotionEntity> findStartingPromotions();
+
+    // Dùng để sửa lỗi data cũ: Nếu lỡ lưu ACTIVE nhưng ngày ở tương lai thì tự động đưa về UPCOMING
+    @Query("SELECT p FROM PromotionEntity p WHERE p.status = 'ACTIVE' AND p.startDate > CURRENT_TIMESTAMP")
+    List<PromotionEntity> findInvalidActivePromotions();
 }

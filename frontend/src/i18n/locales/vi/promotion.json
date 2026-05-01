@@ -29,6 +29,7 @@
     "status": {
       "label": "Trạng thái",
       "all": "Tất cả trạng thái",
+      "UPCOMING": "Sắp diễn ra",
       "ACTIVE": "Hoạt động",
       "INACTIVE": "Ngừng hoạt động"
     },
@@ -104,6 +105,7 @@
       "label": "Trạng thái",
       "placeholder": "Chọn trạng thái",
       "options": {
+        "UPCOMING": "Sắp diễn ra",
         "ACTIVE": "Hoạt động",
         "INACTIVE": "Ngừng hoạt động"
       }

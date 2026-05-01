@@ -42,7 +42,6 @@ export function ProductCard({ product }: { product: ClientProductResponse }) {
     )
   }, [product.variants, selectedVersion, selectedColor])
 
-  // 🛑 BƯỚC PHÒNG THỦ: Nếu sản phẩm chưa có biến thể nào trong DB
   if (!currentVariant) {
     return (
       <div className='bg-card rounded-xl border border-border p-3 flex flex-col transition-all duration-300 relative h-full opacity-60'>
@@ -67,76 +66,81 @@ export function ProductCard({ product }: { product: ClientProductResponse }) {
     )
   }
 
-  // Nếu có currentVariant, tính toán bình thường
   const discountAmount = currentVariant.originalPrice - currentVariant.price
 
   return (
-    <div className='group bg-card rounded-xl border border-border p-3 flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/40 relative h-full'>
-      <Link to={`/product/${product.slug}`} className='cursor-pointer'>
-        {/* Nút yêu thích / Trả góp */}
-        <div className='absolute top-3 left-3 z-10'>
-          <Badge
-            variant='secondary'
-            className='bg-blue-200 text-blue-600 font-medium text-[10px] px-1.5 py-1'
-          >
-            Trả góp 0%
-          </Badge>
-        </div>
+    // FIX: Sử dụng group/item chuyên biệt cho thẻ sản phẩm
+    <div className='group/item bg-card rounded-xl border border-border p-3 flex flex-col transition-all duration-300 hover:shadow-lg hover:border-primary/40 relative h-full'>
+      {/* Nút yêu thích / Trả góp (Để z-10 để đè lên Link) */}
+      <div className='absolute top-3 left-3 z-10 pointer-events-none'>
+        <Badge
+          variant='secondary'
+          className='bg-blue-200 text-blue-600 font-medium text-[10px] px-1.5 py-1'
+        >
+          Trả góp 0%
+        </Badge>
+      </div>
 
+      {/* FIX: Link sẽ bọc cả Ảnh + Tên + Giá để vùng nhấn to hơn */}
+      <Link to={`/product/${product.slug}`} className='cursor-pointer flex flex-col flex-1'>
         {/* Ảnh */}
         <div className='relative w-full aspect-square flex items-center justify-center p-4 mt-4'>
           {product.thumbnail ? (
             <img
               src={product.thumbnail}
               alt={product.baseName}
-              className='h-full w-full object-contain group-hover:-translate-y-1.5 transition-transform duration-300'
+              // FIX: Dùng group-hover/item để chỉ nảy khi hover đúng cái card này
+              className='h-full w-full object-contain group-hover/item:-translate-y-1.5 transition-transform duration-300'
             />
           ) : (
             <ImageIcon className='h-12 w-12 text-muted-foreground/20' />
           )}
         </div>
-      </Link>
 
-      {/* Tên & Giá */}
-      <div className='flex flex-col gap-1 mt-2'>
-        <h3 className='text-sm font-semibold text-foreground line-clamp-2 min-h-[40px]'>
-          {product.baseName} {currentVariant.version}
-        </h3>
+        {/* Tên & Giá */}
+        <div className='flex flex-col gap-1 mt-2'>
+          <h3 className='text-sm font-semibold text-foreground line-clamp-2 min-h-[40px]'>
+            {product.baseName} {currentVariant.version}
+          </h3>
 
-        <div className='flex flex-col mt-1'>
-          {discountAmount > 0 ? (
-            <div className='flex items-center gap-2'>
-              <span className='text-base font-bold text-destructive'>
+          <div className='flex flex-col mt-1'>
+            {discountAmount > 0 ? (
+              <div className='flex items-center gap-2'>
+                <span className='text-base font-bold text-destructive'>
+                  {formatVnd(currentVariant.price)}
+                </span>
+                <Badge
+                  variant='outline'
+                  className='text-[9px] px-1 py-0 h-4 border-destructive text-destructive bg-destructive/10 rounded-sm font-medium'
+                >
+                  -{Math.round((discountAmount / currentVariant.originalPrice) * 100)}%
+                </Badge>
+              </div>
+            ) : (
+              <span className='text-base font-bold text-foreground'>
                 {formatVnd(currentVariant.price)}
               </span>
-              <Badge
-                variant='outline'
-                className='text-[9px] px-1 py-0 h-4 border-destructive text-destructive bg-destructive/10 rounded-sm font-medium'
-              >
-                -{Math.round((discountAmount / currentVariant.originalPrice) * 100)}%
-              </Badge>
-            </div>
-          ) : (
-            <span className='text-base font-bold text-foreground'>
-              {formatVnd(currentVariant.price)}
-            </span>
-          )}
+            )}
 
-          <div className='text-[11px] text-muted-foreground line-through h-4'>
-            {discountAmount > 0 ? formatVnd(currentVariant.originalPrice) : ''}
+            <div className='text-[11px] text-muted-foreground line-through h-4'>
+              {discountAmount > 0 ? formatVnd(currentVariant.originalPrice) : ''}
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
 
-      {/* Tùy chọn (Màu & Dung lượng) */}
-      <div className='mt-2 space-y-2.5'>
+      {/* Tùy chọn (Màu & Dung lượng) - Để bên ngoài Link để người dùng click không bị nhảy trang */}
+      <div className='mt-2 space-y-2.5 relative z-10'>
         {/* Màu sắc */}
         <div className='flex gap-1.5 items-center'>
           {uniqueColors.map((color) => (
             <button
               key={color.hex}
               title={color.name}
-              onClick={() => setSelectedColor(color.hex)}
+              onClick={(e) => {
+                e.preventDefault()
+                setSelectedColor(color.hex)
+              }}
               className={`w-4 h-4 rounded-full border ring-offset-1 transition-all ${
                 selectedColor === color.hex
                   ? 'border-primary ring-1 ring-primary ring-offset-background'
@@ -154,7 +158,10 @@ export function ProductCard({ product }: { product: ClientProductResponse }) {
             return (
               <div
                 key={version}
-                onClick={() => setSelectedVersion(version)}
+                onClick={(e) => {
+                  e.preventDefault()
+                  setSelectedVersion(version)
+                }}
                 className={`relative border rounded px-1.5 py-0.5 text-[10px] font-medium cursor-pointer transition-colors ${
                   isSelected
                     ? 'border-red-500 text-foreground bg-red-50/50 dark:bg-red-950/20'
@@ -184,7 +191,7 @@ export function ProductCard({ product }: { product: ClientProductResponse }) {
       </div>
 
       {/* Footer */}
-      <div className='mt-auto pt-3 flex items-center justify-between'>
+      <div className='mt-auto pt-3 flex items-center justify-between relative z-10'>
         <div className='flex items-center gap-0.5'>
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
