@@ -38,7 +38,8 @@ export function CreateVoucherForm({ onSuccess }: CreateVoucherFormProps) {
     resolver: zodResolver(createVoucherSchema),
     defaultValues: {
       type: VoucherType.PERCENTAGE,
-      status: VoucherStatus.ACTIVE
+      status: VoucherStatus.ACTIVE,
+      requiredPoints: 0
     }
   })
 
@@ -252,6 +253,25 @@ export function CreateVoucherForm({ onSuccess }: CreateVoucherFormProps) {
                 {errors.endDate && (
                   <p className='text-sm text-destructive'>{errors.endDate.message}</p>
                 )}
+              </div>
+              <div className='space-y-2'>
+                <Label>{t('fields.requiredPoints.label')}</Label>
+                <Input
+                  type='number'
+                  min={0}
+                  step={100}
+                  placeholder={t('fields.requiredPoints.placeholder')}
+                  {...register('requiredPoints', {
+                    setValueAs: (v) => (v === '' || Number.isNaN(Number(v)) ? 0 : Number(v))
+                  })}
+                  className={errors.requiredPoints ? 'border-destructive' : ''}
+                />
+                {errors.requiredPoints && (
+                  <p className='text-sm text-destructive'>{errors.requiredPoints.message}</p>
+                )}
+                <p className='text-[11px] text-muted-foreground italic'>
+                  {t('fields.requiredPoints.hint')}
+                </p>
               </div>
             </div>
           </div>

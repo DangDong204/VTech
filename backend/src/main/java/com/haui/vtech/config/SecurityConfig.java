@@ -56,7 +56,7 @@ public class SecurityConfig {
                                 "/api/v1/client/products/**",
                                 "/api/v1/client/categories/**",
                                 "/api/v1/client/articles/**",
-                                "/api/v1/client/reviews/product/**"
+                                "/api/v1/client/promotions/**"
                         ).permitAll()
 
                         // CÁC ENDPOINT CẦN LOGIN

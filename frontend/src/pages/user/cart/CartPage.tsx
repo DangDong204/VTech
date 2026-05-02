@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/contexts/CartContext'
 import type { CartItemResponse } from '@/services/cart/cart.type'
-import { checkVoucherApi, getAllVoucherApi } from '@/services/voucher/voucher.api'
+import { checkVoucherApi, getAllVoucherApi, getMyVouchersApi } from '@/services/voucher/voucher.api'
 
 type ExtendedCartItem = CartItemResponse & {
   originalPrice?: number
@@ -201,8 +201,22 @@ export default function CartPage() {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        const data = await getAllVoucherApi()
-        setAvailableVouchers(data.filter((v) => v.status === 'ACTIVE' || !v.status))
+        // GỌI SONG SONG 2 API: Lấy mã Public hệ thống & Lấy mã Private trong ví
+        const [publicData, walletData] = await Promise.all([getAllVoucherApi(), getMyVouchersApi()])
+
+        // Lọc các mã Public (Không yêu cầu điểm) và đang ACTIVE
+        const publicVouchers = publicData.filter(
+          (v) =>
+            (v.status === 'ACTIVE' || !v.status) && (!v.requiredPoints || v.requiredPoints === 0)
+        )
+
+        // Gộp 2 mảng lại với nhau
+        const allAvailable = [...publicVouchers, ...walletData]
+
+        // Loại bỏ trùng lặp (Phòng trường hợp Backend trả về lỗi data)
+        const uniqueVouchers = Array.from(new Map(allAvailable.map((v) => [v.id, v])).values())
+
+        setAvailableVouchers(uniqueVouchers)
       } catch {
         toast.error('Không thể tải danh sách voucher')
       }

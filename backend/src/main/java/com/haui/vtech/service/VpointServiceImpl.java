@@ -69,7 +69,7 @@ public class VpointServiceImpl implements VpointService {
         VpointHistoryEntity history = VpointHistoryEntity.builder()
                 .user(user)
                 .amount(amount)
-                .transactionType(type.name())
+                .transactionType(type)
                 .referenceId(referenceId)
                 .description(description)
                 .build();
@@ -88,7 +88,6 @@ public class VpointServiceImpl implements VpointService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         user.setCurrentVpoint(user.getCurrentVpoint() - amount);
-        user.setTotalVpoint(Math.max(0, user.getTotalVpoint() - amount));
 
         int total = user.getTotalVpoint();
         MemberTier newTier = MemberTier.MEMBER;
@@ -110,7 +109,7 @@ public class VpointServiceImpl implements VpointService {
         VpointHistoryEntity history = VpointHistoryEntity.builder()
                 .user(user)
                 .amount(-amount)
-                .transactionType(type.name())
+                .transactionType(type)
                 .referenceId(referenceId)
                 .description(description)
                 .build();

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <!-- 1. Thêm cột required_points vào bảng vouchers -->
+    <changeSet id="add-required-points-to-vouchers" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="vouchers" columnName="required_points"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="vouchers">
+            <column name="required_points" type="INT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="vouchers" columnName="required_points"/>
+        </rollback>
+    </changeSet>
+
+    <!-- 2. Tạo bảng Ví Voucher của người dùng -->
+    <changeSet id="create-user-vouchers-table" author="dongdang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_vouchers"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="user_vouchers" remarks="Ví chứa voucher cá nhân của User">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Kế thừa từ BaseEntity -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="voucher_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Trạng thái đã sử dụng hay chưa -->
+            <column name="is_used" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Ghi lại thời điểm dùng voucher -->
+            <column name="used_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <!-- Foreign Keys -->
+        <addForeignKeyConstraint baseTableName="user_vouchers"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_uservouchers_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="user_vouchers"
+                                 baseColumnNames="voucher_id"
+                                 constraintName="fk_uservouchers_voucher"
+                                 referencedTableName="vouchers"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+        <!-- Indexes tối ưu truy vấn lúc Checkout -->
+        <createIndex tableName="user_vouchers" indexName="idx_uservouchers_user_used">
+            <column name="user_id"/>
+            <column name="is_used"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="user_vouchers" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

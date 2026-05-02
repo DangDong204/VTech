@@ -36,4 +36,7 @@ public class VoucherRequest {
     private LocalDateTime endDate;
 
     private VoucherStatus status;
+
+    @Min(value = 0, message = "VOUCHER_VALUE_INVALID")
+    private Integer requiredPoints;
 }

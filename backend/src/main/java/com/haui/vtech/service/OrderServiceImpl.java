@@ -39,9 +39,23 @@ public class OrderServiceImpl implements OrderService {
     private final EmailService emailService;     // THÊM DÒNG NÀY
     private final ReviewRepository reviewRepository;
     private final VpointService vpointService;
+    private final UserVoucherRepository userVoucherRepository;
 
     @Value("${app.vpoint.exchange-rate:10000}")
     private int vpointExchangeRate;
+
+    // THÊM CÁC BIẾN HỆ SỐ NÀY
+    @Value("${app.vpoint.multiplier.member:1.0}")
+    private double multiplierMember;
+
+    @Value("${app.vpoint.multiplier.silver:1.1}")
+    private double multiplierSilver;
+
+    @Value("${app.vpoint.multiplier.gold:1.25}")
+    private double multiplierGold;
+
+    @Value("${app.vpoint.multiplier.diamond:1.5}")
+    private double multiplierDiamond;
 
     @Override
     @Transactional
@@ -106,6 +120,20 @@ public class OrderServiceImpl implements OrderService {
                 }
                 if (subTotal.compareTo(voucher.getMinOrderValue()) < 0) {
                     throw new AppException(ErrorCode.VOUCHER_CONDITION_NOT_MET); // SỬA Ở ĐÂY
+                }
+
+                // ========================================================
+                // BỔ SUNG LOGIC BẢO MẬT: KIỂM TRA VÍ VOUCHER TẠI ĐÂY
+                // ========================================================
+                if (voucher.getRequiredPoints() != null && voucher.getRequiredPoints() > 0) {
+                    // Nếu là mã Private (đổi bằng điểm), khách phải có trong ví và chưa xài
+                    UserVoucherEntity userVoucher = userVoucherRepository.findByUserIdAndVoucherIdAndIsUsedFalse(userId, voucher.getId())
+                            .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION)); // Báo lỗi: Khách không sở hữu mã này hoặc đã xài
+
+                    // Gạch thẻ: Đánh dấu đã xài mã này
+                    userVoucher.setIsUsed(true);
+                    userVoucher.setUsedAt(LocalDateTime.now());
+                    userVoucherRepository.save(userVoucher);
                 }
 
                 // b. Phân loại và tính tiền giảm
@@ -234,6 +262,38 @@ public class OrderServiceImpl implements OrderService {
             variantRepository.save(variant);
         }
 
+        // =======================================================
+        // 2. BỔ SUNG: HOÀN TRẢ VOUCHER LẠI CHO KHÁCH VÀ HỆ THỐNG
+        // =======================================================
+        if (order.getVoucherIds() != null && !order.getVoucherIds().isEmpty()) {
+            List<VoucherEntity> appliedVouchers = voucherRepository.findAllById(order.getVoucherIds());
+            for (VoucherEntity voucher : appliedVouchers) {
+                // a. Trừ đi 1 lượt sử dụng của hệ thống
+                if (voucher.getUsedCount() > 0) {
+                    voucher.setUsedCount(voucher.getUsedCount() - 1);
+                }
+
+                // b. Nếu là Voucher cá nhân (đổi bằng V-point), khôi phục trạng thái trong Ví
+                if (voucher.getRequiredPoints() != null && voucher.getRequiredPoints() > 0) {
+                    // Tìm record trong ví đã bị gạch thẻ trước đó
+                    userVoucherRepository.findById(userId); // Lưu ý: Hàm này cần tìm chính xác record.
+                    // Tốt nhất bạn dùng list và filter, vì hàm findByUserIdAndVoucherIdAndIsUsedFalse sẽ không ra (do nó đang là true)
+
+                    // CÁCH TỐT NHẤT: Thêm hàm findByUserIdAndVoucherId vào UserVoucherRepository
+                    // Tạm xử lý bằng đoạn code an toàn này:
+                    userVoucherRepository.findAll().stream()
+                            .filter(uv -> uv.getUser().getId().equals(userId) && uv.getVoucher().getId().equals(voucher.getId()))
+                            .findFirst()
+                            .ifPresent(uv -> {
+                                uv.setIsUsed(false);
+                                uv.setUsedAt(null);
+                                userVoucherRepository.save(uv);
+                            });
+                }
+            }
+            voucherRepository.saveAll(appliedVouchers);
+        }
+        // =======================================================
         // 2. Chuyển trạng thái
         OrderStatus oldStatus = order.getOrderStatus();
         order.setOrderStatus(OrderStatus.CANCELLED);
@@ -303,8 +363,10 @@ public class OrderServiceImpl implements OrderService {
             if (order.getPaymentStatus() == PaymentStatus.PENDING) {
                 order.setPaymentStatus(PaymentStatus.PAID);
             }
-            // SỬA Ở ĐÂY: Sử dụng biến cấu hình
-            int earnedPoints = order.getFinalPrice().intValue() / vpointExchangeRate;
+
+            // ĐÃ SỬA: Tính điểm dựa trên hạng thẻ của khách
+            int earnedPoints = calculateEarnedPoints(order);
+
             if (earnedPoints > 0) {
                 vpointService.addPoints(order.getUserId(), earnedPoints, VpointTransactionType.EARN_ORDER, order.getId(), "Tích điểm tự động (Mua đơn: " + order.getOrderCode() + ")");
             }
@@ -350,8 +412,8 @@ public class OrderServiceImpl implements OrderService {
         if (order.getPaymentStatus() == PaymentStatus.PENDING) {
             order.setPaymentStatus(PaymentStatus.PAID);
         }
+        int earnedPoints = calculateEarnedPoints(order);
 
-        int earnedPoints = order.getFinalPrice().intValue() / vpointExchangeRate;
         if (earnedPoints > 0) {
             vpointService.addPoints(userId, earnedPoints, VpointTransactionType.EARN_ORDER, order.getId(), "Tích điểm tự động (Mua đơn: " + order.getOrderCode() + ")");
         }
@@ -418,9 +480,20 @@ public class OrderServiceImpl implements OrderService {
             order.setPaymentStatus(PaymentStatus.REFUNDED);
         }
 
-        // SỬA Ở ĐÂY: Sử dụng biến cấu hình
-        int earnedPoints = order.getFinalPrice().intValue() / vpointExchangeRate;
+        int earnedPoints = calculateEarnedPoints(order);
+
         if (earnedPoints > 0) {
+
+            UserEntity user = userRepository.findById(userId).orElseThrow();
+
+            // Nếu khách đã xài điểm khiến số dư hiện tại nhỏ hơn số điểm phải thu hồi
+            if (user.getCurrentVpoint() < earnedPoints) {
+                // Ném ra một lỗi chặn đứng việc trả hàng
+                throw new AppException(ErrorCode.ORDER_CANNOT_RETURN_POINTS_USED);
+                // Gợi ý: Bạn nên tạo mã lỗi ORDER_CANNOT_RETURN_POINTS_USED
+                // với message: "Bạn không thể trả hàng vì đã sử dụng V-Point được tặng từ đơn hàng này!"
+            }
+
             vpointService.deductPoints(
                     userId,
                     earnedPoints,
@@ -714,5 +787,27 @@ public class OrderServiceImpl implements OrderService {
             case CANCELLED -> "Đã hủy";
             case RETURNED -> "Hoàn trả";
         };
+    }
+
+    // HÀM TÍNH TOÁN ĐIỂM DỰA TRÊN HẠNG THẺ CỦA KHÁCH (MEMBER, SILVER, GOLD, DIAMOND)
+    private int calculateEarnedPoints(OrderEntity order) {
+        // Lấy thông tin User để biết hạng thẻ
+        UserEntity user = userRepository.findById(order.getUserId()).orElse(null);
+        if (user == null) return 0;
+
+        // Tính điểm cơ bản (Base points)
+        int basePoints = order.getFinalPrice().intValue() / vpointExchangeRate;
+        if (basePoints <= 0) return 0;
+
+        // Chọn hệ số nhân (Multiplier)
+        double multiplier = switch (user.getMemberTier()) {
+            case SILVER -> multiplierSilver;
+            case GOLD -> multiplierGold;
+            case DIAMOND -> multiplierDiamond;
+            default -> multiplierMember;
+        };
+
+        // Trả về số điểm đã nhân hệ số (làm tròn xuống)
+        return (int) (basePoints * multiplier);
     }
 }

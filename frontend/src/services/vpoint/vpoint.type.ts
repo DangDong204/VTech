@@ -7,6 +7,7 @@ export type VpointTransactionType =
   | 'EARN_BIRTHDAY'
   | 'EARN_ADMIN_GIFT'
   | 'SPEND_ORDER'
+  | 'REDEEM_VOUCHER'
   | 'REFUND_ORDER'
   | 'DEDUCT_RETURN'
 

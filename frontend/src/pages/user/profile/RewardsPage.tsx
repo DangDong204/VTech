@@ -13,8 +13,9 @@ import {
   Star
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 
-// ĐÃ CẬP NHẬT MỐC ĐIỂM MỚI THEO TỈ LỆ 10.000Đ = 1 ĐIỂM
+// ĐÃ CẬP NHẬT MỐC ĐIỂM MỚI VÀ HỆ SỐ NHÂN (MULTIPLIER)
 const TIER_CONFIG = {
   MEMBER: {
     label: 'Thành viên',
@@ -25,7 +26,8 @@ const TIER_CONFIG = {
     barColor: 'bg-slate-500',
     icon: <Star className='h-5 w-5' />,
     next: 'SILVER',
-    max: 1000 // Lên Bạc cần 1.000 điểm
+    max: 1000,
+    multiplier: 'x1.0' // Thêm hệ số
   },
   SILVER: {
     label: 'Bạc',
@@ -36,7 +38,8 @@ const TIER_CONFIG = {
     barColor: 'bg-gradient-to-r from-slate-400 to-slate-600',
     icon: <Star className='h-5 w-5 fill-current' />,
     next: 'GOLD',
-    max: 5000 // Lên Vàng cần 5.000 điểm
+    max: 5000,
+    multiplier: 'x1.1' // Thêm hệ số
   },
   GOLD: {
     label: 'Vàng',
@@ -47,7 +50,8 @@ const TIER_CONFIG = {
     barColor: 'bg-gradient-to-r from-yellow-400 to-amber-500',
     icon: <Crown className='h-5 w-5' />,
     next: 'DIAMOND',
-    max: 20000 // Lên Kim Cương cần 20.000 điểm
+    max: 20000,
+    multiplier: 'x1.25' // Thêm hệ số
   },
   DIAMOND: {
     label: 'Kim Cương',
@@ -58,7 +62,8 @@ const TIER_CONFIG = {
     barColor: 'bg-gradient-to-r from-sky-400 to-blue-500',
     icon: <Gem className='h-5 w-5' />,
     next: 'MAX',
-    max: 20000
+    max: 20000,
+    multiplier: 'x1.5' // Thêm hệ số
   }
 }
 
@@ -69,6 +74,7 @@ const TRANSACTION_MAP: Record<VpointTransactionType, { label: string; category: 
   EARN_BIRTHDAY: { label: 'Quà tặng sinh nhật', category: 'Ưu đãi' },
   EARN_ADMIN_GIFT: { label: 'Hệ thống tặng điểm', category: 'Ưu đãi' },
   SPEND_ORDER: { label: 'Thanh toán đơn hàng', category: 'Sử dụng' },
+  REDEEM_VOUCHER: { label: 'Đổi điểm lấy Voucher', category: 'Ưu đãi' },
   REFUND_ORDER: { label: 'Hoàn điểm hủy đơn', category: 'Hoàn tiền' },
   DEDUCT_RETURN: { label: 'Thu hồi do trả hàng', category: 'Thu hồi' }
 }
@@ -76,7 +82,6 @@ const TRANSACTION_MAP: Record<VpointTransactionType, { label: string; category: 
 const getTransactionInfo = (type: VpointTransactionType) =>
   TRANSACTION_MAP[type] || { label: 'Biến động V-Point', category: 'Khác' }
 
-// Format date nicely
 const formatDate = (dateStr: string) => {
   try {
     const d = new Date(dateStr)
@@ -94,6 +99,7 @@ const formatDate = (dateStr: string) => {
 
 export default function RewardsPage() {
   const { t } = useTranslation('common')
+  const navigate = useNavigate()
 
   const { data: user, isLoading: isLoadingUser } = useQuery({
     queryKey: ['my-profile'],
@@ -226,6 +232,16 @@ export default function RewardsPage() {
         </div>
       </div>
 
+      {/* ── BỔ SUNG: DÒNG GIẢI THÍCH NHANH QUY TẮC TÍCH ĐIỂM ── */}
+      <div className='bg-blue-50 border border-blue-100 text-blue-700 px-4 py-3 rounded-xl text-sm flex items-start gap-3 shadow-sm'>
+        <Sparkles className='w-5 h-5 shrink-0 mt-0.5 text-blue-500' />
+        <div>
+          <strong>Quy tắc nhân điểm:</strong> Điểm cơ bản được tính là{' '}
+          <span className='font-bold text-red-600'>10.000đ = 1 điểm</span>. Điểm thực nhận của bạn
+          sẽ được nhân với <strong>Hệ số hạng</strong> tương ứng bên dưới!
+        </div>
+      </div>
+
       {/* ── TIER BENEFITS ROW ── */}
       <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
         {Object.entries(TIER_CONFIG)
@@ -239,33 +255,46 @@ export default function RewardsPage() {
                 key={key}
                 className={`relative rounded-xl p-3 border text-center transition-all ${
                   isCurrent
-                    ? `bg-gradient-to-br ${val.gradient} text-white border-transparent shadow-md`
+                    ? `bg-gradient-to-br ${val.gradient} text-white border-transparent shadow-md transform scale-[1.02] ring-2 ring-offset-2 ring-red-400`
                     : isPast
                       ? 'bg-slate-50 border-slate-100 opacity-60'
                       : 'bg-white border-slate-100'
                 }`}
               >
                 {isCurrent && (
-                  <div className='absolute -top-1.5 left-1/2 -translate-x-1/2'>
-                    <span className='bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full'>
+                  <div className='absolute -top-2.5 left-1/2 -translate-x-1/2 z-10'>
+                    <span className='bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-sm'>
                       Hiện tại
                     </span>
                   </div>
                 )}
-                <div
-                  className={`mx-auto mb-1.5 h-8 w-8 rounded-lg flex items-center justify-center ${
-                    isCurrent ? 'bg-white/20' : 'bg-slate-100'
-                  }`}
-                >
-                  <span className={isCurrent ? 'text-white' : 'text-slate-500'}>{val.icon}</span>
+
+                <div className='flex justify-between items-start mb-2'>
+                  <div
+                    className={`h-8 w-8 rounded-lg flex items-center justify-center ${
+                      isCurrent ? 'bg-white/20' : 'bg-slate-100'
+                    }`}
+                  >
+                    <span className={isCurrent ? 'text-white' : 'text-slate-500'}>{val.icon}</span>
+                  </div>
+
+                  {/* BỔ SUNG: HIỂN THỊ HỆ SỐ TÍCH ĐIỂM Ở GÓC PHẢI THẺ */}
+                  <span
+                    className={`text-lg font-extrabold ${isCurrent ? 'text-white' : 'text-red-500'}`}
+                  >
+                    {val.multiplier}
+                  </span>
                 </div>
-                <p className={`text-xs font-bold ${isCurrent ? 'text-white' : 'text-slate-700'}`}>
+
+                <p
+                  className={`text-xs font-bold text-left ${isCurrent ? 'text-white' : 'text-slate-700'}`}
+                >
                   {val.label}
                 </p>
                 <p
-                  className={`text-[10px] mt-0.5 ${isCurrent ? 'text-white/70' : 'text-slate-400'}`}
+                  className={`text-[10px] text-left mt-0.5 ${isCurrent ? 'text-white/70' : 'text-slate-400'}`}
                 >
-                  {new Intl.NumberFormat('vi-VN').format(val.max)} điểm
+                  Yêu cầu: {new Intl.NumberFormat('vi-VN').format(val.max)} điểm
                 </p>
               </div>
             )
@@ -294,14 +323,13 @@ export default function RewardsPage() {
           <div className='divide-y divide-slate-50'>
             {histories.map((item, i) => {
               const isEarn = item.amount > 0
-              const info = getTransactionInfo(item.transactionType)
+              const info = getTransactionInfo(item.transactionType as VpointTransactionType) // Sửa lỗi Type TypeScript
               return (
                 <div
                   key={item.id}
                   className='px-6 py-4 flex items-center gap-4 hover:bg-slate-50/70 transition-colors'
                   style={{ animationDelay: `${i * 30}ms` }}
                 >
-                  {/* Icon */}
                   <div
                     className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${
                       isEarn ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
@@ -314,7 +342,6 @@ export default function RewardsPage() {
                     )}
                   </div>
 
-                  {/* Info */}
                   <div className='flex-1 min-w-0'>
                     <div className='flex items-center gap-2 flex-wrap'>
                       <p className='text-sm font-bold text-slate-800 truncate'>{info.label}</p>
@@ -328,7 +355,6 @@ export default function RewardsPage() {
                     <p className='text-xs text-slate-400 mt-1'>{formatDate(item.createdAt)}</p>
                   </div>
 
-                  {/* Amount */}
                   <div className='text-right shrink-0'>
                     <span
                       className={`text-base font-black ${
@@ -353,7 +379,10 @@ export default function RewardsPage() {
             <p className='text-sm text-slate-400 max-w-xs leading-relaxed'>
               Mua sắm và đánh giá sản phẩm để tích lũy V-Point và nhận nhiều ưu đãi hấp dẫn!
             </p>
-            <button className='mt-5 inline-flex items-center gap-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold px-5 py-2.5 transition-colors shadow-sm shadow-red-200'>
+            <button
+              onClick={() => navigate('/products')} // Gắn link để điều hướng đi mua sắm
+              className='mt-5 inline-flex items-center gap-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold px-5 py-2.5 transition-colors shadow-sm shadow-red-200'
+            >
               <ShieldAlert className='h-4 w-4' />
               Khám phá ưu đãi
             </button>

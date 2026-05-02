@@ -80,6 +80,11 @@ app:
       silver: 1000       # Mốc Bạc (tương đương 10 triệu)
       gold: 5000         # Mốc Vàng (tương đương 50 triệu)
       diamond: 20000     # Mốc Kim Cương (tương đương 200 triệu)
+    multiplier:
+      member: 1.0        # Hạng thường: x1
+      silver: 1.1        # Hạng Bạc: x1.1
+      gold: 1.25         # Hạng Vàng: x1.25
+      diamond: 1.5       # Hạng Kim Cương: x1.5
 
 #security:
 #  public:

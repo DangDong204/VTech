@@ -1,42 +1,55 @@
-import { useState, useRef, useEffect } from 'react'
+import LanguageSelector from '@/components/common/LanguageSelector'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useCart } from '@/contexts/CartContext'
+import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/store/auth.store'
 import {
-  Search,
-  MapPin,
-  ShoppingCart,
-  User,
-  Menu,
-  Home,
-  Package,
-  Bell,
   Gift,
   History,
-  ReceiptText,
+  Home,
+  LogOut,
+  MapPin,
+  Menu,
+  Package,
+  Search,
   ShieldCheck,
-  LogOut
+  ShoppingCart,
+  User
 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import LanguageSelector from '@/components/common/LanguageSelector'
-import { useCart } from '@/contexts/CartContext'
 import { Link } from 'react-router-dom'
-import { cn } from '@/lib/utils'
-import { useAuthStore } from '@/store/auth.store' // Import auth store
+
+import { getMyOrdersApi } from '@/services/order/order.api'
+import { getMyVouchersApi } from '@/services/voucher/voucher.api'
+import { useQuery } from '@tanstack/react-query'
 
 export function Header() {
   const { t } = useTranslation('common')
   const { cart } = useCart()
   const totalCount = cart?.totalQuantity || 0
 
-  // --- LẤY STATE TỪ ZUSTAND ---
   const { isAuthenticated, user, logout } = useAuthStore()
-
-  // Tuỳ thuộc vào payload JWT của bạn lưu tên ở field nào (name, sub, username...)
-  // Ở đây tôi lấy user.sub làm ví dụ, fallback về 'Tài khoản'
   const userName = user?.sub || 'Tài khoản'
 
-  // --- LOGIC MENU DROPDOWN ---
+  const { data: vouchers = [] } = useQuery({
+    queryKey: ['my-vouchers'],
+    queryFn: getMyVouchersApi,
+    enabled: isAuthenticated
+  })
+
+  const { data: orders = [] } = useQuery({
+    queryKey: ['my-orders'],
+    queryFn: getMyOrdersApi,
+    enabled: isAuthenticated
+  })
+
+  const ordersProcessing = orders.filter((o) =>
+    ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPING'].includes(o.orderStatus)
+  ).length
+
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -52,8 +65,13 @@ export function Header() {
 
   const handleLogout = () => {
     setIsUserMenuOpen(false)
-    logout() // Gọi hàm logout từ Zustand
+    logout()
   }
+
+  // Class dùng chung cho các item trong Menu
+  const menuItemClass =
+    'flex items-center justify-between px-4 py-2.5 rounded-lg text-[15px] font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all group'
+  const iconClass = 'h-5 w-5 text-slate-500 group-hover:text-red-600 transition-colors'
 
   return (
     <header className='sticky top-0 z-50 bg-primary text-primary-foreground shadow-md'>
@@ -131,87 +149,91 @@ export function Header() {
 
                 {/* Menu thả xuống */}
                 {isUserMenuOpen && (
-                  <div className='absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-100 py-2 text-slate-800 z-50 animate-in fade-in slide-in-from-top-2'>
+                  <div className='absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-100 p-2 text-slate-800 z-50 animate-in fade-in slide-in-from-top-2 flex flex-col gap-1'>
                     <Link
                       onClick={() => setIsUserMenuOpen(false)}
                       to='/profile'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
+                      className={menuItemClass}
                     >
-                      <Home className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Tổng quan</span>
+                      <div className='flex items-center gap-3'>
+                        <Home className={iconClass} strokeWidth={1.5} />
+                        <span>Tổng quan</span>
+                      </div>
                     </Link>
 
                     <Link
                       onClick={() => setIsUserMenuOpen(false)}
                       to='/orders'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
+                      className={menuItemClass}
                     >
-                      <Package className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Đơn hàng của tôi</span>
-                    </Link>
-
-                    <Link
-                      onClick={() => setIsUserMenuOpen(false)}
-                      to='/notifications'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
-                    >
-                      <Bell className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Thông báo của tôi</span>
+                      <div className='flex items-center gap-3'>
+                        <Package className={iconClass} strokeWidth={1.5} />
+                        <span>Đơn hàng của tôi</span>
+                      </div>
+                      {ordersProcessing > 0 && (
+                        <span className='bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold'>
+                          {ordersProcessing}
+                        </span>
+                      )}
                     </Link>
 
                     <Link
                       onClick={() => setIsUserMenuOpen(false)}
                       to='/offers'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
+                      className={menuItemClass}
                     >
-                      <Gift className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Ưu đãi của tôi</span>
+                      <div className='flex items-center gap-3'>
+                        <Gift className={iconClass} strokeWidth={1.5} />
+                        <span>Ưu đãi của tôi</span>
+                      </div>
+                      {vouchers.length > 0 && (
+                        <span className='bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold'>
+                          {vouchers.length}
+                        </span>
+                      )}
                     </Link>
 
                     <Link
                       onClick={() => setIsUserMenuOpen(false)}
                       to='/rewards'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
+                      className={menuItemClass}
                     >
-                      <History className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Lịch sử điểm thưởng</span>
-                    </Link>
-
-                    <Link
-                      onClick={() => setIsUserMenuOpen(false)}
-                      to='/services'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
-                    >
-                      <ReceiptText className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Dịch vụ thu hộ</span>
+                      <div className='flex items-center gap-3'>
+                        <History className={iconClass} strokeWidth={1.5} />
+                        <span>Lịch sử điểm thưởng</span>
+                      </div>
                     </Link>
 
                     <Link
                       onClick={() => setIsUserMenuOpen(false)}
                       to='/warranty'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
+                      className={menuItemClass}
                     >
-                      <ShieldCheck className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Thông tin bảo hành</span>
+                      <div className='flex items-center gap-3'>
+                        <ShieldCheck className={iconClass} strokeWidth={1.5} />
+                        <span>Thông tin bảo hành</span>
+                      </div>
                     </Link>
 
                     <Link
                       onClick={() => setIsUserMenuOpen(false)}
                       to='/addresses'
-                      className='flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors'
+                      className={menuItemClass}
                     >
-                      <MapPin className='h-5 w-5 text-slate-600' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Sổ địa chỉ nhận hàng</span>
+                      <div className='flex items-center gap-3'>
+                        <MapPin className={iconClass} strokeWidth={1.5} />
+                        <span>Sổ địa chỉ nhận hàng</span>
+                      </div>
                     </Link>
 
-                    <div className='my-1 border-t border-slate-100'></div>
+                    <div className='my-1 mx-2 border-t border-slate-100'></div>
 
                     <button
                       onClick={handleLogout}
-                      className='w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-50 transition-colors text-left text-red-600'
+                      className='w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-50 transition-colors text-left text-red-600 font-medium'
                     >
                       <LogOut className='h-5 w-5' strokeWidth={1.5} />
-                      <span className='text-[15px] font-medium'>Đăng xuất</span>
+                      <span className='text-[15px]'>Đăng xuất</span>
                     </button>
                   </div>
                 )}

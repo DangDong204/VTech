@@ -26,4 +26,12 @@ public interface VoucherService {
 
     // CHECK VOUCHER - USE FOR ORDER
     CheckVoucherResponse checkVoucher(CheckVoucherRequest request);
+
+    // Lấy danh sách Voucher khách có thể dùng điểm để đổi
+    List<VoucherResponse> getRedeemableVouchers();
+
+    // Hàm thực hiện đổi điểm lấy Voucher
+    void redeemVoucher(String userId, String voucherId);
+
+    List<VoucherResponse> getMyVouchers(String userId);
 }

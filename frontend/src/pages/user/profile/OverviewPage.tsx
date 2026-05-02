@@ -1,5 +1,6 @@
 import { getMyOrdersApi } from '@/services/order/order.api'
 import { getMyProfileApi } from '@/services/user/user.api'
+import { getMyVouchersApi } from '@/services/voucher/voucher.api' // ADDED IMPORT
 import { useQuery } from '@tanstack/react-query'
 import {
   ChevronRight,
@@ -25,6 +26,11 @@ export default function OverviewPage() {
   const { data: orders = [] } = useQuery({
     queryKey: ['my-orders'],
     queryFn: getMyOrdersApi
+  })
+
+  const { data: vouchers = [] } = useQuery({
+    queryKey: ['my-vouchers'],
+    queryFn: getMyVouchersApi
   })
 
   const ordersProcessing = orders.filter((o) =>
@@ -73,7 +79,7 @@ export default function OverviewPage() {
       iconColor: 'text-emerald-600',
       accentColor: 'from-emerald-400 to-emerald-600',
       label: t('profile.stats.vouchers', 'Voucher khả dụng'),
-      value: 0,
+      value: vouchers.length, // UPDATED: Use the length of the fetched vouchers array
       suffix: 'voucher'
     },
     {

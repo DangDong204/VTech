@@ -30,6 +30,7 @@ import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
 import ProductListPage from '@/pages/user/product-list/ProductListPage'
 import AddressesPage from '@/pages/user/profile/AddressesPage'
 import ChangePasswordPage from '@/pages/user/profile/ChangePasswordPage'
+import OffersPage from '@/pages/user/profile/OffersPage'
 import OrdersPage from '@/pages/user/profile/OrdersPage'
 import OverviewPage from '@/pages/user/profile/OverviewPage'
 import ProfileLayout from '@/pages/user/profile/ProfileLayout'
@@ -67,6 +68,7 @@ function App() {
               <Route path='/addresses' element={<AddressesPage />} />
               <Route path='/change-password' element={<ChangePasswordPage />} />
               <Route path='/rewards' element={<RewardsPage />} />
+              <Route path='/offers' element={<OffersPage />} />
             </Route>
           </Route>
 

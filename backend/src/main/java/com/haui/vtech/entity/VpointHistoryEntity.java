@@ -1,5 +1,6 @@
 package com.haui.vtech.entity;
 
+import com.haui.vtech.enums.VpointTransactionType;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -24,8 +25,9 @@ public class VpointHistoryEntity extends BaseEntity {
     @Column(name = "amount", nullable = false)
     private Integer amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", length = 50, nullable = false)
-    private String transactionType;
+    private VpointTransactionType transactionType;
 
     @Column(name = "reference_id", length = 36)
     private String referenceId;

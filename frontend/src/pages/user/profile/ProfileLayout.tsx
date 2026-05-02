@@ -1,21 +1,11 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import {
-  Home,
-  Package,
-  Bell,
-  Gift,
-  History,
-  ReceiptText,
-  ShieldCheck,
-  MapPin,
-  LogOut,
-  ChevronRight,
-  KeyRound
-} from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
-import { useQuery } from '@tanstack/react-query'
+import { getMyOrdersApi } from '@/services/order/order.api'
 import { getMyProfileApi } from '@/services/user/user.api'
+import { getMyVouchersApi } from '@/services/voucher/voucher.api' // BỔ SUNG IMPORT NÀY
+import { useQuery } from '@tanstack/react-query'
+import { ChevronRight, Gift, History, Home, KeyRound, LogOut, MapPin, Package } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 export default function ProfileLayout() {
   const { t } = useTranslation('common')
@@ -28,15 +18,27 @@ export default function ProfileLayout() {
     queryFn: getMyProfileApi
   })
 
+  // BỔ SUNG: Lấy data Voucher để đếm số lượng
+  const { data: vouchers = [] } = useQuery({
+    queryKey: ['my-vouchers'],
+    queryFn: getMyVouchersApi
+  })
+
+  const { data: orders = [] } = useQuery({
+    queryKey: ['my-orders'],
+    queryFn: getMyOrdersApi
+  })
+
+  const ordersProcessing = orders.filter((o) =>
+    ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPING'].includes(o.orderStatus)
+  ).length
+
   // Danh sách menu đồng bộ với Header
   const menuItems = [
     { path: '/profile', icon: Home, label: t('profile.overview', 'Tổng quan') },
     { path: '/orders', icon: Package, label: t('profile.orders', 'Đơn hàng của tôi') },
-    // { path: '/notifications', icon: Bell, label: t('profile.notifications', 'Thông báo của tôi') },
-    // { path: '/offers', icon: Gift, label: t('profile.offers', 'Ưu đãi của tôi') },
+    { path: '/offers', icon: Gift, label: t('profile.offers', 'Ưu đãi của tôi') },
     { path: '/rewards', icon: History, label: t('profile.rewards', 'Lịch sử điểm thưởng') },
-    // { path: '/services', icon: ReceiptText, label: t('profile.services', 'Dịch vụ thu hộ') },
-    // { path: '/warranty', icon: ShieldCheck, label: t('profile.warranty', 'Thông tin bảo hành') },
     { path: '/addresses', icon: MapPin, label: t('profile.addresses', 'Sổ địa chỉ nhận hàng') },
     { path: '/change-password', icon: KeyRound, label: t('profile.changePassword', 'Đổi mật khẩu') }
   ]
@@ -100,19 +102,38 @@ export default function ProfileLayout() {
             <nav className='p-2 flex flex-col gap-1'>
               {menuItems.map((item) => {
                 const isActive = location.pathname === item.path
+                const isOffers = item.path === '/offers' // Kiểm tra xem có phải tab Ưu đãi không
+                const isOrders = item.path === '/orders' // Kiểm tra xem có phải tab Đơn hàng không
+
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-2.5 rounded-lg text-[15px] transition-all',
+                      'flex items-center justify-between px-4 py-2.5 rounded-lg text-[15px] transition-all',
                       isActive
                         ? 'bg-red-50 text-red-600 font-semibold'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-red-600 font-medium'
                     )}
                   >
-                    <item.icon className='h-5 w-5' strokeWidth={isActive ? 2 : 1.5} />
-                    {item.label}
+                    <div className='flex items-center gap-3'>
+                      <item.icon className='h-5 w-5' strokeWidth={isActive ? 2 : 1.5} />
+                      {item.label}
+                    </div>
+
+                    {/* HIỂN THỊ SỐ LƯỢNG VOUCHER (Màu đỏ) */}
+                    {isOffers && vouchers.length > 0 && (
+                      <span className='bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold'>
+                        {vouchers.length}
+                      </span>
+                    )}
+
+                    {/* HIỂN THỊ THÔNG BÁO SỐ ĐƠN ĐANG XỬ LÝ (Màu xanh) */}
+                    {isOrders && ordersProcessing > 0 && (
+                      <span className='bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold'>
+                        {ordersProcessing}
+                      </span>
+                    )}
                   </Link>
                 )
               })}
