@@ -16,6 +16,7 @@ export interface VoucherResponse {
   createdAt: string
   updatedAt: string
   deletedAt?: string | null
+  requiredPoints: number
 }
 
 export interface VoucherPayload {

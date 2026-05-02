@@ -59,6 +59,9 @@ public class VoucherEntity extends BaseEntity{
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "required_points", nullable = false)
+    private Integer requiredPoints;
+
     @PrePersist
     @Override
     public void prePersist() {
@@ -68,6 +71,9 @@ public class VoucherEntity extends BaseEntity{
         }
         if (usedCount == null) {
             usedCount = 0;
+        }
+        if(requiredPoints == null) {
+            requiredPoints = 0;
         }
     }
 }

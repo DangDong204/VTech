@@ -7,6 +7,7 @@ import com.haui.vtech.entity.*;
 import com.haui.vtech.enums.ImageFolder;
 import com.haui.vtech.enums.MediaType;
 import com.haui.vtech.enums.ReviewStatus;
+import com.haui.vtech.enums.VpointTransactionType; // BỔ SUNG
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.ReviewMapper;
@@ -36,9 +37,16 @@ public class ReviewServiceImpl implements ReviewService {
     private final ProductRepository productRepository;
     private final ReviewMapper reviewMapper;
     private final S3Service s3Service;
+    private final VpointService vpointService; // BỔ SUNG: Tiêm VpointService
 
     @Value("${app.review.sensitive-words}")
     private List<String> sensitiveWords;
+
+    @Value("${app.vpoint.reward.review-text:10}")
+    private int reviewTextPoints;
+
+    @Value("${app.vpoint.reward.review-media:50}")
+    private int reviewMediaPoints;
 
     // ==========================================
     // HÀM HELPER TÍNH TOÁN LẠI ĐIỂM SẢN PHẨM
@@ -60,6 +68,24 @@ public class ReviewServiceImpl implements ReviewService {
             product.setRatingAvg(BigDecimal.valueOf(average).setScale(1, RoundingMode.HALF_UP));
         }
         productRepository.save(product);
+    }
+
+    // ==========================================
+    // BỔ SUNG: HÀM HELPER TẶNG ĐIỂM V-POINT KHI REVIEW ĐƯỢC DUYỆT
+    // ==========================================
+    private void awardPointsForReview(ReviewEntity review) {
+
+        int points = reviewTextPoints;
+        VpointTransactionType type = VpointTransactionType.EARN_REVIEW_TEXT;
+        String desc = "Tích điểm Đánh giá sản phẩm: " + review.getProduct().getProductName();
+
+        if (review.getMediaList() != null && !review.getMediaList().isEmpty()) {
+            points = reviewMediaPoints; // SỬA Ở ĐÂY
+            type = VpointTransactionType.EARN_REVIEW_MEDIA;
+            desc = "Tích điểm Đánh giá sản phẩm (Có hình ảnh/video): " + review.getProduct().getProductName();
+        }
+
+        vpointService.addPoints(review.getUser().getId(), points, type, review.getId(), desc);
     }
 
     @Override
@@ -126,9 +152,10 @@ public class ReviewServiceImpl implements ReviewService {
         // 1. Lưu Review vào DB trước
         ReviewEntity savedReview = reviewRepository.save(review);
 
-        // 2. NẾU ĐÁNH GIÁ ĐƯỢC APPROVED LUÔN -> CẬP NHẬT LẠI ĐIỂM SẢN PHẨM
+        // 2. NẾU ĐÁNH GIÁ ĐƯỢC APPROVED LUÔN (Không có từ nhạy cảm, không có ảnh)
         if (savedReview.getStatus() == ReviewStatus.APPROVED) {
             updateProductReviewStats(savedReview.getProduct());
+            awardPointsForReview(savedReview); // BỔ SUNG: Tặng điểm ngay
         }
 
         return reviewMapper.toResponse(savedReview);
@@ -205,10 +232,18 @@ public class ReviewServiceImpl implements ReviewService {
         review.setStatus(status);
         reviewRepository.save(review);
 
-        // NẾU TRẠNG THÁI THAY ĐỔI CÓ LIÊN QUAN ĐẾN 'APPROVED' -> TÍNH TOÁN LẠI ĐIỂM
-        // VD: Từ PENDING -> APPROVED (tăng điểm) hoặc từ APPROVED -> HIDDEN (giảm điểm)
-        if (oldStatus == ReviewStatus.APPROVED || status == ReviewStatus.APPROVED) {
+        // NẾU TỪ PENDING -> APPROVED: Tính toán lại điểm trung bình SP và Tặng V-point cho khách
+        if (oldStatus != ReviewStatus.APPROVED && status == ReviewStatus.APPROVED) {
             updateProductReviewStats(review.getProduct());
+            awardPointsForReview(review); // BỔ SUNG: Admin vừa duyệt ảnh -> Khách được nhận 5000đ
+        }
+        // NẾU TỪ APPROVED -> HIDDEN (Admin ẩn bài): Tính toán lại điểm SP
+        else if (oldStatus == ReviewStatus.APPROVED && status != ReviewStatus.APPROVED) {
+            updateProductReviewStats(review.getProduct());
+
+            // TÙY CHỌN: Nếu bạn muốn, có thể gọi vpointService.deductPoints() ở đây
+            // để thu hồi điểm nếu phát hiện khách hàng review lừa đảo.
+            // Nhưng thông thường sàn TMĐT ít khi trừ lại điểm Review, chỉ ẩn thôi là đủ răn đe.
         }
     }
 

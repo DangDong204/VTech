@@ -10,6 +10,7 @@ import com.haui.vtech.util.MessageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,4 +83,12 @@ public class UserController {
                 .build();
     }
 
+    @GetMapping("/my-profile")
+    public ApiResponse<UserResponse> getMyProfile() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return ApiResponse.<UserResponse>builder()
+                .data(userService.getMyProfile(email))
+                .build();
+    }
 }

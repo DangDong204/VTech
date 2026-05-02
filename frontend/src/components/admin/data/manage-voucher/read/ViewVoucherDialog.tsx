@@ -102,6 +102,18 @@ export function ViewVoucherDialog({ open, onOpenChange, voucher }: ViewVoucherDi
 
           {/* KHỐI 2: ĐIỀU KIỆN ÁP DỤNG */}
           <div className='space-y-3'>
+            <div className='space-y-1.5'>
+              <Label className='text-muted-foreground'>{t('fields.requiredPoints.label')}</Label>
+              <p className='font-medium'>
+                {voucher.requiredPoints && voucher.requiredPoints > 0 ? (
+                  <span className='text-red-600 font-bold'>
+                    {new Intl.NumberFormat('vi-VN').format(voucher.requiredPoints)} Điểm
+                  </span>
+                ) : (
+                  <span className='text-emerald-600 font-bold'>Miễn phí (Public)</span>
+                )}
+              </p>
+            </div>
             <h3 className='text-xs font-semibold text-muted-foreground uppercase tracking-wider'>
               {t('sections.conditions')}
             </h3>

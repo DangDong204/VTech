@@ -50,3 +50,18 @@ export const checkVoucherApi = async (payload: {
   const res = await api.post('/client/vouchers/check', payload)
   return res.data.data
 }
+
+export const getRedeemableVouchersApi = async () => {
+  const res = await api.get<ApiResponse<VoucherResponse[]>>('/client/vouchers/redeemable')
+  return res.data.data
+}
+
+export const redeemVoucherApi = async (voucherId: string) => {
+  const res = await api.post<ApiResponse<void>>(`/client/vouchers/redeem/${voucherId}`)
+  return res.data
+}
+
+export const getMyVouchersApi = async () => {
+  const res = await api.get<ApiResponse<VoucherResponse[]>>('/client/vouchers/my-wallet')
+  return res.data.data
+}

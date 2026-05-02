@@ -80,6 +80,10 @@
     },
     "status": {
       "invalid": "Trạng thái không hợp lệ"
+    },
+    "requiredPoints": {
+      "invalid": "Điểm yêu cầu phải là số nguyên",
+      "min": "Điểm yêu cầu không được âm"
     }
   },
   "fields": {
@@ -124,6 +128,11 @@
     },
     "endDate": {
       "label": "Ngày kết thúc"
+    },
+    "requiredPoints": {
+      "label": "Điểm V-Point yêu cầu",
+      "placeholder": "Nhập số điểm cần để đổi...",
+      "hint": "Để số 0 nếu muốn phát hành Voucher miễn phí cho tất cả khách hàng."
     },
     "status": {
       "label": "Trạng thái",

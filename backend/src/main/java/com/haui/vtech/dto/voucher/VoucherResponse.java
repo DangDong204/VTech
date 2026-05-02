@@ -30,4 +30,6 @@ public class VoucherResponse {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;;
+
+    private Integer requiredPoints;
 }

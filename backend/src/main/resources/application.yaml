@@ -70,6 +70,21 @@ cleanup-data:
 app:
   review:
     sensitive-words: lừa đảo,chó,mẹ,địt,đm,vl,cc,vãi,cứt,cặc,lồn
+  vpoint:
+    exchange-rate: 10000 # 10.000đ = 1 điểm
+    reward:
+      review-text: 10    # Đánh giá chữ = 10 điểm
+      review-media: 50   # Đánh giá hình ảnh = 50 điểm
+      birthday: 500      # Quà sinh nhật = 500 điểm
+    tier:
+      silver: 1000       # Mốc Bạc (tương đương 10 triệu)
+      gold: 5000         # Mốc Vàng (tương đương 50 triệu)
+      diamond: 20000     # Mốc Kim Cương (tương đương 200 triệu)
+    multiplier:
+      member: 1.0        # Hạng thường: x1
+      silver: 1.1        # Hạng Bạc: x1.1
+      gold: 1.25         # Hạng Vàng: x1.25
+      diamond: 1.5       # Hạng Kim Cương: x1.5
 
 #security:
 #  public:

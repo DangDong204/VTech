@@ -80,6 +80,10 @@
     },
     "status": {
       "invalid": "Invalid status"
+    },
+    "requiredPoints": {
+      "invalid": "Required points must be an integer",
+      "min": "Required points cannot be negative"
     }
   },
   "fields": {
@@ -124,6 +128,11 @@
     },
     "endDate": {
       "label": "End Date"
+    },
+    "requiredPoints": {
+      "label": "Required V-Point",
+      "placeholder": "Enter the number of points required to redeem...",
+      "hint": "Set to 0 if you want to issue the voucher for free to all customers."
     },
     "status": {
       "label": "Status",

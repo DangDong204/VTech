@@ -28,4 +28,9 @@ public class UserResponse {
     private LocalDateTime updatedAt;
 //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime deletedAt;
+
+    private java.time.LocalDate dob;
+    private Integer currentVpoint;
+    private Integer totalVpoint;
+    private String memberTier;
 }

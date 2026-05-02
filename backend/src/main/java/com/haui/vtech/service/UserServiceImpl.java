@@ -133,4 +133,11 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+    @Override
+    public UserResponse getMyProfile(String email) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toUserResponse(user);
+    }
+
 }

@@ -25,6 +25,8 @@ import type { OrderResponse, OrderStatus } from '@/services/order/order.type'
 import { OrderDetailModal } from '@/pages/user/profile/OrderDetailModal'
 import { useCart } from '@/contexts/CartContext'
 import { CreateReviewModal } from '@/pages/user/product-detail/CreateReviewModal'
+import type { AxiosError } from 'axios'
+import type { ApiErrorResponse } from '@/defines/error.type'
 
 const ORDER_TABS = [
   'Tất cả',
@@ -46,6 +48,9 @@ const STATUS_MAP: Record<OrderStatus, string> = {
   CANCELLED: 'Đã hủy',
   RETURNED: 'Hoàn trả'
 }
+
+// Các tab sẽ được hiển thị số lượng (badge)
+const PROCESSING_TABS = ['Chờ xác nhận', 'Đã xác nhận', 'Đang đóng gói', 'Đang giao']
 
 function formatVnd(n: number) {
   return new Intl.NumberFormat('vi-VN').format(n) + '₫'
@@ -102,6 +107,21 @@ export default function OrdersPage() {
     fetchOrders()
   }, [])
 
+  // Đếm số lượng đơn hàng cho mỗi tab
+  const tabCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    ORDER_TABS.forEach((tab) => (counts[tab] = 0))
+    counts['Tất cả'] = orders.length
+
+    orders.forEach((order) => {
+      const mappedStatus = STATUS_MAP[order.orderStatus]
+      if (counts[mappedStatus] !== undefined) {
+        counts[mappedStatus]++
+      }
+    })
+    return counts
+  }, [orders])
+
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
       const mappedStatus = STATUS_MAP[order.orderStatus]
@@ -139,7 +159,6 @@ export default function OrdersPage() {
     return ''
   }
 
-  // --- HÀM MỚI: CẬP NHẬT STATE NGAY LẬP TỨC KHI ĐÁNH GIÁ THÀNH CÔNG ---
   const handleReviewSuccess = (orderDetailId: string) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) => ({
@@ -150,8 +169,6 @@ export default function OrdersPage() {
       }))
     )
   }
-
-  // --- CÁC HÀM XỬ LÝ HÀNH ĐỘNG KHÁC ---
 
   const handleCancelOrder = async (orderId: string) => {
     const reason = window.prompt('Vui lòng nhập lý do hủy đơn (không bắt buộc):')
@@ -196,8 +213,11 @@ export default function OrdersPage() {
       const updatedOrder = await returnOrderApi(orderId, reason)
       toast.success('Đã gửi yêu cầu hoàn trả thành công!')
       setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)))
-    } catch {
-      toast.error('Có lỗi xảy ra khi yêu cầu hoàn trả!')
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<ApiErrorResponse>
+
+      const message = axiosError.response?.data?.message || 'Có lỗi xảy ra khi hủy đơn!'
+      toast.error(message)
     } finally {
       setReturningId(null)
     }
@@ -239,20 +259,35 @@ export default function OrdersPage() {
   return (
     <div className='flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500'>
       <div className='bg-white rounded-xl border border-border/50 shadow-sm overflow-hidden min-h-[60vh] flex flex-col'>
-        <div className='flex overflow-x-auto scrollbar-hide border-b'>
-          {ORDER_TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`whitespace-nowrap px-5 py-4 text-sm font-medium transition-colors border-b-2 ${
-                activeTab === tab
-                  ? 'border-red-600 text-red-600 bg-red-50/30'
-                  : 'border-transparent text-slate-600 hover:text-red-500 hover:bg-slate-50'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+        {/* ĐÃ SỬA DÒNG NÀY ĐỂ GIẤU THANH CUỘN NGANG */}
+        <div className='flex overflow-x-auto border-b [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+          {ORDER_TABS.map((tab) => {
+            const count = tabCounts[tab] || 0
+            const showBadge = PROCESSING_TABS.includes(tab) && count > 0
+
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`whitespace-nowrap px-5 py-4 text-sm font-medium transition-colors border-b-2 flex items-center gap-1.5 ${
+                  activeTab === tab
+                    ? 'border-red-600 text-red-600 bg-red-50/30'
+                    : 'border-transparent text-slate-600 hover:text-red-500 hover:bg-slate-50'
+                }`}
+              >
+                {tab}
+                {showBadge && (
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none ${
+                      activeTab === tab ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
 
         <div className='p-4 bg-slate-50/50 border-b'>
@@ -484,7 +519,7 @@ export default function OrdersPage() {
         <CreateReviewModal
           isOpen={!!reviewingItem}
           onClose={() => setReviewingItem(null)}
-          onSuccess={() => handleReviewSuccess(reviewingItem.orderDetailId)} // <-- GỌI HÀM CẬP NHẬT Ở ĐÂY
+          onSuccess={() => handleReviewSuccess(reviewingItem.orderDetailId)}
           orderDetailId={reviewingItem.orderDetailId}
           productName={reviewingItem.productName}
           variantName={reviewingItem.variantName}

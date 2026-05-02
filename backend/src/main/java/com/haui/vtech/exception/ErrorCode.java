@@ -100,6 +100,7 @@ public enum ErrorCode {
     VOUCHER_EXPIRED(9009, "voucher.expired", HttpStatus.BAD_REQUEST),
     VOUCHER_OUT_OF_USAGE(9010, "voucher.out.of.usage", HttpStatus.BAD_REQUEST),
     VOUCHER_CONDITION_NOT_MET(9011, "voucher.condition.not.met", HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_REDEEMED(9012, "voucher.already.redeemed", HttpStatus.BAD_REQUEST),
 
     PROMOTION_NOT_FOUND(10000, "promotion.not.found", HttpStatus.NOT_FOUND),
     PROMOTION_NAME_NOTBLANK(10001, "promotion.name.not.blank", HttpStatus.BAD_REQUEST),
@@ -148,6 +149,10 @@ public enum ErrorCode {
     REPLY_ALREADY_EXISTS(16005, "review.reply.exists", HttpStatus.BAD_REQUEST),
     REPLY_TEXT_NOTBLANK(16006, "review.reply.text.not.blank", HttpStatus.BAD_REQUEST),
     ALREADY_VOTED_HELPFUL(16007, "review.already.voted", HttpStatus.BAD_REQUEST),
+
+    VPOINT_NOT_ENOUGH(17000, "vpoint.not.enough", HttpStatus.BAD_REQUEST),
+    VPOINT_INVALID_AMOUNT(17001, "vpoint.invalid.amount", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_RETURN_POINTS_USED(17002, "order.cannot.return.points.used", HttpStatus.BAD_REQUEST)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

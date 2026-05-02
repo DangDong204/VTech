@@ -26,5 +26,7 @@ public interface UserService {
     void restore(String id);
 
     // TODO: getMyInfo
+    UserResponse getMyProfile(String email);
+
     // TODO: changePassword
 }

@@ -33,6 +33,11 @@ export const createVoucherSchema = z
       .nullable()
       .optional(),
 
+    requiredPoints: z
+      .number({ message: i18n.t('voucher:schema.requiredPoints.invalid') })
+      .min(0, i18n.t('voucher:schema.requiredPoints.min'))
+      .optional(),
+
     // ĐÃ SỬA: Bắt buộc nhập ngày tháng
     startDate: z.string().min(1, i18n.t('voucher:schema.dates.startRequired')),
     endDate: z.string().min(1, i18n.t('voucher:schema.dates.endRequired'))
