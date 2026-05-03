@@ -46,7 +46,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
+    // 1. Xóa token phiên đăng nhập
     localStorage.removeItem('access_token')
+
+    // 2. DỌN DẸP SẠCH SẼ BỘ NHỚ CỦA CHATBOT AI
+    sessionStorage.removeItem('vtech_chat_messages')
+    sessionStorage.removeItem('vtech_chat_session')
+    sessionStorage.removeItem('vtech_chat_is_open')
     set({
       isAuthenticated: false,
       accessToken: null,

@@ -1,3 +1,4 @@
+import ChatbotWidget from '@/components/user/chat/ChatbotWidget'
 import { Footer } from '@/components/user/home/Footer'
 import { Header } from '@/components/user/home/Header'
 import { Outlet } from 'react-router-dom'
@@ -15,6 +16,8 @@ export default function ClientLayout() {
 
       {/* Footer luôn nằm dưới cùng */}
       <Footer />
+
+      <ChatbotWidget />
     </div>
   )
 }
