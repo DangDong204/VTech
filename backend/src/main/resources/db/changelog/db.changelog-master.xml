@@ -29,5 +29,6 @@
     <include file="classpath:db/changelog/changes/022-create-reviews-table.xml"/>
     <include file="classpath:db/changelog/changes/023-add-vpoint-features.xml"/>
     <include file="classpath:db/changelog/changes/024-update-voucher-wallet.xml"/>
+    <include file="classpath:db/changelog/changes/025-create-chatai-table.xml"/>
 
 </databaseChangeLog>
