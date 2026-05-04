@@ -1,5 +1,6 @@
 package com.haui.vtech.entity;
 
+import com.haui.vtech.enums.Gender;
 import com.haui.vtech.enums.MemberTier;
 import com.haui.vtech.enums.UserStatus;
 import jakarta.persistence.*;
@@ -57,6 +58,10 @@ public class UserEntity extends BaseEntity {
     @Column(name = "dob")
     private java.time.LocalDate dob;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", length = 10)
+    private Gender gender;
+
     @Column(name = "current_vpoint", nullable = false)
     private Integer currentVpoint = 0;
 
@@ -67,11 +72,26 @@ public class UserEntity extends BaseEntity {
     @Column(name = "member_tier", nullable = false, length = 20)
     private MemberTier memberTier = MemberTier.MEMBER;
 
+    @Column(name = "otp_code", length = 10)
+    private String otpCode;
+
+    @Column(name = "otp_expiry_time")
+    private LocalDateTime otpExpiryTime;
+
     @PrePersist
     public void prePersist() {
         super.prePersist();
         if (status == null) {
-            status = UserStatus.ACTIVE;
+            status = UserStatus.PENDING;
+        }
+        if (currentVpoint == null) {
+            currentVpoint = 0;
+        }
+        if (totalVpoint == null) {
+            totalVpoint = 0;
+        }
+        if (memberTier == null) {
+            memberTier = MemberTier.MEMBER;
         }
     }
 }

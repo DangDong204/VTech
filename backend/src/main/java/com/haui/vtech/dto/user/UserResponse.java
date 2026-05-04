@@ -1,6 +1,7 @@
 package com.haui.vtech.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.haui.vtech.enums.Gender;
 import com.haui.vtech.enums.UserStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class UserResponse {
 //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime deletedAt;
 
+    private Gender gender;
     private java.time.LocalDate dob;
     private Integer currentVpoint;
     private Integer totalVpoint;

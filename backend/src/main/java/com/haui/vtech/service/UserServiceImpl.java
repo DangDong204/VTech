@@ -1,9 +1,7 @@
 package com.haui.vtech.service;
 
-import com.haui.vtech.dto.user.ProfileUpdateRequest;
-import com.haui.vtech.dto.user.ProfileUpdateResponse;
-import com.haui.vtech.dto.user.UserCreationRequest;
-import com.haui.vtech.dto.user.UserResponse;
+import com.haui.vtech.dto.auth.ResetPasswordRequest;
+import com.haui.vtech.dto.user.*;
 import com.haui.vtech.entity.RoleEntity;
 import com.haui.vtech.entity.UserEntity;
 import com.haui.vtech.enums.ImageFolder;
@@ -14,6 +12,7 @@ import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.UserMapper;
 import com.haui.vtech.repository.RoleRepository;
 import com.haui.vtech.repository.UserRepository;
+import com.haui.vtech.util.OtpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -34,23 +34,55 @@ public class UserServiceImpl implements UserService{
     private final UserMapper userMapper;
     private final S3Service s3Service;
     private final PasswordEncoder passwordEncoder;
+    private final OtpUtil otpUtil;
+    private final EmailService emailService;
 
     @Override
+    @Transactional
     public UserResponse create(UserCreationRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXSISTED, request.getEmail());
+        // 1. Tìm xem email đã tồn tại trong DB chưa
+        Optional<UserEntity> existingUserOpt = userRepository.findByEmail(request.getEmail());
+
+        UserEntity userToSave;
+
+        if (existingUserOpt.isPresent()) {
+            userToSave = existingUserOpt.get();
+
+            // Nếu tài khoản đã xác thực hoặc bị khóa -> Chặn luôn
+            if (userToSave.getStatus() != UserStatus.PENDING) {
+                throw new AppException(ErrorCode.EMAIL_EXSISTED, request.getEmail());
+            }
+
+            // Nếu PENDING (đăng ký dở dang) -> Cập nhật lại thông tin mới nhất họ vừa nhập
+            userToSave.setUsername(request.getUsername());
+            userToSave.setPassword(passwordEncoder.encode(request.getPassword()));
+
+            userToSave.setFullName(request.getFullName());
+            userToSave.setDob(request.getDob());
+            userToSave.setGender(request.getGender());
+            userToSave.setPhone(request.getPhone());
+
+        } else {
+            // Nếu là Email mới tinh -> Tạo mới bình thường
+            userToSave = userMapper.toEntity(request);
+            userToSave.setPassword(passwordEncoder.encode(userToSave.getPassword()));
+
+            Set<RoleEntity> roles = new HashSet<>();
+            RoleEntity role = roleRepository.findByName(Role.USER.name())
+                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+            roles.add(role);
+            userToSave.setRoles(roles);
         }
 
-        UserEntity newUser = userMapper.toEntity(request);
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        String otp = otpUtil.generateOtp();
+        userToSave.setOtpCode(otp);
+        userToSave.setOtpExpiryTime(LocalDateTime.now().plusMinutes(5));
 
-        Set<RoleEntity> roles = new HashSet<>();
-        RoleEntity role = roleRepository.findByName(Role.USER.name())
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-        roles.add(role);
-        newUser.setRoles(roles);
+        UserEntity savedUser = userRepository.save(userToSave);
 
-        UserEntity savedUser = userRepository.save(newUser);
+        // 3. Bắn Mail
+        emailService.sendOtpEmail(savedUser.getEmail(), otp);
+
         return userMapper.toUserResponse(savedUser);
     }
 
@@ -138,6 +170,158 @@ public class UserServiceImpl implements UserService{
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(String email, ChangePasswordRequest request) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.OLD_PASSWORD_INVALID);
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.NEW_PASSWORD_SAME_AS_OLD);
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void verifyOtp(String email, String otpCode) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // CHẶN BỊ KHÓA HOẶC ĐÃ XÓA
+        if (user.getStatus() == UserStatus.INACTIVE || user.getStatus() == UserStatus.DELETED) {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
+        }
+
+        // KIỂM TRA MÃ OTP VÀ HẠN
+        if (user.getOtpExpiryTime() == null || user.getOtpExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new AppException(ErrorCode.OTP_EXPIRED);
+        }
+
+        if (!otpCode.equals(user.getOtpCode())) {
+            throw new AppException(ErrorCode.OTP_INVALID);
+        }
+
+        // --- XỬ LÝ LƯU DB TÙY THEO TRẠNG THÁI ---
+        if (user.getStatus() == UserStatus.PENDING) {
+            // NẾU LÀ LUỒNG ĐĂNG KÝ: Chuyển sang ACTIVE và xóa OTP
+            user.setStatus(UserStatus.ACTIVE);
+            user.setOtpCode(null);
+            user.setOtpExpiryTime(null);
+            userRepository.save(user);
+        } else if (user.getStatus() == UserStatus.ACTIVE) {
+            // NẾU LÀ LUỒNG QUÊN MẬT KHẨU: CHỈ XÁC NHẬN MÃ ĐÚNG, KHÔNG XÓA OTP!
+            // Giữ nguyên OTP để lát nữa API resetPassword còn lấy để xác minh lại 1 lần nữa!
+            // Do nothing here.
+        }
+    }
+
+    @Override
+    @Transactional
+    public void resendOtp(String email) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.getStatus() != UserStatus.PENDING) {
+            throw new AppException(ErrorCode.EMAIL_ALREADY_VERIFIED);
+        }
+
+        // Sinh lại mã mới và gia hạn thêm 5 phút
+        String newOtp = otpUtil.generateOtp();
+        user.setOtpCode(newOtp);
+        user.setOtpExpiryTime(LocalDateTime.now().plusMinutes(5));
+        userRepository.save(user);
+
+        // Gửi mail mới
+        emailService.sendOtpEmail(user.getEmail(), newOtp);
+    }
+
+    @Override
+    @Transactional
+    public void forgotPassword(String email) {
+        // 1. Kiểm tra user
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // Nếu tài khoản đang PENDING (chưa xác thực email) hoặc BLOCKED thì không cho đổi mật khẩu
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
+        }
+
+        // 2. Sinh OTP và set hạn 5 phút
+        String otp = otpUtil.generateOtp();
+        user.setOtpCode(otp);
+        user.setOtpExpiryTime(LocalDateTime.now().plusMinutes(5));
+        userRepository.save(user);
+
+        // 3. Gửi email forgot password
+        emailService.sendForgotPasswordEmail(user.getEmail(), otp);
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        // 1. Kiểm tra 2 mật khẩu có khớp nhau không
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        // 2. Lấy User và kiểm tra OTP y hệt như luồng Đăng ký
+        UserEntity user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
+        }
+
+        if (user.getOtpExpiryTime() == null || user.getOtpExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new AppException(ErrorCode.OTP_EXPIRED);
+        }
+
+        if (!request.getOtpCode().equals(user.getOtpCode())) {
+            throw new AppException(ErrorCode.OTP_INVALID);
+        }
+
+        // 3. OTP hợp lệ -> Đổi mật khẩu và xóa sạch OTP cũ
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setOtpCode(null);
+        user.setOtpExpiryTime(null);
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public ProfileUpdateResponse updateMyProfile(String email, MyProfileUpdateRequest request, MultipartFile file) {
+        // 1. Tìm user bằng email (lấy từ Token)
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // 2. Chỉ cập nhật các trường được phép
+        user.setUsername(request.getUsername());
+        user.setFullName(request.getFullName());
+        user.setPhone(request.getPhone());
+        user.setGender(request.getGender());
+
+        // 3. Xử lý upload avatar (nếu có file gửi lên)
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = s3Service.uploadImage(file, ImageFolder.USER);
+            user.setAvatar(imageUrl);
+        }
+
+        // 4. Lưu lại và trả về response
+        return userMapper.toProfileUpdateResponse(userRepository.save(user));
     }
 
 }

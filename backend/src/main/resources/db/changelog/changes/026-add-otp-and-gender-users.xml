@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="add-otp-and-gender-users" author="dong">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="otp_code"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="users">
+            <!-- Cột phục vụ OTP -->
+            <column name="otp_code" type="varchar(10)"/>
+            <column name="otp_expiry_time" type="timestamp"/>
+
+            <!-- Cột phục vụ Profile -->
+            <column name="gender" type="varchar(10)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

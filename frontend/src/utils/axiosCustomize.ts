@@ -30,9 +30,15 @@ api.interceptors.response.use(
   (error) => {
     if (error.response) {
       const status = error.response.status
+      const url = error.config?.url
 
       if (status === 401) {
-        // Lỗi 401 (Unauthorized): Gọi hàm logout từ Zustand để clear state và redirect
+        // CỨU CÁNH Ở ĐÂY: Nếu API gọi đến có chứa chữ 'login' thì bỏ qua, KHÔNG F5 TRANG!
+        if (url && (url.includes('/login') || url.includes('/auth/login'))) {
+          return Promise.reject(error)
+        }
+
+        // Nếu là các API khác (VD: đang xem giỏ hàng mà token hết hạn) thì mới ép văng ra ngoài
         useAuthStore.getState().logout()
       } else if (status === 403) {
         // Lỗi 403 (Forbidden)

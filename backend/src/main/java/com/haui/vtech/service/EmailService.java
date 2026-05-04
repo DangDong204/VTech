@@ -7,4 +7,7 @@ public interface EmailService {
 
     void sendOrderStatusEmail(String to, OrderResponse order, String translatedStatus);
 
+    void sendOtpEmail(String to, String otpCode);
+
+    void sendForgotPasswordEmail(String to, String otpCode);
 }
