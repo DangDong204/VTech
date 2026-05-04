@@ -23,6 +23,18 @@ public enum ErrorCode {
     NEW_PASSWORD_NOTBLANK(2005, "password.new.not.blank", HttpStatus.BAD_REQUEST),
     OLD_PASSWORD_INVALID(2006, "password.old.invalid", HttpStatus.BAD_REQUEST),
     NEW_PASSWORD_SAME_AS_OLD(2007, "password.new.same.old", HttpStatus.BAD_REQUEST),
+    PASSWORD_NOT_MATCH(2008, "password.not.match", HttpStatus.BAD_REQUEST),
+    OTP_INVALID(2009, "otp.invalid", HttpStatus.BAD_REQUEST),
+    OTP_EXPIRED(2010, "otp.expired", HttpStatus.BAD_REQUEST),
+    EMAIL_ALREADY_VERIFIED(2011, "email.already.verified", HttpStatus.BAD_REQUEST),
+    ACCOUNT_NOT_ACTIVE(2012, "account.not.active", HttpStatus.BAD_REQUEST),
+
+    FULLNAME_NOTBLANK(1015, "errors.fullName.required", HttpStatus.BAD_REQUEST),
+    DOB_NOTNULL(1016, "errors.dob.required", HttpStatus.BAD_REQUEST),
+    DOB_INVALID(1017, "errors.dob.invalid", HttpStatus.BAD_REQUEST),
+    GENDER_NOTNULL(1018, "errors.gender.required", HttpStatus.BAD_REQUEST),
+    PHONE_NOTBLANK(1019, "errors.phone.required", HttpStatus.BAD_REQUEST),
+    PHONE_INVALID(1020, "errors.phone.min", HttpStatus.BAD_REQUEST),
 
     UNAUTHENTICATED(401, "unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(403, "unauthorized", HttpStatus.FORBIDDEN),

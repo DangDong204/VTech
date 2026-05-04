@@ -1,0 +1,88 @@
+{
+  "changePassword": {
+    "title": "Đổi mật khẩu",
+    "subtitle": "Bảo mật tài khoản của bạn bằng mật khẩu mạnh",
+    "fields": {
+      "oldPassword": {
+        "label": "Mật khẩu hiện tại",
+        "placeholder": "Nhập mật khẩu hiện tại"
+      },
+      "newPassword": {
+        "label": "Mật khẩu mới",
+        "placeholder": "Tối thiểu {{min}} ký tự"
+      },
+      "confirmPassword": {
+        "label": "Xác nhận mật khẩu mới",
+        "placeholder": "Nhập lại mật khẩu mới"
+      }
+    },
+    "buttons": {
+      "saving": "Đang lưu...",
+      "save": "Lưu thay đổi"
+    },
+    "messages": {
+      "success": "Đổi mật khẩu thành công!",
+      "error": "Đổi mật khẩu thất bại!",
+      "systemError": "Có lỗi xảy ra, vui lòng thử lại sau!"
+    },
+    "validation": {
+      "oldPasswordRequired": "Vui lòng nhập mật khẩu hiện tại",
+      "newPasswordMin": "Mật khẩu mới phải có ít nhất {{min}} ký tự",
+      "newPasswordUppercase": "Mật khẩu phải chứa ít nhất 1 chữ cái in hoa",
+      "newPasswordLowercase": "Mật khẩu phải chứa ít nhất 1 chữ cái in thường",
+      "newPasswordNumber": "Mật khẩu phải chứa ít nhất 1 chữ số",
+      "newPasswordSpecial": "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt",
+      "confirmPasswordRequired": "Vui lòng nhập lại mật khẩu mới",
+      "passwordNotMatch": "Xác nhận mật khẩu không khớp!"
+    }
+  },
+  "overview": {
+    "loading": "Đang tải thông tin...",
+    "stats": {
+      "ordersProcessing": "Đơn đang xử lý",
+      "ordersSuffix": "đơn",
+      "vouchers": "Voucher khả dụng",
+      "vouchersSuffix": "voucher",
+      "points": "V-Point của tôi",
+      "pointsSuffix": "điểm"
+    },
+    "accountInfo": {
+      "title": "Thông tin tài khoản",
+      "editButton": "Chỉnh sửa",
+      "fields": {
+        "fullName": "Họ và tên",
+        "phone": "Số điện thoại",
+        "phoneEmpty": "Chưa cập nhật",
+        "email": "Email",
+        "dob": "Ngày sinh",
+        "dobEmpty": "Chưa cập nhật"
+      }
+    },
+    "sheet": {
+      "title": "Cập nhật hồ sơ",
+      "avatarHint": "Nhấn vào ảnh để thay đổi",
+      "fields": {
+        "email": "Email",
+        "username": "Tên đăng nhập",
+        "fullName": "Họ và tên",
+        "phone": "Số điện thoại",
+        "dob": "Ngày sinh",
+        "gender": {
+          "label": "Giới tính",
+          "male": "Nam",
+          "female": "Nữ",
+          "other": "Khác"
+        }
+      },
+      "buttons": {
+        "cancel": "Hủy",
+        "saving": "Đang lưu...",
+        "save": "Lưu thay đổi"
+      },
+      "messages": {
+        "success": "Cập nhật thông tin thành công!",
+        "error": "Cập nhật thất bại!"
+      }
+    }
+  }
+}

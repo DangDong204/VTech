@@ -1,8 +1,7 @@
 package com.haui.vtech.controller;
 
 import com.haui.vtech.dto.ApiResponse;
-import com.haui.vtech.dto.auth.AuthResponse;
-import com.haui.vtech.dto.auth.LoginRequest;
+import com.haui.vtech.dto.auth.*;
 import com.haui.vtech.dto.user.UserCreationRequest;
 import com.haui.vtech.dto.user.UserResponse;
 import com.haui.vtech.security.CustomUserDetailsService;
@@ -60,6 +59,38 @@ public class AuthController {
         return ApiResponse.<UserResponse>builder()
                 .data(userService.create(request))
                 .message(messageUtil.getMessage("created.success"))
+                .build();
+    }
+
+    @PostMapping("/verify-otp")
+    public ApiResponse<Void> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        userService.verifyOtp(request.getEmail(), request.getOtpCode());
+        return ApiResponse.<Void>builder()
+                .message(messageUtil.getMessage("otp.verified.success"))
+                .build();
+    }
+
+    @PostMapping("/resend-otp")
+    public ApiResponse<Void> resendOtp(@Valid @RequestBody ResendOtpRequest request) {
+        userService.resendOtp(request.getEmail());
+        return ApiResponse.<Void>builder()
+                .message(messageUtil.getMessage("otp.sent.success"))
+                .build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ApiResponse<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        userService.forgotPassword(request.getEmail());
+        return ApiResponse.<Void>builder()
+                .message(messageUtil.getMessage("otp.sent.success"))
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request);
+        return ApiResponse.<Void>builder()
+                .message(messageUtil.getMessage("reset.password.success"))
                 .build();
     }
 }

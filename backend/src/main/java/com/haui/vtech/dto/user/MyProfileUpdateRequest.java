@@ -1,43 +1,27 @@
 package com.haui.vtech.dto.user;
 
 import com.haui.vtech.enums.Gender;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@Builder
-public class UserCreationRequest {
+@Data
+public class MyProfileUpdateRequest {
+
     @NotBlank(message = "USERNAME_NOTBLANK")
     private String username;
-
-    @Email(message = "EMAIL_VALID")
-    @NotBlank(message = "EMAIL_NOTBLANK")
-    private String email;
-
-    @Size(min = 6, message = "PASSWORD_INVALID")
-    private String password;
-
 
     @NotBlank(message = "FULLNAME_NOTBLANK")
     private String fullName;
 
-    @NotNull(message = "DOB_NOTNULL")
-    @Past(message = "DOB_INVALID")
-    private LocalDate dob;
-
-    @NotNull(message = "GENDER_NOTNULL")
-    private Gender gender;
-
     @NotBlank(message = "PHONE_NOTBLANK")
     @Size(min = 8, message = "PHONE_INVALID")
     private String phone;
+
+    @NotNull(message = "GENDER_NOTNULL")
+    private Gender gender;
 }

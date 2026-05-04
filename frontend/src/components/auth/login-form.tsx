@@ -1,3 +1,6 @@
+import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -15,7 +18,7 @@ import type { ApiErrorResponse } from '@/defines/error.type'
 import { loginApi } from '@/services/auth/auth.api'
 import { parseJwt, useAuthStore } from '@/store/auth.store'
 import { AxiosError } from 'axios'
-import { useLocation, useNavigate } from 'react-router'
+import { useLocation, useNavigate, Link } from 'react-router'
 import { toast } from 'sonner'
 import type z from 'zod'
 
@@ -25,6 +28,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from || '/'
+
+  const [showPass, setShowPass] = useState(false)
 
   const {
     register,
@@ -42,26 +47,21 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       if (res.data?.accessToken) {
         const token = res.data.accessToken
 
-        // 1. Lưu token vào Zustand (và localStorage)
         login(token)
         toast.success(res.message)
 
-        // 2. Giải mã Token ngay lập tức để lấy Roles
         const payload = parseJwt(token)
         const roles = payload?.roles || []
 
-        // 3. Phân luồng điều hướng dựa trên Role
         if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_STAFF')) {
           navigate('/dashboard')
         } else {
-          navigate(from) // <-- Trả khách hàng về đúng nơi họ vừa rời đi!
+          navigate(from)
         }
       }
     } catch (error: unknown) {
       const axiosError = error as AxiosError<ApiErrorResponse>
-
       const message = axiosError.response?.data?.message || t('login.errors')
-
       toast.error(message)
     }
   }
@@ -95,10 +95,33 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </div>
 
               <div className='flex flex-col gap-3'>
-                <Label htmlFor='password' className='block text-sm'>
-                  {t('login.password')}
-                </Label>
-                <Input type='password' id='password' {...register('password')} />
+                <div className='flex items-center justify-between'>
+                  <Label htmlFor='password' className='block text-sm'>
+                    {t('login.password')}
+                  </Label>
+                  <Link
+                    to='/forgot-password'
+                    className='text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline transition-colors'
+                  >
+                    {t('login.forgot')}
+                  </Link>
+                </div>
+
+                <div className='relative'>
+                  <Input
+                    type={showPass ? 'text' : 'password'}
+                    id='password'
+                    className='pr-10'
+                    {...register('password')}
+                  />
+                  <button
+                    type='button'
+                    onClick={() => setShowPass(!showPass)}
+                    className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600'
+                  >
+                    {showPass ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className='text-destructive text-sm'>{errors.password.message}</p>
                 )}
@@ -109,9 +132,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </Button>
               <div className='text-center text-sm'>
                 {t('login.noAccount')}{' '}
-                <a href='/signup' className='underline underline-offset-4'>
+                <Link to='/signup' className='underline underline-offset-4 hover:text-primary'>
                   {t('login.signup')}
-                </a>
+                </Link>
               </div>
             </div>
           </form>

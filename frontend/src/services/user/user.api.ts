@@ -1,10 +1,16 @@
 import { api } from '@/utils/axiosCustomize'
 import type { ApiResponse } from '@/defines/apiResponse'
 import type {
+  ChangePasswordRequest,
+  ForgotPasswordRequest,
+  ResendOtpRequest,
+  ResetPasswordRequest,
   SignUpRequest,
+  UpdateMyProfileRequest,
   UpdateUserRequest,
   UpdateUserResponse,
-  UserResponse
+  UserResponse,
+  VerifyOtpRequest
 } from '@/services/user/user.type'
 
 export const getAllUsersApi = async () => {
@@ -61,5 +67,49 @@ export const signUpApi = async (data: SignUpRequest) => {
 // Get My-Info
 export const getMyProfileApi = async (): Promise<UserResponse> => {
   const res = await api.get<ApiResponse<UserResponse>>('/users/my-profile')
+  return res.data.data
+}
+
+// Change password
+export const changePasswordApi = async (data: ChangePasswordRequest) => {
+  const res = await api.put<ApiResponse<void>>('/users/change-password', data)
+  return res.data
+}
+
+export const verifyOtpApi = async (data: VerifyOtpRequest) => {
+  const res = await api.post<ApiResponse<void>>('/auth/verify-otp', data)
+  return res.data
+}
+
+export const resendOtpApi = async (data: ResendOtpRequest) => {
+  const res = await api.post<ApiResponse<void>>('/auth/resend-otp', data)
+  return res.data
+}
+
+export const forgotPasswordApi = async (data: ForgotPasswordRequest) => {
+  const res = await api.post<ApiResponse<void>>('/auth/forgot-password', data)
+  return res.data
+}
+
+export const resetPasswordApi = async (data: ResetPasswordRequest) => {
+  const res = await api.post<ApiResponse<void>>('/auth/reset-password', data)
+  return res.data
+}
+
+export const updateMyProfileApi = async (payload: UpdateMyProfileRequest) => {
+  const formData = new FormData()
+
+  formData.append('username', payload.username)
+  formData.append('fullName', payload.fullName)
+  formData.append('phone', payload.phone)
+  formData.append('gender', payload.gender)
+
+  if (payload.avatar) {
+    formData.append('file', payload.avatar)
+  }
+
+  const res = await api.put<ApiResponse<UpdateUserResponse>>('/users/my-profile', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
   return res.data.data
 }

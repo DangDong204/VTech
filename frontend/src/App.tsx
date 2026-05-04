@@ -19,6 +19,7 @@ import UserPage from '@/pages/admin/manage-user/page'
 import VariantPage from '@/pages/admin/manage-variant/page'
 import VersionPage from '@/pages/admin/manage-version/page'
 import VoucherPage from '@/pages/admin/manage-voucher/page'
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import CartPage from '@/pages/user/cart/CartPage'
@@ -74,6 +75,7 @@ function App() {
 
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignupPage />} />
+          <Route path='/forgot-password' element={<ForgotPasswordPage />} />
           <Route path='/payment/vnpay-return' element={<VnPayReturnPage />} />
 
           {/* TODO: tạo protected route */}

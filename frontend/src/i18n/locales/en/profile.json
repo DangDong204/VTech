@@ -1,0 +1,88 @@
+{
+  "changePassword": {
+    "title": "Change Password",
+    "subtitle": "Secure your account with a strong password",
+    "fields": {
+      "oldPassword": {
+        "label": "Current Password",
+        "placeholder": "Enter your current password"
+      },
+      "newPassword": {
+        "label": "New Password",
+        "placeholder": "At least {{min}} characters"
+      },
+      "confirmPassword": {
+        "label": "Confirm New Password",
+        "placeholder": "Re-enter your new password"
+      }
+    },
+    "buttons": {
+      "saving": "Saving...",
+      "save": "Save Changes"
+    },
+    "messages": {
+      "success": "Password changed successfully!",
+      "error": "Failed to change password!",
+      "systemError": "Something went wrong. Please try again later!"
+    },
+    "validation": {
+      "oldPasswordRequired": "Please enter your current password",
+      "newPasswordMin": "New password must be at least {{min}} characters",
+      "newPasswordUppercase": "Password must contain at least one uppercase letter",
+      "newPasswordLowercase": "Password must contain at least one lowercase letter",
+      "newPasswordNumber": "Password must contain at least one number",
+      "newPasswordSpecial": "Password must contain at least one special character",
+      "confirmPasswordRequired": "Please confirm your new password",
+      "passwordNotMatch": "Passwords do not match!"
+    }
+  },
+  "overview": {
+    "loading": "Loading information...",
+    "stats": {
+      "ordersProcessing": "Orders processing",
+      "ordersSuffix": "orders",
+      "vouchers": "Available vouchers",
+      "vouchersSuffix": "vouchers",
+      "points": "My V-Points",
+      "pointsSuffix": "points"
+    },
+    "accountInfo": {
+      "title": "Account Information",
+      "editButton": "Edit",
+      "fields": {
+        "fullName": "Full name",
+        "phone": "Phone number",
+        "phoneEmpty": "Not updated yet",
+        "email": "Email",
+        "dob": "Date of birth",
+        "dobEmpty": "Not updated yet"
+      }
+    },
+    "sheet": {
+      "title": "Update Profile",
+      "avatarHint": "Click on the image to change",
+      "fields": {
+        "email": "Email",
+        "username": "Username",
+        "fullName": "Full name",
+        "phone": "Phone number",
+        "dob": "Date of birth",
+        "gender": {
+          "label": "Gender",
+          "male": "Male",
+          "female": "Female",
+          "other": "Other"
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save changes"
+      },
+      "messages": {
+        "success": "Profile updated successfully!",
+        "error": "Update failed!"
+      }
+    }
+  }
+}

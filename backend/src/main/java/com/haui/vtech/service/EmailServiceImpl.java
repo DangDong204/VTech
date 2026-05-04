@@ -43,4 +43,50 @@ public class EmailServiceImpl implements EmailService {
             log.error("Lỗi khi gửi email: ", e);
         }
     }
+
+    @Override
+    @Async
+    public void sendOtpEmail(String to, String otpCode) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject("Mã xác thực tài khoản VTech Store");
+
+            // Truyền biến vào Template HTML
+            Context context = new Context();
+            context.setVariable("otpCode", otpCode);
+
+            String html = templateEngine.process("otp-email", context); // Tên file HTML
+            helper.setText(html, true);
+
+            mailSender.send(message);
+            log.info("Đã gửi email OTP tới {}", to);
+        } catch (MessagingException e) {
+            log.error("Lỗi khi gửi email OTP: ", e);
+        }
+    }
+
+    @Override
+    @Async
+    public void sendForgotPasswordEmail(String to, String otpCode) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject("Yêu cầu đặt lại mật khẩu VTech Store");
+
+            Context context = new Context();
+            context.setVariable("otpCode", otpCode);
+
+            String html = templateEngine.process("forgot-password-email", context);
+            helper.setText(html, true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            log.error("Lỗi khi gửi email quên mật khẩu: ", e);
+        }
+    }
 }
