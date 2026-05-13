@@ -148,6 +148,10 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, id));
 
+        if (product.getVariants() != null && !product.getVariants().isEmpty()) {
+            throw new AppException(ErrorCode.PRODUCT_HAS_VARIANTS, product.getProductName());
+        }
+
         if (product.getImages() != null && !product.getImages().isEmpty()) {
             product.getImages().forEach(image -> {
                 s3Service.deleteImage(image.getImageUrl());
@@ -163,6 +167,10 @@ public class ProductServiceImpl implements ProductService {
     public String deleteSoft(String id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, id));
+
+        if (product.getVariants() != null && !product.getVariants().isEmpty()) {
+            throw new AppException(ErrorCode.PRODUCT_HAS_VARIANTS, product.getProductName());
+        }
 
         int affectedRows = productRepository.softDelete(id, LocalDateTime.now());
 

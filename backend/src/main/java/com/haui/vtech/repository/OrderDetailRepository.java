@@ -26,4 +26,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetailEntity, 
             "WHERE o.orderStatus = 'DELIVERED' " +
             "GROUP BY p.id, p.productName ORDER BY SUM(od.quantity) DESC")
     java.util.List<Object[]> getTopProductsByOrders(org.springframework.data.domain.Pageable pageable);
+
+    // Kiểm tra xem variant đã có trong đơn hàng nào chưa
+    boolean existsByVariantId(String variantId);
 }

@@ -45,7 +45,7 @@ public class ColorServiceImpl implements ColorService {
                 .orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_FOUND, id));
 
         if (!entity.getProductVariants().isEmpty()) {
-            throw new AppException(ErrorCode.COLOR_USED_BY_VARIANT, entity.getProductVariants());
+            throw new AppException(ErrorCode.COLOR_USED_BY_VARIANT, entity.getColorName());
         }
         colorRepository.delete(entity);
         return entity.getColorName();

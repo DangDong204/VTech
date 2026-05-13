@@ -43,6 +43,10 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(4001, "user.not.found", HttpStatus.NOT_FOUND),
     CANNOT_DELETE_SELF(4002, "user.cannot.delete.self", HttpStatus.BAD_REQUEST),
+    USER_HAS_ORDERS(4003, "user.has.orders", HttpStatus.BAD_REQUEST),
+    USER_HAS_REVIEWS(4004, "user.has.reviews", HttpStatus.BAD_REQUEST),
+    CANNOT_CHANGE_OWN_ROLE(4005, "user.cannot.change.own.role", HttpStatus.BAD_REQUEST),
+    CANNOT_CHANGE_OWN_STATUS(4006, "user.cannot.change.own.status", HttpStatus.BAD_REQUEST),
 
     CATEGORY_NOT_FOUND(5000, "category.not.found", HttpStatus.NOT_FOUND),
     CATEGORY_NAME_NOTBLANK(5001, "category.name.not.blank", HttpStatus.BAD_REQUEST),
@@ -77,6 +81,7 @@ public enum ErrorCode {
     PRODUCT_NAME_EXISTED(7002, "product.name.exists", HttpStatus.BAD_REQUEST),
     PRODUCT_SLUG_NOTBLANK(7002, "product.slug.not.blank", HttpStatus.BAD_REQUEST),
     PRODUCT_SLUG_EXISTED(7003, "product.slug.exists", HttpStatus.BAD_REQUEST),
+    PRODUCT_HAS_VARIANTS(7004, "product.has.variants", HttpStatus.BAD_REQUEST),
 
     COLOR_NOT_FOUND(7100, "color.not.found", HttpStatus.NOT_FOUND),
     COLOR_ID_NOTBLANK(7101, "color.id.not.blank", HttpStatus.BAD_REQUEST),
@@ -96,6 +101,9 @@ public enum ErrorCode {
     VARIANT_SKU_NOTBLANK(7303, "product.variant.sku.not.blank", HttpStatus.BAD_REQUEST),
     BASE_PRICE_NOTNULL(7304, "product.variant.price.not.null", HttpStatus.BAD_REQUEST),
     BASE_PRICE_MIN(7305, "product.variant.price.min", HttpStatus.BAD_REQUEST),
+    VARIANT_USED_BY_ORDER(7306, "product.variant.used.by.order", HttpStatus.BAD_REQUEST),
+    VARIANT_USED_BY_RECEIPT(7307, "product.variant.used.by.receipt", HttpStatus.BAD_REQUEST),
+    VARIANT_USED_BY_CART(7308, "product.variant.used.by.cart", HttpStatus.BAD_REQUEST),
 
     SPEC_EXISTS(8000, "specification.exists", HttpStatus.BAD_REQUEST),
     SPEC_NOT_FOUND(8001, "specification.not.found", HttpStatus.NOT_FOUND),
@@ -113,6 +121,9 @@ public enum ErrorCode {
     VOUCHER_OUT_OF_USAGE(9010, "voucher.out.of.usage", HttpStatus.BAD_REQUEST),
     VOUCHER_CONDITION_NOT_MET(9011, "voucher.condition.not.met", HttpStatus.BAD_REQUEST),
     VOUCHER_ALREADY_REDEEMED(9012, "voucher.already.redeemed", HttpStatus.BAD_REQUEST),
+    VOUCHER_USED_BY_ORDER(9013, "voucher.used.by.order", HttpStatus.BAD_REQUEST),
+    VOUCHER_IN_USER_WALLET(9014, "voucher.in.user.wallet", HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_OWNED(9015, "voucher.not.owned", HttpStatus.BAD_REQUEST),
 
     PROMOTION_NOT_FOUND(10000, "promotion.not.found", HttpStatus.NOT_FOUND),
     PROMOTION_NAME_NOTBLANK(10001, "promotion.name.not.blank", HttpStatus.BAD_REQUEST),

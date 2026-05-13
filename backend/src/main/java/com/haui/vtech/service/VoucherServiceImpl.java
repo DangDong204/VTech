@@ -12,6 +12,7 @@ import com.haui.vtech.enums.VpointTransactionType;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.VoucherMapper;
+import com.haui.vtech.repository.OrderRepository;
 import com.haui.vtech.repository.UserRepository;
 import com.haui.vtech.repository.UserVoucherRepository;
 import com.haui.vtech.repository.VoucherRepository;
@@ -32,6 +33,7 @@ public class VoucherServiceImpl implements VoucherService {
     private final UserVoucherRepository userVoucherRepository;
     private final UserRepository userRepository;
     private final VpointService vpointService;
+    private final OrderRepository orderRepository;
 
     @Override
     public VoucherResponse create(VoucherRequest request) {
@@ -82,6 +84,9 @@ public class VoucherServiceImpl implements VoucherService {
     public String deleteHard(String id) {
         VoucherEntity voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND, id));
+
+        checkIfVoucherIsRemovable(voucher);
+
         voucherRepository.delete(voucher);
         return voucher.getVoucherCode();
     }
@@ -91,6 +96,8 @@ public class VoucherServiceImpl implements VoucherService {
     public String deleteSoft(String id) {
         VoucherEntity voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND, id));
+
+        checkIfVoucherIsRemovable(voucher);
 
         int affectedRows = voucherRepository.softDelete(id, LocalDateTime.now());
         if (affectedRows == 0) {
@@ -124,6 +131,19 @@ public class VoucherServiceImpl implements VoucherService {
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         // 1. Kiểm tra các điều kiện hợp lệ
+        if (voucher.getRequiredPoints() != null && voucher.getRequiredPoints() > 0) {
+            String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+            UserEntity currentUser = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+            // Tìm xem trong ví của user này có mã đó và chưa sử dụng không
+            boolean isOwned = userVoucherRepository.findByUserIdAndVoucherIdAndIsUsedFalse(currentUser.getId(), voucher.getId()).isPresent();
+
+            if (!isOwned) {
+                throw new AppException(ErrorCode.VOUCHER_NOT_OWNED);
+            }
+        }
+
         if (voucher.getStatus() != VoucherStatus.ACTIVE) {
             throw new AppException(ErrorCode.VOUCHER_INACTIVE); // SỬA Ở ĐÂY
         }
@@ -255,4 +275,16 @@ public class VoucherServiceImpl implements VoucherService {
                 .toList();
     }
 
+    // Hàm dùng chung khi xoá mềm hay cứng voucher
+    private void checkIfVoucherIsRemovable(VoucherEntity voucher) {
+        // 1. Kiểm tra xem mã giảm giá đã nằm trong đơn hàng nào chưa
+        if (orderRepository.existsByVoucherIdInOrders(voucher.getId())) {
+            throw new AppException(ErrorCode.VOUCHER_USED_BY_ORDER, voucher.getVoucherCode());
+        }
+
+        // 2. Kiểm tra xem mã giảm giá có đang nằm trong ví người dùng không
+        if (userVoucherRepository.existsByVoucherId(voucher.getId())) {
+            throw new AppException(ErrorCode.VOUCHER_IN_USER_WALLET, voucher.getVoucherCode());
+        }
+    }
 }

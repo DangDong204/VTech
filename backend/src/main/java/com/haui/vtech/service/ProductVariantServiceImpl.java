@@ -10,10 +10,7 @@ import com.haui.vtech.enums.ImageFolder;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.ProductVariantMapper;
-import com.haui.vtech.repository.ColorRepository;
-import com.haui.vtech.repository.ProductRepository;
-import com.haui.vtech.repository.ProductVariantRepository;
-import com.haui.vtech.repository.VersionRepository;
+import com.haui.vtech.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +27,9 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     private final VersionRepository versionRepository;
     private final ProductVariantMapper variantMapper;
     private final S3Service s3Service;
+    private final OrderDetailRepository orderDetailRepository;
+    private final CartDetailRepository cartDetailRepository;
+    private final InventoryReceiptDetailRepository receiptDetailRepository;
 
     @Override
     public ProductVariantResponse create(ProductVariantRequest request, MultipartFile image) {
@@ -107,6 +107,24 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public String delete(String id) {
         ProductVariantEntity entity = variantRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND, id));
+
+        // --- KIỂM TRA CÁC ĐIỀU KIỆN CHẶN XÓA ---
+        // 1. Nếu đã nhập kho -> Cấm xóa (Lịch sử kế toán)
+        if (receiptDetailRepository.existsByVariant_Id(id)) {
+            throw new AppException(ErrorCode.VARIANT_USED_BY_RECEIPT, entity.getSku());
+        }
+
+        // 2. Nếu đã có người mua -> Cấm xóa (Lịch sử đơn hàng)
+        if (orderDetailRepository.existsByVariantId(id)) {
+            throw new AppException(ErrorCode.VARIANT_USED_BY_ORDER, entity.getSku());
+        }
+
+        // 3. Nếu đang nằm trong giỏ hàng -> Cấm xóa
+        // (Hoặc nếu bạn muốn mạnh tay, có thể dùng cartDetailRepository.deleteByVariantId(id) để xóa luôn khỏi giỏ hàng thay vì báo lỗi)
+        if (cartDetailRepository.existsByVariantId(id)) {
+            throw new AppException(ErrorCode.VARIANT_USED_BY_CART, entity.getSku());
+        }
+        // ----------------------------------------
 
         // XÓA ẢNH TRÊN S3 TRƯỚC KHI XÓA RECORD
         if (entity.getImageUrl() != null) {

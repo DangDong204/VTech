@@ -3,6 +3,7 @@ package com.haui.vtech.repository;
 import com.haui.vtech.entity.OrderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,4 +44,11 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
     // BIỂU ĐỒ ĐƯỜNG: Lấy danh sách ngày tạo và tổng tiền của các đơn hàng thành công
     @Query("SELECT o.createdAt, o.finalPrice FROM OrderEntity o WHERE o.orderStatus = 'DELIVERED' AND o.createdAt >= :startDate AND o.createdAt <= :endDate")
     List<Object[]> getDeliveredOrdersForRevenue(@org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
+
+    // Kiểm tra xem voucher đã được sử dụng trong đơn hàng nào chưa (phục vụ việc xóa voucher)
+    @Query("SELECT CASE WHEN COUNT(o) > 0 THEN true ELSE false END FROM OrderEntity o JOIN o.voucherIds v WHERE v = :voucherId")
+    boolean existsByVoucherIdInOrders(@Param("voucherId") String voucherId);
+
+    // Kiểm tra xem user có đơn hàng nào không (phục vụ việc xóa user)
+    boolean existsByUserId(String userId);
 }

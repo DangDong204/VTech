@@ -33,7 +33,7 @@ public class VoucherController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ApiResponse<List<VoucherResponse>> getAll() {
         return ApiResponse.<List<VoucherResponse>>builder()
                 .data(voucherService.getAllVouchers())
