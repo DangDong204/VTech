@@ -25,7 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<UserResponse>> getAll() {
         return ApiResponse.<List<UserResponse>>builder()
                 .data(userService.getAllUsers())
@@ -33,11 +33,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUser(@PathVariable String userId) {
         return  userService.getById(userId);
     }
 
     @PutMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ProfileUpdateResponse>  updateUser(
             @PathVariable String userId,
             @Valid @ModelAttribute ProfileUpdateRequest request,
@@ -68,6 +70,7 @@ public class UserController {
     }
 
     @GetMapping("/trash")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<UserResponse>> getAllInTrash() {
         return ApiResponse.<List<UserResponse>>builder()
                 .data(userService.getAllInTrash())

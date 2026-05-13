@@ -53,10 +53,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         const payload = parseJwt(token)
         const roles = payload?.roles || []
 
-        if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_STAFF')) {
-          navigate('/dashboard')
+        if (roles.includes('ROLE_ADMIN')) {
+          navigate('/dashboard') // Admin vào xem trang tổng quan
+        } else if (roles.includes('ROLE_STAFF')) {
+          navigate('/dashboard/orders') // Staff vào thẳng phần Đơn hàng
         } else {
-          navigate(from)
+          navigate(from) // User bình thường
         }
       }
     } catch (error: unknown) {

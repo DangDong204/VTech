@@ -23,7 +23,7 @@ public class BrandController {
     private final MessageUtil messageUtil;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<BrandResponse> createBrand(
             @Valid @ModelAttribute BrandCreationRequest request,
             @RequestPart(required = false) MultipartFile brandLogo
@@ -50,7 +50,7 @@ public class BrandController {
     }
 
     @PutMapping("/{brandId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<BrandResponse> updateBrand(
             @PathVariable String brandId,
             @Valid @ModelAttribute BrandUpdateRequest request,
@@ -64,7 +64,7 @@ public class BrandController {
     }
 
     @DeleteMapping("/trash/{brandId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteBrand(@PathVariable String brandId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("brand.deleted.success", brandService.delete(brandId)))
@@ -72,7 +72,7 @@ public class BrandController {
     }
 
     @DeleteMapping("/{brandId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteSoftBrand(@PathVariable String brandId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("brand.deleted.soft.success", brandService.deleteSoft(brandId)))
@@ -80,6 +80,7 @@ public class BrandController {
     }
 
     @GetMapping("/trash")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<BrandResponse>> getAllInTrash() {
         return ApiResponse.<List<BrandResponse>>builder()
                 .data(brandService.getAllInTrash())
@@ -87,7 +88,7 @@ public class BrandController {
     }
 
     @PatchMapping("/trash/{brandId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> restoreBrand(@PathVariable String brandId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("brand.restored.success", brandService.restore(brandId)))

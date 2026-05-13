@@ -28,7 +28,7 @@ public class VersionController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<VersionResponse> create(
             @RequestBody @Valid VersionRequest request) {
         return ApiResponse.<VersionResponse>builder()
@@ -38,7 +38,7 @@ public class VersionController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<VersionResponse> update(
             @PathVariable String id,
             @RequestBody @Valid VersionRequest request) {
@@ -49,7 +49,7 @@ public class VersionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> delete(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("version.deleted.success",

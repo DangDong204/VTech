@@ -26,7 +26,7 @@ public class CategoryController {
     private final MessageUtil messageUtil;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<CategoryResponse> createCategory(
             @Valid @ModelAttribute CategoryCreationRequest request,
             @RequestPart(required = false) MultipartFile thumbnailUrl
@@ -53,7 +53,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<CategoryResponse> updateCategory(
             @PathVariable String categoryId,
             @Valid @ModelAttribute CategoryUpdateRequest request,
@@ -67,7 +67,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/trash/{categoryId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteCategory(@PathVariable String categoryId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage(
@@ -77,7 +77,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteSoftCategory(@PathVariable String categoryId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage(
@@ -87,6 +87,7 @@ public class CategoryController {
     }
 
     @GetMapping("/trash")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<CategoryResponse>> getAllInTrash() {
         return ApiResponse.<List<CategoryResponse>>builder()
                 .data(categoryService.getAllInTrash())
@@ -94,7 +95,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/trash/{categoryId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> restoreCategory(@PathVariable String categoryId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage(

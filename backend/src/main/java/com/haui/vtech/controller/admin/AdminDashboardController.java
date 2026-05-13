@@ -23,7 +23,7 @@ public class AdminDashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/kpi")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<KpiDataResponse>> getKpis(@RequestParam(defaultValue = "month") String period) {
         return ApiResponse.<List<KpiDataResponse>>builder()
                 .data(dashboardService.getKpiData(period))
@@ -31,7 +31,7 @@ public class AdminDashboardController {
     }
 
     @GetMapping("/order-status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<OrderStatusChartResponse>> getOrderStatusChart(@RequestParam(defaultValue = "month") String period) {
         return ApiResponse.<List<OrderStatusChartResponse>>builder()
                 .data(dashboardService.getOrderStatusChart(period))
@@ -39,7 +39,7 @@ public class AdminDashboardController {
     }
 
     @GetMapping("/revenue")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<RevenueChartResponse>> getRevenueChart(@RequestParam(defaultValue = "month") String period) {
         return ApiResponse.<List<RevenueChartResponse>>builder()
                 .data(dashboardService.getRevenueChart(period))
@@ -47,7 +47,7 @@ public class AdminDashboardController {
     }
 
     @GetMapping("/top-products")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<TopProductResponse>> getTopProducts(@RequestParam(defaultValue = "revenue") String metric) {
         return ApiResponse.<List<TopProductResponse>>builder()
                 .data(dashboardService.getTopProducts(metric))

@@ -80,24 +80,31 @@ function App() {
 
           {/* TODO: tạo protected route */}
           <Route element={<ProtectedRoute />}>
-            {/* <Route path='/profile' element={<ProfilePage />} /> */}
             <Route path='/dashboard' element={<LayoutAdmin />}>
-              <Route index element={<DashboardHome />} />
-              <Route path='users' element={<UserPage />} />
-              <Route path='categories' element={<CategoryPage />} />
-              <Route path='brands' element={<BrandPage />} />
-              <Route path='tags' element={<TagPage />} />
-              <Route path='products' element={<ProductPage />} />
-              <Route path='products/:productId/variants' element={<VariantPage />} />
-              <Route path='colors' element={<ColorPage />} />
-              <Route path='versions' element={<VersionPage />} />
-              <Route path='vouchers' element={<VoucherPage />} />
-              <Route path='promotions' element={<PromotionPage />} />
-              <Route path='receipts' element={<ReceiptPage />} />
+              <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
+                <Route index element={<DashboardHome />} />
+              </Route>
+
+              {/* --- NHỮNG MODULE MÀ CẢ ADMIN VÀ STAFF ĐỀU ĐƯỢC VÀO --- */}
               <Route path='orders' element={<OrderPage />} />
+              <Route path='receipts' element={<ReceiptPage />} />
+              <Route path='reviews' element={<ReviewPage />} />
               <Route path='articles' element={<ArticlePage />} />
               <Route path='articles/:id' element={<ArticleDetailPage />} />
-              <Route path='reviews' element={<ReviewPage />} />
+
+              {/* --- NHỮNG MODULE CHỈ CÓ ADMIN ĐƯỢC VÀO --- */}
+              <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
+                <Route path='users' element={<UserPage />} />
+                <Route path='categories' element={<CategoryPage />} />
+                <Route path='brands' element={<BrandPage />} />
+                <Route path='tags' element={<TagPage />} />
+                <Route path='products' element={<ProductPage />} />
+                <Route path='products/:productId/variants' element={<VariantPage />} />
+                <Route path='colors' element={<ColorPage />} />
+                <Route path='versions' element={<VersionPage />} />
+                <Route path='vouchers' element={<VoucherPage />} />
+                <Route path='promotions' element={<PromotionPage />} />
+              </Route>
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}
