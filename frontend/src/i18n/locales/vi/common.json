@@ -211,6 +211,7 @@
       "category": "Danh mục:",
       "brand": "Hãng:",
       "tag": "Nhu cầu:",
+      "keyword": "Từ khoá:",
       "price": "Giá:",
       "priceFromTo": "Từ {{min}} - {{max}}",
       "priceAbove": "Trên {{min}}",

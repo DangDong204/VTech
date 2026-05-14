@@ -37,12 +37,13 @@ public class ClientProductController {
             @RequestParam(required = false) String categorySlug,
             @RequestParam(required = false) String brandSlug,
             @RequestParam(required = false) String tagId,
+            @RequestParam(required = false) String keyword, // THÊM DÒNG NÀY
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false, defaultValue = "newest") String sort
     ) {
         return ApiResponse.<List<ClientProductResponse>>builder()
-                .data(productService.searchClientProducts(categorySlug, brandSlug, tagId, minPrice, maxPrice, sort))
+                .data(productService.searchClientProducts(categorySlug, brandSlug, tagId, keyword, minPrice, maxPrice, sort))
                 .message("Tìm kiếm sản phẩm thành công")
                 .build();
     }

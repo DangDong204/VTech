@@ -16,6 +16,7 @@ export interface SearchProductParams {
   categorySlug?: string
   brandSlug?: string
   tagId?: string
+  keyword?: string // THÊM DÒNG NÀY
   minPrice?: number
   maxPrice?: number
   sort?: 'newest' | 'price-asc' | 'price-desc' | 'rating'

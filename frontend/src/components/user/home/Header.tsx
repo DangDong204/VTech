@@ -28,7 +28,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { getMyOrdersApi } from '@/services/order/order.api'
 import { getMyVouchersApi } from '@/services/voucher/voucher.api'
@@ -44,6 +44,22 @@ export function Header() {
   const userName = user?.sub || t('header.account', 'Tài khoản')
 
   const [showLoginDialog, setShowLoginDialog] = useState(false)
+
+  // Tìm đoạn khai báo state và thêm vào:
+  const navigate = useNavigate()
+  const [searchValue, setSearchValue] = useState('')
+
+  // Thêm hàm xử lý khi nhấn Enter
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (searchValue.trim()) {
+        navigate(`/products?keyword=${encodeURIComponent(searchValue.trim())}`)
+      } else {
+        navigate('/products')
+      }
+    }
+  }
 
   const { data: vouchers = [] } = useQuery({
     queryKey: ['my-vouchers'],
@@ -117,6 +133,9 @@ export function Header() {
                 <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors' />
                 <Input
                   type='search'
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onKeyDown={handleSearch}
                   placeholder={t('header.searchPlaceholder')}
                   className='h-10 pl-10 pr-4 bg-white text-foreground border-0 rounded-full shadow-inner focus-visible:ring-2 focus-visible:ring-white/50 placeholder:text-muted-foreground transition-all'
                 />

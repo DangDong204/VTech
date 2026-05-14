@@ -43,26 +43,16 @@ public class AiToolsConfig {
             BigDecimal max = request.maxPrice() != null ? BigDecimal.valueOf(request.maxPrice()) : null;
 
             try {
-                // Tái sử dụng lại hàm tìm kiếm có sẵn
-                // Chú ý: Hàm searchClientProducts của bạn hiện không hỗ trợ tham số "keyword" ở Service.
-                // Tạm thời AI sẽ lọc theo minPrice, maxPrice, categorySlug và brandSlug.
+                // ĐÃ CẬP NHẬT: Truyền trực tiếp keyword xuống DB
                 List<ClientProductResponse> products = productService.searchClientProducts(
                         request.categorySlug(),
                         request.brandSlug(),
                         null,
+                        request.keyword(), // <-- Thêm tham số keyword
                         min,
                         max,
                         "newest"
                 );
-
-                // NẾU CÓ KEYWORD (AI bóc tách được từ câu hỏi của user: VD "iphone")
-                // Ta sẽ tự lọc thêm trên RAM bằng Java (vì API hiện tại chưa query keyword)
-                if (request.keyword() != null && !request.keyword().isBlank()) {
-                    String kw = request.keyword().toLowerCase();
-                    products = products.stream()
-                            .filter(p -> p.getBaseName().toLowerCase().contains(kw))
-                            .toList();
-                }
 
                 if (products.isEmpty()) {
                     return "Không tìm thấy sản phẩm nào phù hợp với yêu cầu.";
@@ -124,11 +114,12 @@ public class AiToolsConfig {
                 try {
                     detail = productService.getClientProductDetail(request.productNameOrSlug());
                 } catch (Exception e) {
-                    // 2. Nếu AI truyền tên (VD: "iphone 15"), ta phải quét tìm tên rồi lấy slug
-                    List<ClientProductResponse> allProducts = productService.searchClientProducts(null, null, null, null, null, "newest");
-                    var matchedProduct = allProducts.stream()
-                            .filter(p -> p.getBaseName().toLowerCase().contains(request.productNameOrSlug().toLowerCase()))
-                            .findFirst();
+                    // 2. ĐÃ CẬP NHẬT: Nếu lấy bằng slug lỗi, dùng DB để tìm theo keyword thay vì quét toàn bộ RAM
+                    List<ClientProductResponse> allProducts = productService.searchClientProducts(
+                            null, null, null, request.productNameOrSlug(), null, null, "newest"
+                    );
+
+                    var matchedProduct = allProducts.stream().findFirst();
 
                     if (matchedProduct.isPresent()) {
                         detail = productService.getClientProductDetail(matchedProduct.get().getSlug());
@@ -158,8 +149,6 @@ public class AiToolsConfig {
                 sb.append("BẢNG GIÁ VÀ CÁC PHIÊN BẢN:\n");
                 if (detail.getVariantList() != null && !detail.getVariantList().isEmpty()) {
                     for (var v : detail.getVariantList()) {
-                        // Giả sử DTO variant của bạn có getBasePrice() và getSalePrice() (hoặc getPrice() / getOriginalPrice())
-                        // Bạn hãy đổi tên hàm get...() cho khớp với DTO của bạn nhé
                         sb.append(String.format("- Màu %s, Bản %s: Giá gốc: %,.0f VNĐ | Giá khuyến mãi hiện tại: %,.0f VNĐ\n",
                                 v.getColor(), v.getVersion(), v.getOriginalPrice(), v.getPrice()));
                     }
@@ -221,11 +210,9 @@ public class AiToolsConfig {
                 if (userOpt.isEmpty()) return "Lỗi: Không xác định được danh tính người dùng.";
                 String userId = userOpt.get().getId();
 
-                // 2. TÌM SẢN PHẨM KHÁCH MUỐN MUA
-                var allProducts = productService.searchClientProducts(null, null, null, null, null, "newest");
-                var matchedProductOpt = allProducts.stream()
-                        .filter(p -> p.getBaseName().toLowerCase().contains(request.productName().toLowerCase()))
-                        .findFirst();
+                // 2. ĐÃ CẬP NHẬT: TÌM SẢN PHẨM KHÁCH MUỐN MUA QUA KEYWORD
+                var allProducts = productService.searchClientProducts(null, null, null, request.productName(), null, null, "newest");
+                var matchedProductOpt = allProducts.stream().findFirst();
 
                 if (matchedProductOpt.isEmpty()) {
                     return "Không tìm thấy sản phẩm nào tên là: " + request.productName() + ". Hãy báo khách chọn lại.";
@@ -382,7 +369,6 @@ public class AiToolsConfig {
     /**
      * Công cụ 5: Tra cứu đơn hàng
      */
-    // Cập nhật lại Description để rèn thêm tính kỷ luật cho AI
     @Bean
     @Description("Sử dụng công cụ này khi khách hàng yêu cầu kiểm tra, tra cứu trạng thái đơn hàng. Nếu khách cung cấp mã đơn, truyền mã đó vào orderCode. Nếu khách hỏi 'đơn gần nhất' hoặc không nhắc đến mã, TUYỆT ĐỐI BỎ TRỐNG (null) trường orderCode.")
     public Function<OrderTrackingRequest, String> orderTrackingTool(

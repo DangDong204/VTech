@@ -15,6 +15,7 @@ import {
 import { getAllTagApi } from '@/services/tag/tag.api'
 import {
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   ChevronUp,
   Filter,
@@ -28,6 +29,8 @@ import {
   Zap
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+
+const ITEMS_PER_PAGE = 12 // Số sản phẩm trên mỗi trang (12 chia hết cho 2,3,4 cột)
 
 function formatVnd(n: number) {
   // LUÔN LUÔN CỐ ĐỊNH FORMAT TIỀN TỆ VIỆT NAM (yêu cầu của người dùng)
@@ -70,9 +73,13 @@ export default function ProductListPage() {
   const categorySlug = searchParams.get('categorySlug') || undefined
   const brandSlug = searchParams.get('brandSlug') || undefined
   const tagId = searchParams.get('tagId') || undefined
+  const keyword = searchParams.get('keyword') || undefined
   const sort = (searchParams.get('sort') || 'newest') as SearchProductParams['sort']
   const minPrice = searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined
   const maxPrice = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined
+
+  // Param Phân Trang
+  const currentPage = parseInt(searchParams.get('page') || '1', 10)
 
   // State hiển thị cục bộ
   const [localMin, setLocalMin] = useState(minPrice ? String(minPrice) : '')
@@ -87,8 +94,9 @@ export default function ProductListPage() {
 
   // Fetch Sản phẩm tự động gọi lại mỗi khi có params trên URL thay đổi
   const { data: products = [], isLoading } = useFetchData(
-    ['search-products', categorySlug, brandSlug, tagId, sort, minPrice, maxPrice],
-    () => searchClientProductsApi({ categorySlug, brandSlug, tagId, sort, minPrice, maxPrice })
+    ['search-products', categorySlug, brandSlug, tagId, keyword, sort, minPrice, maxPrice],
+    () =>
+      searchClientProductsApi({ categorySlug, brandSlug, tagId, keyword, sort, minPrice, maxPrice })
   )
 
   // Hàm cập nhật URL
@@ -98,6 +106,12 @@ export default function ProductListPage() {
     } else {
       searchParams.delete(key)
     }
+
+    // Nếu thay đổi bộ lọc (không phải đổi page), ta reset page về 1
+    if (key !== 'page') {
+      searchParams.delete('page')
+    }
+
     setSearchParams(searchParams)
   }
 
@@ -136,6 +150,13 @@ export default function ProductListPage() {
       })
   }
 
+  if (keyword) {
+    activeFilters.push({
+      key: 'keyword',
+      label: `${t('productList.activeFilters.keyword')} ${keyword}`
+    })
+  }
+
   if (minPrice !== undefined || maxPrice !== undefined) {
     const matchedRange = PRICE_RANGES.find(
       (r) => r.min === (minPrice || 0) && r.max === (maxPrice || null)
@@ -169,6 +190,7 @@ export default function ProductListPage() {
     } else {
       searchParams.delete(key)
     }
+    searchParams.delete('page') // Reset page
     setSearchParams(searchParams)
   }
 
@@ -176,11 +198,84 @@ export default function ProductListPage() {
     searchParams.delete('categorySlug')
     searchParams.delete('brandSlug')
     searchParams.delete('tagId')
+    searchParams.delete('keyword')
     searchParams.delete('minPrice')
     searchParams.delete('maxPrice')
+    searchParams.delete('page') // Reset page
     setLocalMin('')
     setLocalMax('')
     setSearchParams(searchParams)
+  }
+
+  // --- LOGIC PHÂN TRANG (CLIENT-SIDE) ---
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE)
+  const validCurrentPage = products.length > 0 ? Math.min(Math.max(1, currentPage), totalPages) : 1
+
+  const currentProducts = useMemo(() => {
+    const startIndex = (validCurrentPage - 1) * ITEMS_PER_PAGE
+    return products.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [products, validCurrentPage])
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      updateFilter('page', String(newPage))
+      window.scrollTo({ top: 0, behavior: 'smooth' }) // Cuộn lên top khi đổi trang
+    }
+  }
+
+  // Render Component Phân Trang
+  const renderPagination = () => {
+    if (totalPages <= 1) return null
+
+    const pages = []
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= validCurrentPage - 1 && i <= validCurrentPage + 1)) {
+        pages.push(
+          <Button
+            key={i}
+            variant={validCurrentPage === i ? 'default' : 'outline'}
+            className={
+              validCurrentPage === i
+                ? 'bg-red-500 hover:bg-red-600 text-white w-9 h-9 p-0'
+                : 'w-9 h-9 p-0 text-slate-600'
+            }
+            onClick={() => handlePageChange(i)}
+          >
+            {i}
+          </Button>
+        )
+      } else if (i === validCurrentPage - 2 || i === validCurrentPage + 2) {
+        pages.push(
+          <span key={`ellipsis-${i}`} className='px-1 text-slate-400'>
+            ...
+          </span>
+        )
+      }
+    }
+
+    return (
+      <div className='flex items-center justify-center gap-1 mt-8'>
+        <Button
+          variant='outline'
+          size='icon'
+          className='w-9 h-9 text-slate-600'
+          onClick={() => handlePageChange(validCurrentPage - 1)}
+          disabled={validCurrentPage === 1}
+        >
+          <ChevronLeft className='h-4 w-4' />
+        </Button>
+        {pages}
+        <Button
+          variant='outline'
+          size='icon'
+          className='w-9 h-9 text-slate-600'
+          onClick={() => handlePageChange(validCurrentPage + 1)}
+          disabled={validCurrentPage === totalPages}
+        >
+          <ChevronRight className='h-4 w-4' />
+        </Button>
+      </div>
+    )
   }
 
   const displayBrands = showAllBrands ? brands : brands.slice(0, 8)
@@ -504,12 +599,12 @@ export default function ProductListPage() {
             )}
 
             {/* Product Grid */}
-            <div className='bg-white rounded-xl border border-border/50 p-4 sm:p-6 shadow-sm min-h-[500px]'>
+            <div className='bg-white rounded-xl border border-border/50 p-4 sm:p-6 shadow-sm min-h-[500px] flex flex-col justify-between'>
               <div className='grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4'>
                 {isLoading ? (
-                  Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
-                ) : products.length > 0 ? (
-                  products.map((p) => <ProductCard key={p.id} product={p} />)
+                  Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => <ProductSkeleton key={i} />)
+                ) : currentProducts.length > 0 ? (
+                  currentProducts.map((p) => <ProductCard key={p.id} product={p} />)
                 ) : (
                   <div className='col-span-full py-20 flex flex-col items-center justify-center text-center'>
                     <img
@@ -534,6 +629,9 @@ export default function ProductListPage() {
                   </div>
                 )}
               </div>
+
+              {/* KHU VỰC PHÂN TRANG */}
+              {!isLoading && products.length > 0 && renderPagination()}
             </div>
           </div>
         </div>

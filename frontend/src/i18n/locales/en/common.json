@@ -211,6 +211,7 @@
       "category": "Category:",
       "brand": "Brand:",
       "tag": "Need:",
+      "keyword": "Keyword:",
       "price": "Price:",
       "priceFromTo": "From {{min}} - {{max}}",
       "priceAbove": "Above {{min}}",

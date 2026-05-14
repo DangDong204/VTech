@@ -326,8 +326,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, BigDecimal minPrice, BigDecimal maxPrice, String sort) {
-        List<ProductEntity> products = productRepository.searchClientProducts(categorySlug, brandSlug, tagId, minPrice, maxPrice);
+    public List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, String keyword, BigDecimal minPrice, BigDecimal maxPrice, String sort) {
+        List<ProductEntity> products = productRepository.searchClientProducts(categorySlug, brandSlug, tagId, keyword, minPrice, maxPrice);
 
         List<ClientProductResponse> responseList = products.stream()
                 .map(productMapper::toClientResponse)
