@@ -145,7 +145,7 @@ export default function ProfileLayout() {
                 className='flex items-center gap-3 px-4 py-2.5 rounded-lg text-[15px] font-medium text-red-600 hover:bg-red-50 transition-all text-left'
               >
                 <LogOut className='h-5 w-5' strokeWidth={1.5} />
-                {t('profile.logout', 'Đăng xuất')}
+                {t('nav.logout', 'Đăng xuất')}
               </button>
             </nav>
           </div>

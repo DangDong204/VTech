@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ProductCard } from './ProductCard'
 import { Zap, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 function pad(n: number) {
   return Number.isNaN(n) ? '00' : n.toString().padStart(2, '0')
@@ -37,7 +38,6 @@ function CountdownBox({ value, textColor }: { value: string; textColor: string }
   )
 }
 
-// Hook tính số cột hiển thị theo breakpoint
 function useVisibleCount() {
   const [count, setCount] = useState(6)
   useEffect(() => {
@@ -57,6 +57,7 @@ function useVisibleCount() {
 }
 
 export function FlashSale() {
+  const { t } = useTranslation('common')
   const [now, setNow] = useState(new Date().getTime())
   const [activeTab, setActiveTab] = useState<string | null>(null)
   const [startIndex, setStartIndex] = useState(0)
@@ -67,7 +68,6 @@ export function FlashSale() {
     queryFn: getClientActivePromotionsApi
   })
 
-  // FIX: Dùng derived state thay vì dùng useEffect để set tab mặc định
   const resolvedActiveTab = activeTab ?? (promotions.length > 0 ? promotions[0].id : null)
 
   const { data: products = [], isLoading: isLoadingProducts } = useQuery({
@@ -106,8 +106,9 @@ export function FlashSale() {
         badgeBg: 'bg-emerald-50 border-emerald-100 text-emerald-700',
         badgePing: 'bg-emerald-400',
         badgeDot: 'bg-emerald-500',
-        title: 'CHƯƠNG TRÌNH SẮP TỚI',
-        label: 'Bắt đầu sau:',
+        title: t('flashSale.upcoming', 'CHƯƠNG TRÌNH SẮP TỚI'),
+        label: t('flashSale.startsIn', 'Bắt đầu sau:'),
+        statusText: t('flashSale.statusUpcoming', 'Sắp mở bán'),
         activeTabCls: 'bg-emerald-100 text-emerald-800 border-emerald-200 shadow-md scale-105',
         btnCls: 'bg-emerald-600 hover:bg-emerald-700 text-white'
       }
@@ -118,13 +119,13 @@ export function FlashSale() {
         badgeBg: 'bg-red-50 border-red-100 text-destructive',
         badgePing: 'bg-red-400',
         badgeDot: 'bg-red-500',
-        title: 'KHUYẾN MÃI HOT',
-        label: 'Kết thúc trong:',
+        title: t('flashSale.hotPromo', 'KHUYẾN MÃI HOT'),
+        label: t('flashSale.endsIn', 'Kết thúc trong:'),
+        statusText: t('flashSale.statusOngoing', 'Đang diễn ra'),
         activeTabCls: 'bg-yellow-400 text-red-700 border-yellow-400 shadow-md scale-105',
         btnCls: 'bg-red-700 hover:bg-red-800 text-white'
       }
 
-  // Slider logic
   const totalProducts = products.length
 
   const maxIndex = Math.max(0, totalProducts - visibleCount)
@@ -165,7 +166,7 @@ export function FlashSale() {
                 />
                 <span className={`relative inline-flex rounded-full h-3 w-3 ${theme.badgeDot}`} />
               </span>
-              {isUpcoming ? 'Sắp mở bán' : 'Đang diễn ra'}
+              {theme.statusText}
             </div>
 
             <span className='text-white font-medium mr-1 uppercase text-sm hidden sm:inline'>
@@ -175,7 +176,9 @@ export function FlashSale() {
             {d > 0 && (
               <>
                 <CountdownBox value={pad(d)} textColor={theme.textRed} />
-                <span className='font-bold text-white text-sm mr-1'>Ngày</span>
+                <span className='font-bold text-white text-sm mr-1'>
+                  {t('flashSale.days', 'Ngày')}
+                </span>
               </>
             )}
             <CountdownBox value={pad(h)} textColor={theme.textRed} />
@@ -211,16 +214,13 @@ export function FlashSale() {
         </div>
       </div>
 
-      {/* KHU VỰC SẢN PHẨM */}
       <div className='bg-background mx-2 mb-2 sm:mx-3 sm:mb-3 rounded-xl p-4 sm:p-5'>
-        {/* FIX: Đổi 'group' thành 'group/slider' để cô lập hiệu ứng với ProductCard */}
         <div className='relative group/slider'>
-          {/* NÚT PREV */}
           {!isLoadingProducts && totalProducts > visibleCount && (
             <button
               onClick={handlePrev}
               disabled={!canPrev}
-              aria-label='Sản phẩm trước'
+              aria-label={t('flashSale.prevAria', 'Sản phẩm trước')}
               className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-all duration-300
                 ${canPrev ? `${theme.btnCls} opacity-0 group-hover/slider:opacity-100 hover:scale-110 cursor-pointer` : 'bg-gray-200 text-gray-400 opacity-0 pointer-events-none'}`}
             >
@@ -228,7 +228,6 @@ export function FlashSale() {
             </button>
           )}
 
-          {/* VÙNG CHỨA THANH TRƯỢT */}
           <div className='overflow-hidden px-1 py-2 -mx-1'>
             <div
               className='flex gap-3 transition-transform duration-500 ease-out'
@@ -258,19 +257,18 @@ export function FlashSale() {
                     <Zap className='h-12 w-12 text-slate-300 mb-3' />
                   )}
                   <p className='text-slate-500 font-medium'>
-                    Đang tải dữ liệu sản phẩm của chương trình...
+                    {t('flashSale.emptyProduct', 'Đang tải dữ liệu sản phẩm của chương trình...')}
                   </p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* NÚT NEXT */}
           {!isLoadingProducts && totalProducts > visibleCount && (
             <button
               onClick={handleNext}
               disabled={!canNext}
-              aria-label='Sản phẩm tiếp theo'
+              aria-label={t('flashSale.nextAria', 'Sản phẩm tiếp theo')}
               className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-all duration-300
                 ${canNext ? `${theme.btnCls} opacity-0 group-hover/slider:opacity-100 hover:scale-110 cursor-pointer` : 'bg-gray-200 text-gray-400 opacity-0 pointer-events-none'}`}
             >
@@ -279,7 +277,6 @@ export function FlashSale() {
           )}
         </div>
 
-        {/* CHỈ BÁO VỊ TRÍ (dots) */}
         {!isLoadingProducts && totalProducts > visibleCount && (
           <div className='flex justify-center gap-1.5 mt-2'>
             {Array.from({ length: maxIndex + 1 }).map((_, i) => (

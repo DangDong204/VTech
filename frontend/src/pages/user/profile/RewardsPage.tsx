@@ -13,9 +13,8 @@ import {
   Star
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
-// ĐÃ CẬP NHẬT MỐC ĐIỂM MỚI VÀ HỆ SỐ NHÂN (MULTIPLIER)
 const TIER_CONFIG = {
   MEMBER: {
     label: 'Thành viên',
@@ -27,7 +26,7 @@ const TIER_CONFIG = {
     icon: <Star className='h-5 w-5' />,
     next: 'SILVER',
     max: 1000,
-    multiplier: 'x1.0' // Thêm hệ số
+    multiplier: 'x1.0'
   },
   SILVER: {
     label: 'Bạc',
@@ -39,7 +38,7 @@ const TIER_CONFIG = {
     icon: <Star className='h-5 w-5 fill-current' />,
     next: 'GOLD',
     max: 5000,
-    multiplier: 'x1.1' // Thêm hệ số
+    multiplier: 'x1.1'
   },
   GOLD: {
     label: 'Vàng',
@@ -51,7 +50,7 @@ const TIER_CONFIG = {
     icon: <Crown className='h-5 w-5' />,
     next: 'DIAMOND',
     max: 20000,
-    multiplier: 'x1.25' // Thêm hệ số
+    multiplier: 'x1.25'
   },
   DIAMOND: {
     label: 'Kim Cương',
@@ -63,7 +62,7 @@ const TIER_CONFIG = {
     icon: <Gem className='h-5 w-5' />,
     next: 'MAX',
     max: 20000,
-    multiplier: 'x1.5' // Thêm hệ số
+    multiplier: 'x1.5'
   }
 }
 
@@ -79,26 +78,8 @@ const TRANSACTION_MAP: Record<VpointTransactionType, { label: string; category: 
   DEDUCT_RETURN: { label: 'Thu hồi do trả hàng', category: 'Thu hồi' }
 }
 
-const getTransactionInfo = (type: VpointTransactionType) =>
-  TRANSACTION_MAP[type] || { label: 'Biến động V-Point', category: 'Khác' }
-
-const formatDate = (dateStr: string) => {
-  try {
-    const d = new Date(dateStr)
-    return new Intl.DateTimeFormat('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(d)
-  } catch {
-    return dateStr
-  }
-}
-
 export default function RewardsPage() {
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('profile')
   const navigate = useNavigate()
 
   const { data: user, isLoading: isLoadingUser } = useQuery({
@@ -112,12 +93,43 @@ export default function RewardsPage() {
     enabled: !!user?.id
   })
 
+  // Định dạng số và ngày linh hoạt theo ngôn ngữ
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat(i18n.language === 'en' ? 'en-US' : 'vi-VN').format(num)
+  }
+
+  const formatDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr)
+      return new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-US' : 'vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(d)
+    } catch {
+      return dateStr
+    }
+  }
+
+  // Hàm helper lấy thông tin giao dịch đã translate
+  const getTransactionInfo = (type: VpointTransactionType) => {
+    const fallback = TRANSACTION_MAP[type] || { label: 'Biến động V-Point', category: 'Khác' }
+    return {
+      label: t(`rewards.transactions.${type}.label`, fallback.label),
+      category: t(`rewards.transactions.${type}.category`, fallback.category)
+    }
+  }
+
   if (isLoadingUser) {
     return (
       <div className='flex items-center justify-center p-16'>
         <div className='flex flex-col items-center gap-3'>
           <div className='h-10 w-10 rounded-full border-4 border-red-500 border-t-transparent animate-spin' />
-          <p className='text-sm text-slate-500 font-medium'>Đang tải thông tin...</p>
+          <p className='text-sm text-slate-500 font-medium'>
+            {t('rewards.loading', 'Đang tải thông tin...')}
+          </p>
         </div>
       </div>
     )
@@ -138,13 +150,11 @@ export default function RewardsPage() {
         className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${cfg.cardGradient} p-6 text-white shadow-xl`}
         style={{ minHeight: 200 }}
       >
-        {/* Background patterns */}
         <div className='absolute inset-0 opacity-10'>
           <div className='absolute -right-10 -top-10 h-52 w-52 rounded-full bg-white' />
           <div className='absolute -left-6 -bottom-10 h-36 w-36 rounded-full bg-white' />
           <div className='absolute right-1/3 top-1/2 h-20 w-20 rounded-full bg-white' />
         </div>
-        {/* Dots pattern */}
         <div
           className='absolute inset-0 opacity-5'
           style={{
@@ -154,55 +164,49 @@ export default function RewardsPage() {
         />
 
         <div className='relative z-10'>
-          {/* Top row */}
           <div className='flex items-start justify-between mb-5'>
             <div>
-              <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black uppercase tracking-widest backdrop-blur-sm bg-white/20`}
-              >
+              <span className='inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black uppercase tracking-widest backdrop-blur-sm bg-white/20'>
                 {cfg.icon}
-                {cfg.sublabel}
+                {t(`rewards.tiers.${tier}.sublabel`, cfg.sublabel)}
               </span>
             </div>
             <div className='text-right opacity-80'>
-              <p className='text-xs font-medium'>V-Point Card</p>
-              <p className='text-xs font-mono opacity-60'>
-                ****{' '}
-                {String(user.id || '0000')
-                  .slice(-4)
-                  .padStart(4, '0')}
-              </p>
+              <p className='text-xs font-medium'>{t('rewards.card.title', 'V-Point Card')}</p>
             </div>
           </div>
 
-          {/* Main points display */}
           <div className='mb-5'>
             <p className='text-xs font-medium text-white/60 uppercase tracking-widest mb-1'>
-              Số dư V-Point
+              {t('rewards.card.balance', 'Số dư V-Point')}
             </p>
             <div className='flex items-end gap-2'>
               <span className='text-4xl font-black leading-none tracking-tight'>
-                {new Intl.NumberFormat('vi-VN').format(user.currentVpoint || 0)}
+                {formatNumber(user.currentVpoint || 0)}
               </span>
-              <span className='text-base font-semibold text-white/70 pb-1'>điểm</span>
+              <span className='text-base font-semibold text-white/70 pb-1'>
+                {t('rewards.card.points', 'điểm')}
+              </span>
             </div>
             <p className='text-xs text-white/50 mt-1'>
-              Tổng tích lũy:{' '}
+              {t('rewards.card.totalAccumulated', 'Tổng tích lũy:')}{' '}
               <span className='font-semibold text-white/80'>
-                {new Intl.NumberFormat('vi-VN').format(user.totalVpoint || 0)} điểm
+                {formatNumber(user.totalVpoint || 0)} {t('rewards.card.points', 'điểm')}
               </span>
             </p>
           </div>
 
-          {/* Progress bar */}
           {tier !== 'DIAMOND' && (
             <div>
               <div className='flex justify-between text-xs font-medium text-white/70 mb-2'>
                 <span className='flex items-center gap-1'>
                   <Sparkles className='h-3 w-3 text-yellow-300' />
-                  Tiến trình lên hạng{' '}
+                  {t('rewards.card.progressToNext', 'Tiến trình lên hạng')}{' '}
                   <strong className='text-white'>
-                    {TIER_CONFIG[cfg.next as MemberTier]?.label}
+                    {t(
+                      `rewards.tiers.${cfg.next}.label`,
+                      TIER_CONFIG[cfg.next as MemberTier]?.label
+                    )}
                   </strong>
                 </span>
                 <span>{Math.round(progressPercent)}%</span>
@@ -214,11 +218,11 @@ export default function RewardsPage() {
                 />
               </div>
               <p className='text-xs text-white/60 mt-2'>
-                Cần thêm{' '}
+                {t('rewards.card.needMore', 'Cần thêm')}{' '}
                 <span className='font-bold text-white'>
-                  {new Intl.NumberFormat('vi-VN').format(pointsLeft > 0 ? pointsLeft : 0)}
+                  {formatNumber(pointsLeft > 0 ? pointsLeft : 0)}
                 </span>{' '}
-                điểm để thăng hạng
+                {t('rewards.card.toUpgrade', 'điểm để thăng hạng')}
               </p>
             </div>
           )}
@@ -226,7 +230,7 @@ export default function RewardsPage() {
           {tier === 'DIAMOND' && (
             <div className='flex items-center gap-2 text-sm font-semibold text-yellow-300'>
               <Crown className='h-4 w-4 fill-yellow-300' />
-              Bạn đang ở hạng cao nhất — Chúc mừng!
+              {t('rewards.card.maxTier', 'Bạn đang ở hạng cao nhất — Chúc mừng!')}
             </div>
           )}
         </div>
@@ -236,9 +240,14 @@ export default function RewardsPage() {
       <div className='bg-blue-50 border border-blue-100 text-blue-700 px-4 py-3 rounded-xl text-sm flex items-start gap-3 shadow-sm'>
         <Sparkles className='w-5 h-5 shrink-0 mt-0.5 text-blue-500' />
         <div>
-          <strong>Quy tắc nhân điểm:</strong> Điểm cơ bản được tính là{' '}
-          <span className='font-bold text-red-600'>10.000đ = 1 điểm</span>. Điểm thực nhận của bạn
-          sẽ được nhân với <strong>Hệ số hạng</strong> tương ứng bên dưới!
+          <strong>{t('rewards.rule.title', 'Quy tắc nhân điểm:')}</strong>{' '}
+          {t('rewards.rule.desc1', 'Điểm cơ bản được tính là')}{' '}
+          <span className='font-bold text-red-600'>
+            {t('rewards.rule.desc2', '10.000đ = 1 điểm')}
+          </span>
+          {t('rewards.rule.desc3', '. Điểm thực nhận của bạn sẽ được nhân với')}{' '}
+          <strong>{t('rewards.rule.desc4', 'Hệ số hạng')}</strong>{' '}
+          {t('rewards.rule.desc5', 'tương ứng bên dưới!')}
         </div>
       </div>
 
@@ -264,7 +273,7 @@ export default function RewardsPage() {
                 {isCurrent && (
                   <div className='absolute -top-2.5 left-1/2 -translate-x-1/2 z-10'>
                     <span className='bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-sm'>
-                      Hiện tại
+                      {t('rewards.tierCard.current', 'Hiện tại')}
                     </span>
                   </div>
                 )}
@@ -277,8 +286,6 @@ export default function RewardsPage() {
                   >
                     <span className={isCurrent ? 'text-white' : 'text-slate-500'}>{val.icon}</span>
                   </div>
-
-                  {/* BỔ SUNG: HIỂN THỊ HỆ SỐ TÍCH ĐIỂM Ở GÓC PHẢI THẺ */}
                   <span
                     className={`text-lg font-extrabold ${isCurrent ? 'text-white' : 'text-red-500'}`}
                   >
@@ -289,12 +296,13 @@ export default function RewardsPage() {
                 <p
                   className={`text-xs font-bold text-left ${isCurrent ? 'text-white' : 'text-slate-700'}`}
                 >
-                  {val.label}
+                  {t(`rewards.tiers.${key}.label`, val.label)}
                 </p>
                 <p
                   className={`text-[10px] text-left mt-0.5 ${isCurrent ? 'text-white/70' : 'text-slate-400'}`}
                 >
-                  Yêu cầu: {new Intl.NumberFormat('vi-VN').format(val.max)} điểm
+                  {t('rewards.tierCard.requirement', 'Yêu cầu:')} {formatNumber(val.max)}{' '}
+                  {t('rewards.tierCard.points', 'điểm')}
                 </p>
               </div>
             )
@@ -306,11 +314,13 @@ export default function RewardsPage() {
         <div className='px-6 py-4 border-b border-slate-50 flex items-center justify-between'>
           <div className='flex items-center gap-2'>
             <div className='h-1 w-4 rounded-full bg-red-500' />
-            <h2 className='text-base font-bold text-slate-800'>Lịch sử giao dịch V-Point</h2>
+            <h2 className='text-base font-bold text-slate-800'>
+              {t('rewards.history.title', 'Lịch sử giao dịch V-Point')}
+            </h2>
           </div>
           {histories.length > 0 && (
             <span className='text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full'>
-              {histories.length} giao dịch
+              {histories.length} {t('rewards.history.transactions', 'giao dịch')}
             </span>
           )}
         </div>
@@ -323,7 +333,7 @@ export default function RewardsPage() {
           <div className='divide-y divide-slate-50'>
             {histories.map((item, i) => {
               const isEarn = item.amount > 0
-              const info = getTransactionInfo(item.transactionType as VpointTransactionType) // Sửa lỗi Type TypeScript
+              const info = getTransactionInfo(item.transactionType as VpointTransactionType)
               return (
                 <div
                   key={item.id}
@@ -362,9 +372,11 @@ export default function RewardsPage() {
                       }`}
                     >
                       {isEarn ? '+' : ''}
-                      {new Intl.NumberFormat('vi-VN').format(item.amount)}
+                      {formatNumber(item.amount)}
                     </span>
-                    <p className='text-xs text-slate-400 font-medium'>điểm</p>
+                    <p className='text-xs text-slate-400 font-medium'>
+                      {t('rewards.history.points', 'điểm')}
+                    </p>
                   </div>
                 </div>
               )
@@ -375,16 +387,21 @@ export default function RewardsPage() {
             <div className='h-20 w-20 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 shadow-inner'>
               <Gift className='h-10 w-10 text-slate-300' />
             </div>
-            <p className='text-base font-bold text-slate-700 mb-1'>Chưa có lịch sử tích điểm</p>
+            <p className='text-base font-bold text-slate-700 mb-1'>
+              {t('rewards.history.empty.title', 'Chưa có lịch sử tích điểm')}
+            </p>
             <p className='text-sm text-slate-400 max-w-xs leading-relaxed'>
-              Mua sắm và đánh giá sản phẩm để tích lũy V-Point và nhận nhiều ưu đãi hấp dẫn!
+              {t(
+                'rewards.history.empty.desc',
+                'Mua sắm và đánh giá sản phẩm để tích lũy V-Point và nhận nhiều ưu đãi hấp dẫn!'
+              )}
             </p>
             <button
-              onClick={() => navigate('/products')} // Gắn link để điều hướng đi mua sắm
+              onClick={() => navigate('/products')}
               className='mt-5 inline-flex items-center gap-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold px-5 py-2.5 transition-colors shadow-sm shadow-red-200'
             >
               <ShieldAlert className='h-4 w-4' />
-              Khám phá ưu đãi
+              {t('rewards.history.empty.btn', 'Khám phá ưu đãi')}
             </button>
           </div>
         )}

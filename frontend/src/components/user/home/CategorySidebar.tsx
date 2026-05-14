@@ -34,7 +34,7 @@ export function CategorySidebar() {
                   <img
                     src={cat.thumbnailUrl}
                     alt={cat.categoryName}
-                    className='h-5 w-5 rounded-full object-contain opacity-80 group-hover:opacity-100 transition-opacity'
+                    className='h-8 w-8 rounded-full object-contain opacity-80 group-hover:opacity-100 transition-opacity'
                   />
                 ) : (
                   <LayoutGrid className='h-4 w-4 text-slate-400 group-hover:text-red-600' />

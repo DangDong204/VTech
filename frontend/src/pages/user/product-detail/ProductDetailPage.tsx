@@ -24,6 +24,7 @@ import { getClientProductDetailApi } from '@/services/product/client-product.api
 import type { ClientProductDetailResponse } from '@/services/product/client-product.type'
 
 function formatVnd(n: number) {
+  // Cố định format tiền tệ Việt Nam
   return new Intl.NumberFormat('vi-VN').format(n) + '₫'
 }
 
@@ -61,7 +62,7 @@ export default function ProductDetailPage() {
         }
       } catch {
         if (isMounted) {
-          setError('Không tìm thấy sản phẩm hoặc đã xảy ra lỗi.')
+          setError(t('productDetail.fetchError', 'Không tìm thấy sản phẩm hoặc đã xảy ra lỗi.'))
         }
       } finally {
         if (isMounted) setLoading(false)
@@ -73,7 +74,7 @@ export default function ProductDetailPage() {
     return () => {
       isMounted = false
     }
-  }, [slug])
+  }, [slug, t])
 
   // ---------- Tính giá theo biến thể đang chọn ----------
   const currentVariant = useMemo(() => {
@@ -90,7 +91,7 @@ export default function ProductDetailPage() {
     if (!product || !currentVariant) return
     // Token sẽ được axios interceptor tự động đính kèm
     if (!localStorage.getItem('access_token')) {
-      toast.error('Vui lòng đăng nhập để mua hàng!')
+      toast.error(t('productDetail.loginRequired', 'Vui lòng đăng nhập để mua hàng!'))
       navigate('/login')
       return
     }
@@ -125,9 +126,11 @@ export default function ProductDetailPage() {
   if (error || !product) {
     return (
       <div className='flex flex-col items-center justify-center min-h-[60vh] gap-4'>
-        <p className='text-muted-foreground text-lg'>{error ?? 'Sản phẩm không tồn tại.'}</p>
+        <p className='text-muted-foreground text-lg'>
+          {error ?? t('productDetail.productNotFound', 'Sản phẩm không tồn tại.')}
+        </p>
         <Link to='/' className='text-primary underline'>
-          Quay về trang chủ
+          {t('productDetail.backToHome', 'Quay về trang chủ')}
         </Link>
       </div>
     )
@@ -148,7 +151,7 @@ export default function ProductDetailPage() {
         >
           <Link to='/' className='hover:text-primary flex items-center gap-1 transition-colors'>
             <Home className='h-4 w-4' />
-            <span className='hidden sm:inline'>{t('nav.home')}</span>
+            <span className='hidden sm:inline'>{t('nav.home', 'Trang chủ')}</span>
           </Link>
           <ChevronRight className='h-4 w-4 mx-1.5 shrink-0' />
           <Link to='/products' className='hover:text-primary transition-colors whitespace-nowrap'>
@@ -174,12 +177,12 @@ export default function ProductDetailPage() {
                   {product.name} {selectedVersion && <span>{selectedVersion}</span>}
                 </h1>
 
-                {/* ĐÃ CẬP NHẬT: THÊM ĐIỂM TB VÀ SỰ KIỆN CLICK CUỘN TRANG */}
+                {/* ĐIỂM TB VÀ SỰ KIỆN CLICK CUỘN TRANG */}
                 <div className='flex items-center gap-3 text-sm'>
                   <div
                     className='flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity'
                     onClick={scrollToReviews}
-                    title='Bấm để xem đánh giá chi tiết'
+                    title={t('productDetail.clickToReview', 'Bấm để xem đánh giá chi tiết')}
                   >
                     <span className='font-bold text-base text-amber-500 mt-0.5'>
                       {product.rating > 0 ? product.rating.toFixed(1) : 0}
@@ -197,7 +200,7 @@ export default function ProductDetailPage() {
                     onClick={scrollToReviews}
                     className='text-blue-600 hover:underline cursor-pointer font-medium'
                   >
-                    {t('productDetail.reviews', { count: product.reviews })} đánh giá
+                    {t('productDetail.reviews', { count: product.reviews })}
                   </span>
                 </div>
               </div>
@@ -241,23 +244,31 @@ export default function ProductDetailPage() {
                 <div className='bg-red-50 px-4 py-2 border-b border-red-200 flex items-center gap-2'>
                   <Gift className='h-5 w-5 text-red-600' />
                   <span className='font-bold text-red-600 uppercase text-sm'>
-                    Khuyến mãi - Ưu đãi
+                    {t('productDetail.promoTitle', 'Khuyến mãi - Ưu đãi')}
                   </span>
                 </div>
                 <div className='p-4 text-sm flex flex-col gap-3'>
                   <div className='flex items-start gap-2'>
                     <Check className='h-4 w-4 text-green-500 mt-0.5 shrink-0' />
                     <span>
-                      Giảm thêm <strong>500.000đ</strong> khi thanh toán qua thẻ tín dụng VNPAY
+                      {/* Dùng dangerouslySetInnerHTML nếu bạn muốn render thẻ <strong> từ chuỗi tĩnh, hoặc để vậy */}
+                      {t(
+                        'productDetail.promo1',
+                        'Giảm thêm 500.000đ khi thanh toán qua thẻ tín dụng VNPAY'
+                      )}
                     </span>
                   </div>
                   <div className='flex items-start gap-2'>
                     <Check className='h-4 w-4 text-green-500 mt-0.5 shrink-0' />
-                    <span>Tặng Balo Laptop VTech cao cấp trị giá 300.000đ</span>
+                    <span>
+                      {t('productDetail.promo2', 'Tặng Balo Laptop VTech cao cấp trị giá 300.000đ')}
+                    </span>
                   </div>
                   <div className='flex items-start gap-2'>
                     <Check className='h-4 w-4 text-green-500 mt-0.5 shrink-0' />
-                    <span>Cơ hội trúng giải đặc biệt cuối tháng</span>
+                    <span>
+                      {t('productDetail.promo3', 'Cơ hội trúng giải đặc biệt cuối tháng')}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -267,8 +278,12 @@ export default function ProductDetailPage() {
                   onClick={() => handleBuyNow(1)}
                   className='w-full bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg py-3.5 flex flex-col items-center justify-center transition-all shadow-md active:scale-[0.98]'
                 >
-                  <span className='text-lg font-bold uppercase'>Mua ngay</span>
-                  <span className='text-xs font-medium'>Giao hàng miễn phí hoặc nhận tại shop</span>
+                  <span className='text-lg font-bold uppercase'>
+                    {t('productDetail.buyNow', 'Mua ngay')}
+                  </span>
+                  <span className='text-xs font-medium'>
+                    {t('productDetail.buyNowSub', 'Giao hàng miễn phí hoặc nhận tại shop')}
+                  </span>
                 </button>
 
                 <div className='flex gap-2.5'>
@@ -276,10 +291,14 @@ export default function ProductDetailPage() {
                     onClick={() => handleAddToCart(1)}
                     className='flex-1 border-2 border-blue-600 bg-white hover:bg-blue-50 text-blue-600 rounded-lg py-2 flex flex-col items-center justify-center transition-all active:scale-[0.98]'
                   >
-                    <span className='font-bold text-sm'>THÊM GIỎ HÀNG</span>
+                    <span className='font-bold text-sm uppercase'>
+                      {t('productDetail.addCart', 'THÊM GIỎ HÀNG')}
+                    </span>
                   </button>
                   <button className='flex-1 border-2 border-blue-600 bg-white hover:bg-blue-50 text-blue-600 rounded-lg py-2 flex flex-col items-center justify-center transition-all active:scale-[0.98]'>
-                    <span className='font-bold text-sm'>TRẢ GÓP 0%</span>
+                    <span className='font-bold text-sm uppercase'>
+                      {t('productDetail.installment', 'TRẢ GÓP 0%')}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -288,19 +307,15 @@ export default function ProductDetailPage() {
               <div className='bg-slate-50 rounded-lg p-4 mt-6 text-sm flex flex-col gap-3 border border-border/60'>
                 <div className='flex items-start gap-3'>
                   <ShieldCheck className='h-5 w-5 text-green-600 shrink-0' />
-                  <span>
-                    {t('productDetail.warranty')} chính hãng 12 tháng tại trung tâm uỷ quyền.
-                  </span>
+                  <span>{t('productDetail.warranty', 'Bảo hành chính hãng 12 tháng')}</span>
                 </div>
                 <div className='flex items-start gap-3'>
                   <Truck className='h-5 w-5 text-blue-600 shrink-0' />
-                  <span>
-                    {t('productDetail.exchange')} miễn phí 30 ngày nếu có lỗi từ nhà sản xuất.
-                  </span>
+                  <span>{t('productDetail.exchange', '1 đổi 1 trong 30 ngày')}</span>
                 </div>
                 <div className='flex items-start gap-3'>
                   <Headset className='h-5 w-5 text-purple-600 shrink-0' />
-                  <span>Kỹ thuật viên hỗ trợ trực tuyến, giải đáp mọi thắc mắc về sản phẩm.</span>
+                  <span>{t('productDetail.support', 'Hỗ trợ kỹ thuật 24/7')}</span>
                 </div>
               </div>
             </div>
@@ -312,12 +327,12 @@ export default function ProductDetailPage() {
           <div className='lg:col-span-8 space-y-6'>
             <div className='bg-white rounded-xl shadow-sm border border-border/50 p-4 sm:p-6'>
               <h2 className='text-xl font-bold mb-4 pb-2 border-b border-border/50'>
-                Đặc điểm nổi bật
+                {t('productDetail.features', 'Đặc điểm nổi bật')}
               </h2>
               <ProductDescription content={product.description} />
             </div>
 
-            {/* ĐÃ CẬP NHẬT: Bổ sung ID 'reviews-section' để neo (anchor) khi người dùng click */}
+            {/* NEOS ĐÁNH GIÁ (Anchor) */}
             <div
               id='reviews-section'
               className='bg-white rounded-xl shadow-sm border border-border/50 p-4 sm:p-6'
@@ -330,7 +345,7 @@ export default function ProductDetailPage() {
           <div className='lg:col-span-4'>
             <div className='sticky top-24 bg-white rounded-xl shadow-sm border border-border/50 p-4 sm:p-6'>
               <h2 className='text-xl font-bold mb-4 pb-2 border-b border-border/50'>
-                Thông số kỹ thuật
+                {t('productDetail.specs', 'Thông số kỹ thuật')}
               </h2>
               <SpecsTable specs={product.specs} />
             </div>

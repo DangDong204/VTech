@@ -37,6 +37,7 @@ function CartItemRow({
   isSelected: boolean
   onToggle: (id: string, checked: boolean) => void
 }) {
+  const { t } = useTranslation('common')
   const { updateQuantity, removeItem } = useCart()
   const stock = item.stockQuantity ?? 999
   const isOutOfStock = item.quantity >= stock
@@ -44,7 +45,7 @@ function CartItemRow({
   const handleUpdateQuantity = (newQty: number) => {
     if (newQty < 1) return
     if (newQty > stock) {
-      toast.error(`Sản phẩm này chỉ còn ${stock} cái trong kho.`)
+      toast.error(t('cart.stockLimit', { stock }))
       updateQuantity(item.id, stock)
       return
     }
@@ -79,7 +80,7 @@ function CartItemRow({
             {item.productName} {item.versionName}
           </h3>
           <div className='flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5 min-w-0'>
-            <span className='shrink-0'>Màu:</span>
+            <span className='shrink-0'>{t('cart.color')}</span>
             <span
               className='w-3 h-3 rounded-full border border-slate-200 shadow-sm shrink-0'
               style={{ backgroundColor: item.colorHex || '#ccc' }}
@@ -113,7 +114,9 @@ function CartItemRow({
       </div>
       <div className='w-full sm:w-[130px] shrink-0 flex flex-col items-center justify-center mt-2 sm:mt-0'>
         <div className='w-full flex justify-between sm:justify-center items-center'>
-          <span className='text-sm font-medium text-slate-700 sm:hidden ml-8'>Số lượng:</span>
+          <span className='text-sm font-medium text-slate-700 sm:hidden ml-8'>
+            {t('cart.quantity')}
+          </span>
           <div className='flex items-center h-8 border border-slate-300 rounded overflow-hidden bg-white'>
             <button
               className='h-full w-8 flex items-center justify-center text-slate-600 bg-slate-50 hover:bg-slate-100 disabled:opacity-50 transition-colors'
@@ -201,28 +204,23 @@ export default function CartPage() {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        // GỌI SONG SONG 2 API: Lấy mã Public hệ thống & Lấy mã Private trong ví
         const [publicData, walletData] = await Promise.all([getAllVoucherApi(), getMyVouchersApi()])
 
-        // Lọc các mã Public (Không yêu cầu điểm) và đang ACTIVE
         const publicVouchers = publicData.filter(
           (v) =>
             (v.status === 'ACTIVE' || !v.status) && (!v.requiredPoints || v.requiredPoints === 0)
         )
 
-        // Gộp 2 mảng lại với nhau
         const allAvailable = [...publicVouchers, ...walletData]
-
-        // Loại bỏ trùng lặp (Phòng trường hợp Backend trả về lỗi data)
         const uniqueVouchers = Array.from(new Map(allAvailable.map((v) => [v.id, v])).values())
 
         setAvailableVouchers(uniqueVouchers)
       } catch {
-        toast.error('Không thể tải danh sách voucher')
+        toast.error(t('cart.messages.fetchVoucherError'))
       }
     }
     fetchVouchers()
-  }, [])
+  }, [t])
 
   useEffect(() => {
     const repurchaseVariantIds = location.state?.repurchaseVariantIds
@@ -250,7 +248,7 @@ export default function CartPage() {
   useEffect(() => {
     if (appliedVouchers.length > 0) {
       setAppliedVouchers([])
-      toast.info('Giỏ hàng đã thay đổi, vui lòng áp dụng lại mã giảm giá.')
+      toast.info(t('cart.cartChanged'))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSubtotal])
@@ -273,17 +271,17 @@ export default function CartPage() {
       : setSelectedItemIds((p) => p.filter((i) => i !== id))
 
   const handleClearCart = async () => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ giỏ hàng không?')) {
+    if (window.confirm(t('cart.clearConfirm'))) {
       await clear()
       setSelectedItemIds([])
-      toast.success('Đã xóa toàn bộ giỏ hàng')
+      toast.success(t('cart.clearSuccess'))
     }
   }
 
   // MỞ MODAL & COPY STATE
   const openVoucherModal = () => {
     if (selectedItemIds.length === 0) {
-      toast.warning('Vui lòng chọn ít nhất 1 sản phẩm trước khi áp dụng mã.')
+      toast.warning(t('cart.messages.selectOneVoucher'))
       return
     }
     setSelectedVouchersInModal(appliedVouchers.map((v) => ({ code: v.code, type: v.type })))
@@ -293,11 +291,9 @@ export default function CartPage() {
   // TOGGLE VOUCHER TRONG MODAL
   const toggleVoucher = (code: string, type: string) => {
     setSelectedVouchersInModal((prev) => {
-      // Nếu đã có -> bỏ chọn
       if (prev.some((v) => v.code === code)) {
         return prev.filter((v) => v.code !== code)
       }
-      // Nếu chưa có -> thêm vào, đồng thời ghi đè mã cùng loại
       const isFreeShip = type === 'FREE_SHIP'
       const filtered = prev.filter((v) => (v.type === 'FREE_SHIP') !== isFreeShip)
       return [...filtered, { code, type }]
@@ -327,9 +323,9 @@ export default function CartPage() {
       )
 
       setIsVoucherModalOpen(false)
-      if (results.length > 0) toast.success('Đã áp dụng mã ưu đãi thành công!')
+      if (results.length > 0) toast.success(t('cart.messages.applyVoucherSuccess'))
     } catch {
-      toast.error('Một số mã không hợp lệ hoặc đã hết hạn!')
+      toast.error(t('cart.messages.applyVoucherError'))
     } finally {
       setIsCheckingVoucher(false)
     }
@@ -346,7 +342,6 @@ export default function CartPage() {
         shippingFee: shippingFee
       })
 
-      // Nếu là mã ẩn chưa có trong list, thêm giả vào list để hiển thị
       setAvailableVouchers((prev) => {
         if (!prev.find((v) => v.voucherCode === data.voucherCode)) {
           return [
@@ -367,9 +362,9 @@ export default function CartPage() {
 
       toggleVoucher(data.voucherCode, data.type)
       setVoucherInput('')
-      toast.success('Đã tìm thấy và chọn mã ưu đãi!')
+      toast.success(t('cart.messages.findVoucherSuccess'))
     } catch {
-      toast.error('Mã ưu đãi không hợp lệ.')
+      toast.error(t('cart.messages.findVoucherError'))
     } finally {
       setIsCheckingVoucher(false)
     }
@@ -381,7 +376,7 @@ export default function CartPage() {
 
   const handleCheckout = () => {
     if (selectedItemIds.length === 0) {
-      toast.warning('Vui lòng chọn sản phẩm để thanh toán!')
+      toast.warning(t('cart.selectRequired'))
       return
     }
     const selectedItemsToCheckout = items.filter((item) => selectedItemIds.includes(item.id))
@@ -426,7 +421,9 @@ export default function CartPage() {
                   className={`w-24 shrink-0 flex flex-col items-center justify-center p-2 text-white border-r border-dashed border-white/40 ${bgClass}`}
                 >
                   <span className='text-[10px] font-medium uppercase mb-1 text-center leading-tight'>
-                    {v.type === 'FREE_SHIP' ? 'Vận chuyển' : 'Giảm giá'}
+                    {v.type === 'FREE_SHIP'
+                      ? t('cart.modal.shippingType')
+                      : t('cart.modal.discountType')}
                   </span>
                   <span className='text-lg font-extrabold text-center leading-tight'>
                     {v.type === 'PERCENTAGE' ? `${v.discountValue}%` : formatVnd(v.discountValue)}
@@ -438,16 +435,18 @@ export default function CartPage() {
                     {v.voucherName}
                   </h5>
                   <p className='text-xs text-slate-500 mb-2'>
-                    Đơn tối thiểu {formatVnd(v.minOrderValue)}
+                    {t('cart.modal.minOrder')} {formatVnd(v.minOrderValue)}
                   </p>
 
                   {v.usageLimit ? (
                     <div className='mb-2'>
                       <div className='flex justify-between items-center text-[10px] font-medium text-slate-500 mb-1'>
                         <span>
-                          Đã dùng {v.usedCount || 0}/{v.usageLimit}
+                          {t('cart.modal.used')} {v.usedCount || 0}/{v.usageLimit}
                         </span>
-                        {isOutOfUsage && <span className='text-red-500'>Hết mã</span>}
+                        {isOutOfUsage && (
+                          <span className='text-red-500'>{t('cart.modal.outOfStock')}</span>
+                        )}
                       </div>
                       <div className='w-full h-1.5 bg-slate-200 rounded-full overflow-hidden'>
                         <div
@@ -458,7 +457,7 @@ export default function CartPage() {
                     </div>
                   ) : (
                     <div className='mb-2 text-[10px] text-slate-500 font-medium'>
-                      Số lượng: Không giới hạn
+                      {t('cart.modal.unlimited')}
                     </div>
                   )}
 
@@ -467,7 +466,6 @@ export default function CartPage() {
                       {v.voucherCode}
                     </span>
 
-                    {/* CUSTOM RADIO/CHECKBOX */}
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-red-600 bg-red-600' : 'border-slate-300 bg-white'}`}
                     >
@@ -509,12 +507,18 @@ export default function CartPage() {
                     onCheckedChange={handleToggleSelectAll}
                     className='data-[state=checked]:bg-red-600 h-5 w-5 rounded'
                   />
-                  <span className='ml-3'>Chọn tất cả</span>
+                  <span className='ml-3'>{t('cart.selectAll')}</span>
                 </div>
                 <div className='hidden sm:block flex-1'></div>
-                <div className='hidden sm:block w-[120px] text-right'>Đơn giá</div>
-                <div className='hidden sm:block w-[130px] text-center'>Số lượng</div>
-                <div className='hidden sm:block w-[130px] text-right'>Thành tiền</div>
+                <div className='hidden sm:block w-[120px] text-right'>
+                  {t('cart.headers.price')}
+                </div>
+                <div className='hidden sm:block w-[130px] text-center'>
+                  {t('cart.headers.quantity')}
+                </div>
+                <div className='hidden sm:block w-[130px] text-right'>
+                  {t('cart.headers.total')}
+                </div>
                 <div className='flex-1 sm:flex-none sm:w-[40px] flex justify-end'>
                   <Button
                     variant='ghost'
@@ -548,13 +552,13 @@ export default function CartPage() {
                   <div className='space-y-3'>
                     <div className='flex items-center justify-between'>
                       <label className='text-sm font-medium text-slate-700 flex items-center gap-1.5'>
-                        <Tag className='h-4 w-4 text-red-500' /> Khuyến mãi
+                        <Tag className='h-4 w-4 text-red-500' /> {t('cart.promotions')}
                       </label>
                       <button
                         onClick={openVoucherModal}
                         className='text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors'
                       >
-                        Chọn hoặc nhập mã
+                        {t('cart.selectOrEnterCode')}
                       </button>
                     </div>
                     {appliedVouchers.length > 0 && (
@@ -567,7 +571,10 @@ export default function CartPage() {
                             <div className='flex flex-col'>
                               <span className='font-bold uppercase'>{v.code}</span>
                               <span className='text-[11px] opacity-80'>
-                                Giảm {v.type === 'FREE_SHIP' ? 'phí vận chuyển' : 'tiền hàng'}
+                                Giảm{' '}
+                                {v.type === 'FREE_SHIP'
+                                  ? t('cart.discountOffShipping')
+                                  : t('cart.discountOffProduct')}
                               </span>
                             </div>
                             <button
@@ -592,18 +599,18 @@ export default function CartPage() {
                       </span>
                     </div>
                     <div className='flex justify-between'>
-                      <span className='text-slate-500 font-medium'>Phí vận chuyển</span>
+                      <span className='text-slate-500 font-medium'>{t('cart.shippingFee')}</span>
                       <span className='font-bold text-slate-800'>{formatVnd(shippingFee)}</span>
                     </div>
                     {productDiscount > 0 && (
                       <div className='flex justify-between text-red-600'>
-                        <span className='font-medium'>Giảm giá sản phẩm</span>
+                        <span className='font-medium'>{t('cart.productDiscount')}</span>
                         <span className='font-bold'>-{formatVnd(productDiscount)}</span>
                       </div>
                     )}
                     {shippingDiscount > 0 && (
                       <div className='flex justify-between text-emerald-600'>
-                        <span className='font-medium'>Giảm giá vận chuyển</span>
+                        <span className='font-medium'>{t('cart.shippingDiscount')}</span>
                         <span className='font-bold'>-{formatVnd(shippingDiscount)}</span>
                       </div>
                     )}
@@ -640,9 +647,8 @@ export default function CartPage() {
       {isVoucherModalOpen && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity duration-300'>
           <div className='bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]'>
-            {/* Header */}
             <div className='flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 shrink-0'>
-              <h3 className='font-bold text-lg text-slate-800'>Chọn Voucher của VTech</h3>
+              <h3 className='font-bold text-lg text-slate-800'>{t('cart.modal.title')}</h3>
               <button
                 onClick={() => setIsVoucherModalOpen(false)}
                 className='p-1.5 hover:bg-slate-200 rounded-full text-slate-500 transition-colors'
@@ -651,13 +657,12 @@ export default function CartPage() {
               </button>
             </div>
 
-            {/* Body */}
             <div className='p-4 sm:p-5 flex-1 overflow-y-auto bg-slate-50 scrollbar-thin'>
               <div className='flex gap-2 mb-6'>
                 <Input
                   value={voucherInput}
                   onChange={(e) => setVoucherInput(e.target.value)}
-                  placeholder='Mã voucher (nếu có)'
+                  placeholder={t('cart.modal.inputPlaceholder')}
                   className='uppercase h-11 border-slate-300 focus-visible:ring-red-500'
                 />
                 <Button
@@ -665,26 +670,26 @@ export default function CartPage() {
                   disabled={isCheckingVoucher || !voucherInput.trim()}
                   className='h-11 bg-slate-800 hover:bg-slate-900 w-24 font-bold'
                 >
-                  Tìm mã
+                  {t('cart.modal.findCode')}
                 </Button>
               </div>
 
               {availableVouchers.length === 0 ? (
                 <div className='text-center py-6 text-slate-500 text-sm'>
-                  Hiện tại chưa có mã giảm giá nào.
+                  {t('cart.modal.noVouchers')}
                 </div>
               ) : (
                 <>
                   {renderVoucherGroup(
                     shippingVouchers,
-                    'Mã Miễn Phí Vận Chuyển',
+                    t('cart.modal.shippingVouchers'),
                     Truck,
                     'text-emerald-600',
                     'bg-emerald-500'
                   )}
                   {renderVoucherGroup(
                     discountVouchers,
-                    'Mã Giảm Giá Sản Phẩm',
+                    t('cart.modal.discountVouchers'),
                     Ticket,
                     'text-red-600',
                     'bg-red-500'
@@ -693,10 +698,9 @@ export default function CartPage() {
               )}
             </div>
 
-            {/* Footer */}
             <div className='p-4 border-t border-slate-100 bg-white flex justify-between items-center shrink-0'>
               <div className='text-sm text-slate-600'>
-                Đã chọn:{' '}
+                {t('cart.modal.selected')}{' '}
                 <span className='font-bold text-red-600'>{selectedVouchersInModal.length}/2</span>
               </div>
               <div className='flex gap-3'>
@@ -705,14 +709,14 @@ export default function CartPage() {
                   className='font-semibold'
                   onClick={() => setIsVoucherModalOpen(false)}
                 >
-                  Hủy
+                  {t('cart.modal.cancel')}
                 </Button>
                 <Button
                   onClick={handleConfirmVouchers}
                   disabled={isCheckingVoucher}
                   className='bg-red-600 hover:bg-red-700 font-bold px-6'
                 >
-                  Xác nhận
+                  {t('cart.modal.confirm')}
                 </Button>
               </div>
             </div>

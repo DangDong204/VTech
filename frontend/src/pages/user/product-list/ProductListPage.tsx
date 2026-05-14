@@ -1,5 +1,5 @@
 import { useFetchData } from '@/hooks/useFetchData'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ProductSkeleton } from '@/components/common/ProductSkeleton'
 import { Button } from '@/components/ui/button'
@@ -29,16 +29,8 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-const PRICE_RANGES = [
-  { label: 'Dưới 2 triệu', min: 0, max: 2000000 },
-  { label: 'Từ 2 - 4 triệu', min: 2000000, max: 4000000 },
-  { label: 'Từ 4 - 7 triệu', min: 4000000, max: 7000000 },
-  { label: 'Từ 7 - 13 triệu', min: 7000000, max: 13000000 },
-  { label: 'Từ 13 - 20 triệu', min: 13000000, max: 20000000 },
-  { label: 'Trên 20 triệu', min: 20000000, max: null }
-]
-
 function formatVnd(n: number) {
+  // LUÔN LUÔN CỐ ĐỊNH FORMAT TIỀN TỆ VIỆT NAM (yêu cầu của người dùng)
   return new Intl.NumberFormat('vi-VN').format(n) + '₫'
 }
 
@@ -46,14 +38,39 @@ export default function ProductListPage() {
   const { t } = useTranslation('common')
   const [searchParams, setSearchParams] = useSearchParams()
 
+  const PRICE_RANGES = useMemo(
+    () => [
+      { label: t('productList.priceRanges.under2m', 'Dưới 2 triệu'), min: 0, max: 2000000 },
+      {
+        label: t('productList.priceRanges.from2to4m', 'Từ 2 - 4 triệu'),
+        min: 2000000,
+        max: 4000000
+      },
+      {
+        label: t('productList.priceRanges.from4to7m', 'Từ 4 - 7 triệu'),
+        min: 4000000,
+        max: 7000000
+      },
+      {
+        label: t('productList.priceRanges.from7to13m', 'Từ 7 - 13 triệu'),
+        min: 7000000,
+        max: 13000000
+      },
+      {
+        label: t('productList.priceRanges.from13to20m', 'Từ 13 - 20 triệu'),
+        min: 13000000,
+        max: 20000000
+      },
+      { label: t('productList.priceRanges.above20m', 'Trên 20 triệu'), min: 20000000, max: null }
+    ],
+    [t]
+  )
+
   // Lấy params từ URL
   const categorySlug = searchParams.get('categorySlug') || undefined
   const brandSlug = searchParams.get('brandSlug') || undefined
   const tagId = searchParams.get('tagId') || undefined
-
-  // ĐÃ FIX LỖI "any" Ở ĐÂY: Ép kiểu chính xác vào thuộc tính sort của SearchProductParams
   const sort = (searchParams.get('sort') || 'newest') as SearchProductParams['sort']
-
   const minPrice = searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined
   const maxPrice = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined
 
@@ -94,17 +111,29 @@ export default function ProductListPage() {
 
   if (categorySlug) {
     const cat = categories.find((c) => c.slug === categorySlug)
-    if (cat) activeFilters.push({ key: 'categorySlug', label: `Danh mục: ${cat.categoryName}` })
+    if (cat)
+      activeFilters.push({
+        key: 'categorySlug',
+        label: `${t('productList.activeFilters.category')} ${cat.categoryName}`
+      })
   }
 
   if (brandSlug) {
     const brand = brands.find((b) => b.slug === brandSlug)
-    if (brand) activeFilters.push({ key: 'brandSlug', label: `Hãng: ${brand.brandName}` })
+    if (brand)
+      activeFilters.push({
+        key: 'brandSlug',
+        label: `${t('productList.activeFilters.brand')} ${brand.brandName}`
+      })
   }
 
   if (tagId) {
     const tag = tags.find((t) => t.id === tagId)
-    if (tag) activeFilters.push({ key: 'tagId', label: `Nhu cầu: ${tag.tagName}` })
+    if (tag)
+      activeFilters.push({
+        key: 'tagId',
+        label: `${t('productList.activeFilters.tag')} ${tag.tagName}`
+      })
   }
 
   if (minPrice !== undefined || maxPrice !== undefined) {
@@ -112,12 +141,21 @@ export default function ProductListPage() {
       (r) => r.min === (minPrice || 0) && r.max === (maxPrice || null)
     )
     if (matchedRange) {
-      activeFilters.push({ key: 'price', label: `Giá: ${matchedRange.label}` })
+      activeFilters.push({
+        key: 'price',
+        label: `${t('productList.activeFilters.price')} ${matchedRange.label}`
+      })
     } else {
-      let priceLabel = 'Giá: '
-      if (minPrice && maxPrice) priceLabel += `Từ ${formatVnd(minPrice)} - ${formatVnd(maxPrice)}`
-      else if (minPrice) priceLabel += `Trên ${formatVnd(minPrice)}`
-      else if (maxPrice) priceLabel += `Dưới ${formatVnd(maxPrice)}`
+      let priceLabel = `${t('productList.activeFilters.price')} `
+      if (minPrice && maxPrice)
+        priceLabel += t('productList.activeFilters.priceFromTo', {
+          min: formatVnd(minPrice),
+          max: formatVnd(maxPrice)
+        })
+      else if (minPrice)
+        priceLabel += t('productList.activeFilters.priceAbove', { min: formatVnd(minPrice) })
+      else if (maxPrice)
+        priceLabel += t('productList.activeFilters.priceBelow', { max: formatVnd(maxPrice) })
       activeFilters.push({ key: 'price', label: priceLabel })
     }
   }
@@ -158,7 +196,9 @@ export default function ProductListPage() {
             <span className='hidden sm:inline'>{t('nav.home', 'Trang chủ')}</span>
           </Link>
           <ChevronRight className='h-4 w-4 mx-1.5 shrink-0' />
-          <span className='text-foreground font-medium'>Tìm kiếm sản phẩm</span>
+          <span className='text-foreground font-medium'>
+            {t('productList.breadcrumb', 'Tìm kiếm sản phẩm')}
+          </span>
         </nav>
 
         <div className='flex flex-col lg:flex-row gap-6 items-start'>
@@ -167,7 +207,7 @@ export default function ProductListPage() {
             {/* Lọc Hãng (Thương hiệu) */}
             <div className='bg-white rounded-xl border border-border/50 p-4 shadow-sm'>
               <h3 className='font-bold text-base mb-4 flex items-center gap-2'>
-                <Filter className='h-4 w-4' /> Hãng sản xuất
+                <Filter className='h-4 w-4' /> {t('productList.filters.brand', 'Hãng sản xuất')}
               </h3>
 
               <div className='grid grid-cols-2 gap-2'>
@@ -222,11 +262,13 @@ export default function ProductListPage() {
                 >
                   {showAllBrands ? (
                     <>
-                      Thu gọn <ChevronUp className='h-4 w-4' />
+                      {t('productList.filters.showLess', 'Thu gọn')}{' '}
+                      <ChevronUp className='h-4 w-4' />
                     </>
                   ) : (
                     <>
-                      Xem thêm {brands.length - 8} hãng <ChevronDown className='h-4 w-4' />
+                      {t('productList.filters.showMoreBrands', { count: brands.length - 8 })}{' '}
+                      <ChevronDown className='h-4 w-4' />
                     </>
                   )}
                 </button>
@@ -237,7 +279,7 @@ export default function ProductListPage() {
             {tags.length > 0 && (
               <div className='bg-white rounded-xl border border-border/50 p-4 shadow-sm'>
                 <h3 className='font-bold text-base mb-4 flex items-center gap-2'>
-                  <Tag className='h-4 w-4' /> Nhu cầu
+                  <Tag className='h-4 w-4' /> {t('productList.filters.tags', 'Nhu cầu')}
                 </h3>
                 <div className='flex flex-wrap gap-2'>
                   {tags.map((tag) => {
@@ -264,14 +306,15 @@ export default function ProductListPage() {
             {/* Lọc Danh mục */}
             <div className='bg-white rounded-xl border border-border/50 p-4 shadow-sm space-y-3'>
               <h3 className='font-bold text-base flex items-center gap-2'>
-                <SlidersHorizontal className='h-4 w-4' /> Danh mục
+                <SlidersHorizontal className='h-4 w-4' />{' '}
+                {t('productList.filters.category', 'Danh mục')}
               </h3>
               <div className='flex flex-col gap-2'>
                 <button
                   onClick={() => updateFilter('categorySlug', null)}
                   className={`text-left text-sm py-1 hover:text-primary transition-colors ${!categorySlug ? 'text-primary font-bold' : 'text-muted-foreground'}`}
                 >
-                  Tất cả sản phẩm
+                  {t('productList.filters.allProducts', 'Tất cả sản phẩm')}
                 </button>
                 {displayCategories.map((cat) => {
                   const isSelected = categorySlug === cat.slug
@@ -303,11 +346,15 @@ export default function ProductListPage() {
                 >
                   {showAllCategories ? (
                     <>
-                      Thu gọn <ChevronUp className='h-4 w-4' />
+                      {t('productList.filters.showLess', 'Thu gọn')}{' '}
+                      <ChevronUp className='h-4 w-4' />
                     </>
                   ) : (
                     <>
-                      Xem thêm {categories.length - 8} danh mục <ChevronDown className='h-4 w-4' />
+                      {t('productList.filters.showMoreCategories', {
+                        count: categories.length - 8
+                      })}{' '}
+                      <ChevronDown className='h-4 w-4' />
                     </>
                   )}
                 </button>
@@ -316,7 +363,9 @@ export default function ProductListPage() {
 
             {/* Lọc Giá */}
             <div className='bg-white rounded-xl border border-border/50 p-4 shadow-sm'>
-              <h3 className='font-bold text-base mb-4'>Mức giá</h3>
+              <h3 className='font-bold text-base mb-4'>
+                {t('productList.filters.price', 'Mức giá')}
+              </h3>
               <div className='flex flex-wrap gap-2 mb-4'>
                 {PRICE_RANGES.map((range, index) => {
                   const isSelected = minPrice === range.min && maxPrice === (range.max || undefined)
@@ -352,7 +401,7 @@ export default function ProductListPage() {
               <div className='flex items-center gap-2 pt-3 border-t'>
                 <Input
                   type='number'
-                  placeholder='Từ'
+                  placeholder={t('productList.filters.from', 'Từ')}
                   className='h-8 text-sm'
                   value={localMin}
                   onChange={(e) => setLocalMin(e.target.value)}
@@ -360,14 +409,14 @@ export default function ProductListPage() {
                 <span>-</span>
                 <Input
                   type='number'
-                  placeholder='Đến'
+                  placeholder={t('productList.filters.to', 'Đến')}
                   className='h-8 text-sm'
                   value={localMax}
                   onChange={(e) => setLocalMax(e.target.value)}
                 />
               </div>
               <Button className='w-full mt-3 h-8 text-sm' onClick={handleApplyPrice}>
-                Áp dụng
+                {t('productList.filters.apply', 'Áp dụng')}
               </Button>
             </div>
           </div>
@@ -377,7 +426,7 @@ export default function ProductListPage() {
             {/* Topbar: Sắp xếp */}
             <div className='bg-white rounded-xl border border-border/50 p-3 shadow-sm flex flex-wrap items-center gap-2 lg:gap-4'>
               <span className='text-sm font-semibold text-slate-700 hidden sm:block ml-2'>
-                Sắp xếp theo:
+                {t('productList.sort.label', 'Sắp xếp theo:')}
               </span>
 
               <button
@@ -389,7 +438,7 @@ export default function ProductListPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 )}
               >
-                <Zap className='h-4 w-4' /> Mới nhất
+                <Zap className='h-4 w-4' /> {t('productList.sort.newest', 'Mới nhất')}
               </button>
 
               <button
@@ -401,7 +450,7 @@ export default function ProductListPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 )}
               >
-                <SortDesc className='h-4 w-4' /> Giá cao - thấp
+                <SortDesc className='h-4 w-4' /> {t('productList.sort.priceDesc', 'Giá cao - thấp')}
               </button>
 
               <button
@@ -413,12 +462,14 @@ export default function ProductListPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 )}
               >
-                <SortAsc className='h-4 w-4' /> Giá thấp - cao
+                <SortAsc className='h-4 w-4' /> {t('productList.sort.priceAsc', 'Giá thấp - cao')}
               </button>
 
               <div className='ml-auto'>
                 <span className='text-sm font-medium text-slate-500'>
-                  Tìm thấy <strong className='text-primary'>{products.length}</strong> sản phẩm
+                  {t('productList.sort.found', 'Tìm thấy')}{' '}
+                  <strong className='text-primary'>{products.length}</strong>{' '}
+                  {t('productList.sort.products', 'sản phẩm')}
                 </span>
               </div>
             </div>
@@ -426,7 +477,9 @@ export default function ProductListPage() {
             {/* --- KHU VỰC HIỂN THỊ CÁC BỘ LỌC ĐANG CHỌN --- */}
             {activeFilters.length > 0 && (
               <div className='flex flex-wrap items-center gap-2 px-1 animate-in fade-in'>
-                <span className='text-sm font-medium text-slate-600 mr-1'>Đang lọc theo:</span>
+                <span className='text-sm font-medium text-slate-600 mr-1'>
+                  {t('productList.activeFilters.filteringBy', 'Đang lọc theo:')}
+                </span>
                 {activeFilters.map((filter) => (
                   <div
                     key={filter.key}
@@ -445,7 +498,7 @@ export default function ProductListPage() {
                   onClick={clearAllFilters}
                   className='text-sm text-blue-600 hover:text-blue-800 hover:underline ml-2 font-medium transition-colors'
                 >
-                  Xóa tất cả
+                  {t('productList.activeFilters.clearAll', 'Xóa tất cả')}
                 </button>
               </div>
             )}
@@ -465,14 +518,17 @@ export default function ProductListPage() {
                       className='h-36 opacity-50 mb-4 grayscale'
                     />
                     <h3 className='text-lg font-bold text-slate-700'>
-                      Không tìm thấy sản phẩm nào!
+                      {t('productList.empty.title', 'Không tìm thấy sản phẩm nào!')}
                     </h3>
                     <p className='text-sm text-slate-500 mt-2'>
-                      Vui lòng thử bỏ bớt tiêu chí lọc để có thêm kết quả.
+                      {t(
+                        'productList.empty.desc',
+                        'Vui lòng thử bỏ bớt tiêu chí lọc để có thêm kết quả.'
+                      )}
                     </p>
                     {activeFilters.length > 0 && (
                       <Button variant='outline' className='mt-4' onClick={clearAllFilters}>
-                        Xóa bộ lọc
+                        {t('productList.empty.clearBtn', 'Xóa bộ lọc')}
                       </Button>
                     )}
                   </div>

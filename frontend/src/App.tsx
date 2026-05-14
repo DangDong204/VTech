@@ -57,19 +57,25 @@ function App() {
           {/* TODO: tạo các public route */}
           <Route element={<ClientLayout />}>
             <Route path='/' element={<HomePage />} />
-            <Route path='/cart' element={<CartPage />} />
             <Route path='/products' element={<ProductListPage />} />
             <Route path='/product/:slug' element={<ProductDetailPage />} />
-            <Route path='/checkout' element={<CheckoutPage />} />
             <Route path='/articles' element={<ClientArticleListPage />} />
             <Route path='/articles/:slug' element={<ClientArticleDetailPage />} />
-            <Route element={<ProfileLayout />}>
-              <Route path='/profile' element={<OverviewPage />} />
-              <Route path='/orders' element={<OrdersPage />} />
-              <Route path='/addresses' element={<AddressesPage />} />
-              <Route path='/change-password' element={<ChangePasswordPage />} />
-              <Route path='/rewards' element={<RewardsPage />} />
-              <Route path='/offers' element={<OffersPage />} />
+
+            {/* === CÁC TRANG DÀNH CHO KHÁCH HÀNG (YÊU CẦU ĐĂNG NHẬP) === */}
+            <Route element={<ProtectedRoute allowedRoles={[]} />}>
+              <Route path='/cart' element={<CartPage />} />
+              <Route path='/checkout' element={<CheckoutPage />} />
+
+              {/* Profile cũng cần đăng nhập mới được xem */}
+              <Route element={<ProfileLayout />}>
+                <Route path='/profile' element={<OverviewPage />} />
+                <Route path='/orders' element={<OrdersPage />} />
+                <Route path='/addresses' element={<AddressesPage />} />
+                <Route path='/change-password' element={<ChangePasswordPage />} />
+                <Route path='/rewards' element={<RewardsPage />} />
+                <Route path='/offers' element={<OffersPage />} />
+              </Route>
             </Route>
           </Route>
 
