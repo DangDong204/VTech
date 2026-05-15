@@ -117,6 +117,7 @@
     "color": "Màu sắc:",
     "quantity": "Số lượng:",
     "buyNow": "Mua ngay",
+    "compare": "So sánh",
     "features": "Đặc điểm nổi bật",
     "specs": "Thông số kỹ thuật",
     "warranty": "Bảo hành chính hãng 12 tháng",
@@ -222,6 +223,21 @@
       "title": "Không tìm thấy sản phẩm nào!",
       "desc": "Vui lòng thử bỏ bớt tiêu chí lọc để có thêm kết quả.",
       "clearBtn": "Xóa bộ lọc"
+    }
+  },
+  "compare": {
+    "title": "So sánh sản phẩm",
+    "emptyTitle": "Bạn chưa chọn sản phẩm nào để so sánh",
+    "continueShopping": "Tiếp tục mua sắm",
+    "basicInfo": "Thông tin cơ bản",
+    "rating": "Đánh giá",
+    "reviewsCount": "({{count}} đánh giá)",
+    "tray": {
+      "title": "So sánh sản phẩm",
+      "addMore": "Thêm SP",
+      "clearAll": "Xóa",
+      "compareNow": "SO SÁNH NGAY",
+      "needMore": "CHỌN THÊM ĐỂ SO SÁNH"
     }
   },
   "cart": {

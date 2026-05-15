@@ -25,6 +25,7 @@ import SignupPage from '@/pages/auth/SignupPage'
 import CartPage from '@/pages/user/cart/CartPage'
 import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
 import ClientLayout from '@/pages/user/ClientLayout'
+import ComparePage from '@/pages/user/compare/ComparePage'
 import HomePage from '@/pages/user/home/HomePage'
 import VnPayReturnPage from '@/pages/user/payment/VnPayReturnPage'
 import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
@@ -59,6 +60,7 @@ function App() {
             <Route path='/' element={<HomePage />} />
             <Route path='/products' element={<ProductListPage />} />
             <Route path='/product/:slug' element={<ProductDetailPage />} />
+            <Route path='/compare' element={<ComparePage />} />
             <Route path='/articles' element={<ClientArticleListPage />} />
             <Route path='/articles/:slug' element={<ClientArticleDetailPage />} />
 

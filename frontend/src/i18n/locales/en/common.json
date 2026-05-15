@@ -117,6 +117,7 @@
     "color": "Color:",
     "quantity": "Quantity:",
     "buyNow": "Buy now",
+    "compare": "Compare",
     "features": "Key features",
     "specs": "Specifications",
     "warranty": "Official 12-month warranty",
@@ -222,6 +223,21 @@
       "title": "No products found!",
       "desc": "Please try removing some filter criteria to get more results.",
       "clearBtn": "Clear filters"
+    }
+  },
+  "compare": {
+    "title": "Product Comparison",
+    "emptyTitle": "You haven't selected any products to compare",
+    "continueShopping": "Continue Shopping",
+    "basicInfo": "Basic Information",
+    "rating": "Rating",
+    "reviewsCount": "({{count}} reviews)",
+    "tray": {
+      "title": "Compare Products",
+      "addMore": "Add",
+      "clearAll": "Clear",
+      "compareNow": "COMPARE NOW",
+      "needMore": "SELECT MORE TO COMPARE"
     }
   },
   "cart": {

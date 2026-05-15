@@ -13,6 +13,7 @@ import java.util.List;
 public class ClientProductDetailResponse {
     private String id;
     private String name;
+    private String slug;
     private String category;
     private String description;
 

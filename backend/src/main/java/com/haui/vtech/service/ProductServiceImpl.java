@@ -311,6 +311,7 @@ public class ProductServiceImpl implements ProductService {
         return ClientProductDetailResponse.builder()
                 .id(product.getId())
                 .name(product.getProductName())
+                .slug(product.getSlug())
                 .category(product.getCategory() != null ? product.getCategory().getCategoryName() : "Sản phẩm")
                 .description(product.getProductDesc())
                 .price(minPrice != null ? minPrice : BigDecimal.ZERO)
@@ -359,6 +360,13 @@ public class ProductServiceImpl implements ProductService {
         List<ProductEntity> products = productRepository.findProductsByPromotionId(promotionId);
         return products.stream()
                 .map(productMapper::toClientResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClientProductDetailResponse> getCompareProducts(List<String> slugs) {
+        return slugs.stream()
+                .map(this::getClientProductDetail)
                 .collect(Collectors.toList());
     }
 

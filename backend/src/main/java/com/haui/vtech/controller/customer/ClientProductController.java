@@ -55,4 +55,12 @@ public class ClientProductController {
                 .message("Lấy danh sách sản phẩm theo ID khuyến mãi thành công")
                 .build();
     }
+
+    @GetMapping("/compare")
+    public ApiResponse<List<ClientProductDetailResponse>> getCompareProducts(@RequestParam List<String> slugs) {
+        return ApiResponse.<List<ClientProductDetailResponse>>builder()
+                .data(productService.getCompareProducts(slugs))
+                .message("Lấy thông tin so sánh thành công")
+                .build();
+    }
 }

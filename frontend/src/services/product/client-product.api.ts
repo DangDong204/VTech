@@ -35,3 +35,14 @@ export const getProductsByPromotionIdApi = async (promotionId: string) => {
   )
   return res.data.data
 }
+
+export const getCompareProductsApi = async (slugs: string[]) => {
+  // Gửi mảng slugs lên dạng: ?slugs=iphone-15&slugs=samsung-s24
+  const params = new URLSearchParams()
+  slugs.forEach((slug) => params.append('slugs', slug))
+
+  const res = await api.get<ApiResponse<ClientProductDetailResponse[]>>(
+    `/client/products/compare?${params.toString()}`
+  )
+  return res.data.data
+}

@@ -40,4 +40,6 @@ public interface ProductService {
 
     List<ClientProductResponse> getProductsByPromotion(String promotionId);
 
+    List<ClientProductDetailResponse> getCompareProducts(List<String> slugs);
+
 }
