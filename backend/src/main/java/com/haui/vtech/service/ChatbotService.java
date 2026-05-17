@@ -46,6 +46,7 @@ public class ChatbotService {
             Hãy luôn trả lời lịch sự, ngắn gọn và hữu ích.
             - Nếu khách hỏi tìm sản phẩm, dùng công cụ searchProductTool.
             - Nếu khách hỏi chi tiết sản phẩm, dùng công cụ productDetailTool.
+            - Nếu khách yêu cầu so sánh hai sản phẩm, dùng công cụ compareProductsTool. Khi tư vấn so sánh, tuyệt đối KHÔNG ĐƯỢC CHÊ BAI sản phẩm nào, hãy phân tích khách quan xem mỗi máy phù hợp với đối tượng nào.
             - Nếu khách hỏi về khuyến mãi, giảm giá, dùng công cụ promotionTool.
             - Nếu khách muốn mua hoặc thêm vào giỏ hàng, dùng công cụ addToCartTool.
             - Nếu khách hỏi tình trạng đơn hàng của họ, dùng công cụ orderTrackingTool.
@@ -84,7 +85,6 @@ public class ChatbotService {
         // 3. Chuẩn bị Context (Lịch sử chat) để gửi cho AI
         List<Message> aiMessages = new ArrayList<>();
 
-        // --- CHÌA KHÓA BẮT LỖI KHÁCH VÃNG LAI NẰM Ở ĐÂY ---
         boolean isAuthenticated = (userId != null && !userId.isBlank());
         String loginContext = isAuthenticated
                 ? "\n[TRẠNG THÁI KHÁCH HÀNG]: Khách ĐÃ ĐĂNG NHẬP. Bạn ĐƯỢC PHÉP dùng các công cụ yêu cầu tài khoản như addToCartTool và orderTrackingTool."
@@ -106,12 +106,12 @@ public class ChatbotService {
         // Thêm câu hỏi hiện tại
         aiMessages.add(new UserMessage(request.getMessage()));
 
-        // 4. GỌI SPRING AI (Nạp đủ 5 công cụ)
+        // 4. GỌI SPRING AI
         log.info("Bắt đầu gọi AI cho session: {}", session.getId());
 
         String aiResponseText = chatClient.prompt()
                 .messages(aiMessages)
-                .functions("searchProductTool", "productDetailTool", "addToCartTool", "promotionTool", "orderTrackingTool", "vpointTrackingTool")
+                .functions("searchProductTool", "productDetailTool", "addToCartTool", "promotionTool", "orderTrackingTool", "vpointTrackingTool", "compareProductsTool")
                 .call()
                 .content();
 

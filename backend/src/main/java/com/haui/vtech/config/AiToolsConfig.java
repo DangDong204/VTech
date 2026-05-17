@@ -39,16 +39,24 @@ public class AiToolsConfig {
         return request -> {
             log.info("AI Đang sử dụng công cụ tìm kiếm: {}", request);
 
-            BigDecimal min = request.minPrice() != null ? BigDecimal.valueOf(request.minPrice()) : null;
-            BigDecimal max = request.maxPrice() != null ? BigDecimal.valueOf(request.maxPrice()) : null;
+            // --- ĐÃ FIX: BỘ LỌC TRỊ BỆNH "ẢO GIÁC" DỮ LIỆU CỦA AI ---
+
+            // 1. Xử lý chuỗi: Nếu AI trả về chuỗi rỗng (""), ta ép nó thành null để DB bỏ qua điều kiện lọc này
+            String safeKeyword = (request.keyword() != null && !request.keyword().trim().isEmpty()) ? request.keyword().trim() : null;
+            String safeCategorySlug = (request.categorySlug() != null && !request.categorySlug().trim().isEmpty()) ? request.categorySlug().trim() : null;
+            String safeBrandSlug = (request.brandSlug() != null && !request.brandSlug().trim().isEmpty()) ? request.brandSlug().trim() : null;
+
+            // 2. Xử lý giá: Nếu AI tự gán giá = 0, ta ép nó thành null để DB không tìm máy có giá 0 VNĐ
+            BigDecimal min = (request.minPrice() != null && request.minPrice() > 0) ? BigDecimal.valueOf(request.minPrice()) : null;
+            BigDecimal max = (request.maxPrice() != null && request.maxPrice() > 0) ? BigDecimal.valueOf(request.maxPrice()) : null;
 
             try {
-                // ĐÃ CẬP NHẬT: Truyền trực tiếp keyword xuống DB
+                // Truyền trực tiếp các biến đã được làm sạch (safe) xuống DB
                 List<ClientProductResponse> products = productService.searchClientProducts(
-                        request.categorySlug(),
-                        request.brandSlug(),
+                        safeCategorySlug,
+                        safeBrandSlug,
                         null,
-                        request.keyword(), // <-- Thêm tham số keyword
+                        safeKeyword,
                         min,
                         max,
                         "newest"
@@ -75,14 +83,17 @@ public class AiToolsConfig {
                                 .orElse(BigDecimal.ZERO);
                     }
 
-                    // Format lại chuỗi cho AI dễ đọc
-                    result.append(String.format("- Tên: %s, Giá chỉ từ: %,.0f VNĐ. (Link chi tiết: /product/%s)\n",
+                    // ĐÃ FIX: Dùng cú pháp link chuẩn Markdown: [Text hiển thị](URL)
+                    result.append(String.format("- **%s** — Giá chỉ từ: %,.0f VNĐ. [Xem chi tiết](/product/%s)\n",
                             p.getBaseName(), lowestPrice, p.getSlug()));
                 }
 
                 if (products.size() > 5) {
                     result.append(String.format("...và còn %d sản phẩm khác nữa.\n", products.size() - 5));
                 }
+
+                // ĐÃ FIX: Chỉ thị mạnh (Strong Prompt) cấm AI xóa link
+                result.append("\nLƯU Ý QUAN TRỌNG: Bạn BẮT BUỘC PHẢI giữ nguyên đường link [Xem chi tiết](/product/...) kế bên mỗi sản phẩm để khách hàng click vào, không được tự ý xóa bỏ đi.\n");
 
                 return result.toString();
 
@@ -537,6 +548,76 @@ public class AiToolsConfig {
             } catch (Exception e) {
                 log.error("Lỗi khi AI tra cứu V-point: ", e);
                 return "Hệ thống điểm thưởng đang bảo trì, vui lòng báo khách thử lại sau.";
+            }
+        };
+    }
+
+    /**
+     * DTO nhận yêu cầu so sánh sản phẩm từ AI
+     */
+    public record CompareProductsRequest(
+            String productA,
+            String productB
+    ) {}
+
+    /**
+     * Công cụ 7: So sánh hai sản phẩm
+     */
+    @Bean
+    @Description("Sử dụng công cụ này khi khách hàng yêu cầu SO SÁNH hai sản phẩm với nhau (VD: So sánh iPhone 15 và Galaxy S24, Máy A với Máy B cái nào tốt hơn). Truyền tên của hai sản phẩm vào productA và productB.")
+    public Function<CompareProductsRequest, String> compareProductsTool(ProductService productService) {
+        return request -> {
+            log.info("AI Đang sử dụng công cụ So sánh sản phẩm: {}", request);
+
+            try {
+                // 1. Dùng hàm search để tìm sản phẩm A
+                var listA = productService.searchClientProducts(null, null, null, request.productA(), null, null, "newest");
+                // 2. Dùng hàm search để tìm sản phẩm B
+                var listB = productService.searchClientProducts(null, null, null, request.productB(), null, null, "newest");
+
+                if (listA.isEmpty() || listB.isEmpty()) {
+                    return "Không tìm thấy đủ 2 sản phẩm để so sánh. Vui lòng báo khách cung cấp rõ hơn tên từng sản phẩm.";
+                }
+
+                // 3. Lấy thông tin chi tiết của 2 sản phẩm đầu tiên tìm được
+                var detailA = productService.getClientProductDetail(listA.get(0).getSlug());
+                var detailB = productService.getClientProductDetail(listB.get(0).getSlug());
+
+                // 4. Lắp ráp bảng so sánh để gửi cho AI đọc
+                StringBuilder sb = new StringBuilder();
+                sb.append("Dưới đây là thông số kỹ thuật của 2 sản phẩm để bạn (AI) dựa vào đó tư vấn cho khách:\n\n");
+
+                // --- Thông tin Sản phẩm A ---
+                sb.append("=== SẢN PHẨM 1: ").append(detailA.getName()).append(" ===\n");
+                sb.append("- Giá thấp nhất: ").append(String.format("%,.0f VNĐ\n", detailA.getPrice()));
+                if (detailA.getSpecs() != null) {
+                    detailA.getSpecs().forEach(spec ->
+                            sb.append("  + ").append(spec.getLabel()).append(": ").append(spec.getValue()).append("\n")
+                    );
+                }
+                sb.append("\n");
+
+                // --- Thông tin Sản phẩm B ---
+                sb.append("=== SẢN PHẨM 2: ").append(detailB.getName()).append(" ===\n");
+                sb.append("- Giá thấp nhất: ").append(String.format("%,.0f VNĐ\n", detailB.getPrice()));
+                if (detailB.getSpecs() != null) {
+                    detailB.getSpecs().forEach(spec ->
+                            sb.append("  + ").append(spec.getLabel()).append(": ").append(spec.getValue()).append("\n")
+                    );
+                }
+
+                // --- RÀNG BUỘC KỊCH BẢN BÁN HÀNG DÀNH RIÊNG CHO CÔNG CỤ NÀY ---
+                sb.append("\nLƯU Ý QUAN TRỌNG DÀNH CHO BẠN (AI TƯ VẤN):\n");
+                sb.append("1. Bạn không được nói sản phẩm nào 'tệ hơn' hay 'yếu hơn'. Hãy biến nhược điểm thành đặc điểm phù hợp cho nhóm đối tượng khác.\n");
+                sb.append("2. Tập trung chỉ ra Sản phẩm 1 hợp với AI, Sản phẩm 2 hợp với ai.\n");
+                sb.append("3. Nếu giá chênh lệch lớn, hãy khéo léo nói về 'sự tối ưu ngân sách' thay vì nói 'rẻ tiền'.\n");
+                sb.append("4. Ở cuối câu trả lời, hãy hỏi ngược lại xem khách hàng thường dùng máy cho nhu cầu gì nhất để bạn chốt lại cho họ nhé.\n");
+
+                return sb.toString();
+
+            } catch (Exception e) {
+                log.error("Lỗi khi AI so sánh: ", e);
+                return "Hệ thống đang lỗi, không thể lấy thông số so sánh lúc này.";
             }
         };
     }
