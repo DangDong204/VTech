@@ -23,7 +23,7 @@ public class TagController {
     private final MessageUtil messageUtil;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<TagResponse> createTag(
             @Valid @ModelAttribute TagCreationRequest request
     ) {
@@ -48,7 +48,7 @@ public class TagController {
     }
 
     @PutMapping("/{tagId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<TagResponse> updateTag(
             @PathVariable String tagId,
             @Valid @ModelAttribute TagUpdateRequest request
@@ -61,7 +61,7 @@ public class TagController {
     }
 
     @DeleteMapping("/trash/{tagId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteTag(@PathVariable String tagId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("tag.deleted.success", tagService.delete(tagId)))
@@ -77,6 +77,7 @@ public class TagController {
     }
 
     @GetMapping("/trash")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<TagResponse>> getAllInTrash() {
         return ApiResponse.<List<TagResponse>>builder()
                 .data(tagService.getAllInTrash())
@@ -84,7 +85,7 @@ public class TagController {
     }
 
     @PatchMapping("trash/{tagId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> restoreTag(@PathVariable String tagId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("tag.restored.success", tagService.restore(tagId)))

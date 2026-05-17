@@ -1,13 +1,15 @@
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Calendar, Eye, User, ChevronRight, ShoppingBag } from 'lucide-react'
+import { Calendar, Eye, User, ChevronRight, ShoppingBag, Home } from 'lucide-react'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
 
 import { getClientArticleBySlugApi } from '@/services/article/article.api'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 
 export default function ClientArticleDetailPage() {
+  const { t } = useTranslation('common')
   const { slug } = useParams<{ slug: string }>()
 
   // Dùng useQuery để fetch data dựa vào slug
@@ -57,12 +59,13 @@ export default function ClientArticleDetailPage() {
     <div className='container mx-auto px-4 py-8 max-w-4xl'>
       {/* Breadcrumb đơn giản */}
       <nav className='flex items-center gap-2 text-sm text-muted-foreground mb-6'>
-        <Link to='/' className='hover:text-primary transition-colors'>
-          Trang chủ
+        <Link to='/' className='hover:text-primary flex items-center gap-1 transition-colors'>
+          <Home className='h-4 w-4 mb-0.5' />
+          {t('nav.home')}
         </Link>
         <ChevronRight className='h-4 w-4' />
         <Link to='/articles' className='hover:text-primary transition-colors'>
-          Tin tức
+          {t('articlesList.title')}
         </Link>
         <ChevronRight className='h-4 w-4' />
         <span className='text-foreground font-medium truncate max-w-[200px] sm:max-w-none'>

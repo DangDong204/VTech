@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Calendar, ImageIcon, ArrowRight, ChevronRight } from 'lucide-react'
+import { Calendar, ImageIcon, ArrowRight, ChevronRight, Home } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useFetchData } from '@/hooks/useFetchData'
@@ -16,23 +16,28 @@ export default function ClientArticleListPage() {
   })
 
   return (
-    <div className='container mx-auto px-4 py-8 md:py-12'>
+    <div className='container mx-auto px-4 py-8 md:py-12 max-w-7xl'>
       {/* Breadcrumb */}
       <nav className='flex items-center gap-2 text-sm text-muted-foreground mb-8'>
-        <Link to='/' className='hover:text-primary transition-colors'>
-          Trang chủ
+        <Link to='/' className='hover:text-primary flex items-center gap-1 transition-colors'>
+          <Home className='h-4 w-4 mb-0.5' />
+          {t('nav.home', 'Trang chủ')}
         </Link>
         <ChevronRight className='h-4 w-4' />
-        <span className='text-foreground font-medium'>Tin tức công nghệ</span>
+        <span className='text-foreground font-medium'>
+          {t('articlesList.breadcrumb', 'Tin tức công nghệ')}
+        </span>
       </nav>
 
       <div className='mb-8 md:mb-10'>
         <h1 className='text-3xl md:text-4xl font-extrabold text-foreground mb-3'>
-          Tin tức công nghệ
+          {t('articlesList.title', 'Tin tức công nghệ')}
         </h1>
         <p className='text-muted-foreground max-w-2xl'>
-          Cập nhật những thông tin mới nhất về công nghệ, đánh giá sản phẩm và các mẹo hay dành cho
-          bạn.
+          {t(
+            'articlesList.subtitle',
+            'Cập nhật những thông tin mới nhất về công nghệ, đánh giá sản phẩm và các mẹo hay dành cho bạn.'
+          )}
         </p>
       </div>
 
@@ -50,13 +55,18 @@ export default function ClientArticleListPage() {
         // Empty State
         <div className='py-20 text-center flex flex-col items-center gap-4 bg-muted/30 rounded-xl border border-dashed'>
           <ImageIcon className='h-12 w-12 text-muted-foreground/50' />
-          <h2 className='text-xl font-semibold'>Chưa có bài viết nào</h2>
+          <h2 className='text-xl font-semibold'>
+            {t('articlesList.empty.title', 'Chưa có bài viết nào')}
+          </h2>
           <p className='text-muted-foreground'>
-            Chúng tôi đang cập nhật thêm nội dung. Vui lòng quay lại sau!
+            {t(
+              'articlesList.empty.desc',
+              'Chúng tôi đang cập nhật thêm nội dung. Vui lòng quay lại sau!'
+            )}
           </p>
         </div>
       ) : (
-        // Lưới bài viết (Lấy tất cả bài viết thay vì slice(0, 4))
+        // Lưới bài viết
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
           {articles.map((a, index) => {
             const fallbackHue = [250, 30, 150, 320][index % 4]
@@ -107,7 +117,7 @@ export default function ClientArticleListPage() {
                     className='text-sm text-muted-foreground line-clamp-3 flex-1 leading-relaxed'
                     title={a.summary || ''}
                   >
-                    {a.summary || 'Không có mô tả cho bài viết này.'}
+                    {a.summary || t('articlesList.noSummary', 'Không có mô tả cho bài viết này.')}
                   </p>
 
                   <Button

@@ -12,4 +12,6 @@ public interface CartDetailRepository extends JpaRepository<CartDetailEntity, St
     Optional<CartDetailEntity> findByCartIdAndVariantId(String cartId, String variantId);
 
     void deleteByCartId(String cartId);
+
+    boolean existsByVariantId(String variantId);
 }

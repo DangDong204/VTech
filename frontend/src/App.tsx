@@ -25,6 +25,7 @@ import SignupPage from '@/pages/auth/SignupPage'
 import CartPage from '@/pages/user/cart/CartPage'
 import CheckoutPage from '@/pages/user/checkout/CheckoutPage'
 import ClientLayout from '@/pages/user/ClientLayout'
+import ComparePage from '@/pages/user/compare/ComparePage'
 import HomePage from '@/pages/user/home/HomePage'
 import VnPayReturnPage from '@/pages/user/payment/VnPayReturnPage'
 import ProductDetailPage from '@/pages/user/product-detail/ProductDetailPage'
@@ -57,19 +58,26 @@ function App() {
           {/* TODO: tạo các public route */}
           <Route element={<ClientLayout />}>
             <Route path='/' element={<HomePage />} />
-            <Route path='/cart' element={<CartPage />} />
             <Route path='/products' element={<ProductListPage />} />
             <Route path='/product/:slug' element={<ProductDetailPage />} />
-            <Route path='/checkout' element={<CheckoutPage />} />
+            <Route path='/compare' element={<ComparePage />} />
             <Route path='/articles' element={<ClientArticleListPage />} />
             <Route path='/articles/:slug' element={<ClientArticleDetailPage />} />
-            <Route element={<ProfileLayout />}>
-              <Route path='/profile' element={<OverviewPage />} />
-              <Route path='/orders' element={<OrdersPage />} />
-              <Route path='/addresses' element={<AddressesPage />} />
-              <Route path='/change-password' element={<ChangePasswordPage />} />
-              <Route path='/rewards' element={<RewardsPage />} />
-              <Route path='/offers' element={<OffersPage />} />
+
+            {/* === CÁC TRANG DÀNH CHO KHÁCH HÀNG (YÊU CẦU ĐĂNG NHẬP) === */}
+            <Route element={<ProtectedRoute allowedRoles={[]} />}>
+              <Route path='/cart' element={<CartPage />} />
+              <Route path='/checkout' element={<CheckoutPage />} />
+
+              {/* Profile cũng cần đăng nhập mới được xem */}
+              <Route element={<ProfileLayout />}>
+                <Route path='/profile' element={<OverviewPage />} />
+                <Route path='/orders' element={<OrdersPage />} />
+                <Route path='/addresses' element={<AddressesPage />} />
+                <Route path='/change-password' element={<ChangePasswordPage />} />
+                <Route path='/rewards' element={<RewardsPage />} />
+                <Route path='/offers' element={<OffersPage />} />
+              </Route>
             </Route>
           </Route>
 
@@ -80,24 +88,31 @@ function App() {
 
           {/* TODO: tạo protected route */}
           <Route element={<ProtectedRoute />}>
-            {/* <Route path='/profile' element={<ProfilePage />} /> */}
             <Route path='/dashboard' element={<LayoutAdmin />}>
-              <Route index element={<DashboardHome />} />
-              <Route path='users' element={<UserPage />} />
-              <Route path='categories' element={<CategoryPage />} />
-              <Route path='brands' element={<BrandPage />} />
-              <Route path='tags' element={<TagPage />} />
-              <Route path='products' element={<ProductPage />} />
-              <Route path='products/:productId/variants' element={<VariantPage />} />
-              <Route path='colors' element={<ColorPage />} />
-              <Route path='versions' element={<VersionPage />} />
-              <Route path='vouchers' element={<VoucherPage />} />
-              <Route path='promotions' element={<PromotionPage />} />
-              <Route path='receipts' element={<ReceiptPage />} />
+              <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
+                <Route index element={<DashboardHome />} />
+              </Route>
+
+              {/* --- NHỮNG MODULE MÀ CẢ ADMIN VÀ STAFF ĐỀU ĐƯỢC VÀO --- */}
               <Route path='orders' element={<OrderPage />} />
+              <Route path='receipts' element={<ReceiptPage />} />
+              <Route path='reviews' element={<ReviewPage />} />
               <Route path='articles' element={<ArticlePage />} />
               <Route path='articles/:id' element={<ArticleDetailPage />} />
-              <Route path='reviews' element={<ReviewPage />} />
+
+              {/* --- NHỮNG MODULE CHỈ CÓ ADMIN ĐƯỢC VÀO --- */}
+              <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
+                <Route path='users' element={<UserPage />} />
+                <Route path='categories' element={<CategoryPage />} />
+                <Route path='brands' element={<BrandPage />} />
+                <Route path='tags' element={<TagPage />} />
+                <Route path='products' element={<ProductPage />} />
+                <Route path='products/:productId/variants' element={<VariantPage />} />
+                <Route path='colors' element={<ColorPage />} />
+                <Route path='versions' element={<VersionPage />} />
+                <Route path='vouchers' element={<VoucherPage />} />
+                <Route path='promotions' element={<PromotionPage />} />
+              </Route>
             </Route>
           </Route>
           {/* <Route path='/' element={<TestPage />} /> */}

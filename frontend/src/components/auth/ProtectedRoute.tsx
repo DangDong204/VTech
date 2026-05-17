@@ -2,7 +2,13 @@ import { useAuthStore } from '@/store/auth.store'
 import { Navigate, Outlet } from 'react-router-dom'
 import { toast } from 'sonner'
 
-export default function ProtectedRoute() {
+interface ProtectedRouteProps {
+  allowedRoles?: string[]
+}
+
+export default function ProtectedRoute({
+  allowedRoles = ['ROLE_ADMIN', 'ROLE_STAFF']
+}: ProtectedRouteProps) {
   const { isAuthenticated, user } = useAuthStore()
 
   // 1. Nếu chưa đăng nhập -> Đá về trang /login
@@ -10,13 +16,15 @@ export default function ProtectedRoute() {
     return <Navigate to='/login' replace />
   }
 
-  // 2. Kiểm tra Role (Chỉ ADMIN hoặc STAFF mới được vào Dashboard)
-  const hasAccess = user?.roles?.some((role) => ['ROLE_ADMIN', 'ROLE_STAFF'].includes(role))
+  // 2. Nếu có truyền allowedRoles vào -> Kiểm tra xem user có ít nhất 1 role hợp lệ không
+  if (allowedRoles.length > 0) {
+    const hasAccess = user?.roles?.some((role) => allowedRoles.includes(role))
 
-  if (!hasAccess) {
-    // Có thể bạn sẽ tạo 1 trang 403.tsx riêng, ở đây tạm thời đá về trang chủ hoặc thông báo
-    toast.error('Bạn không có quyền truy cập trang quản trị!')
-    return <Navigate to='/login' replace />
+    if (!hasAccess) {
+      toast.error('Bạn không có quyền truy cập trang này!')
+      // Đá về trang dashboard nếu đã ở trong admin, hoặc trang chủ nếu ở ngoài
+      return <Navigate to='/dashboard/orders' replace />
+    }
   }
 
   // 3. Hợp lệ -> Cho phép render giao diện bên trong

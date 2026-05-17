@@ -16,6 +16,7 @@ export interface SearchProductParams {
   categorySlug?: string
   brandSlug?: string
   tagId?: string
+  keyword?: string // THÊM DÒNG NÀY
   minPrice?: number
   maxPrice?: number
   sort?: 'newest' | 'price-asc' | 'price-desc' | 'rating'
@@ -31,6 +32,17 @@ export const searchClientProductsApi = async (params: SearchProductParams) => {
 export const getProductsByPromotionIdApi = async (promotionId: string) => {
   const res = await api.get<ApiResponse<ClientProductResponse[]>>(
     `/client/products/promotions/${promotionId}`
+  )
+  return res.data.data
+}
+
+export const getCompareProductsApi = async (slugs: string[]) => {
+  // Gửi mảng slugs lên dạng: ?slugs=iphone-15&slugs=samsung-s24
+  const params = new URLSearchParams()
+  slugs.forEach((slug) => params.append('slugs', slug))
+
+  const res = await api.get<ApiResponse<ClientProductDetailResponse[]>>(
+    `/client/products/compare?${params.toString()}`
   )
   return res.data.data
 }

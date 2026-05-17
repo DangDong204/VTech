@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
@@ -17,6 +17,8 @@ import { toast } from 'sonner'
 import z from 'zod'
 import type { AddressResponse } from '@/services/address/address.type'
 import { createAddressApi, updateAddressApi } from '@/services/address/address.api'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 
 const API_URL = 'https://esgoo.net/api-tinhthanh'
 
@@ -25,18 +27,33 @@ interface LocationData {
   name: string
 }
 
-const addressSchema = z.object({
-  recipientName: z.string().min(2, 'Vui lòng nhập họ và tên'),
-  phone: z.string().regex(/(84|0[3|5|7|8|9])+([0-9]{8})\b/, 'Số điện thoại không hợp lệ'),
-  provinceId: z.string().min(1, 'Vui lòng chọn Tỉnh/Thành phố'),
-  districtId: z.string().min(1, 'Vui lòng chọn Quận/Huyện'),
-  wardId: z.string().min(1, 'Vui lòng chọn Phường/Xã'),
-  specificAddress: z.string().min(5, 'Vui lòng nhập địa chỉ cụ thể (số nhà, tên đường)'),
-  addressType: z.enum(['HOME', 'OFFICE']),
-  isDefault: z.boolean()
-})
+// Chuyển việc định nghĩa type ra ngoài thông qua 1 hàm lấy schema và gán type TFunction cho t
+const getAddressSchema = (t: TFunction<'profile'>) =>
+  z.object({
+    recipientName: z
+      .string()
+      .min(2, t('address.form.validation.nameReq', 'Vui lòng nhập họ và tên')),
+    phone: z
+      .string()
+      .regex(
+        /(84|0[3|5|7|8|9])+([0-9]{8})\b/,
+        t('address.form.validation.phoneInv', 'Số điện thoại không hợp lệ')
+      ),
+    provinceId: z
+      .string()
+      .min(1, t('address.form.validation.provinceReq', 'Vui lòng chọn Tỉnh/Thành phố')),
+    districtId: z
+      .string()
+      .min(1, t('address.form.validation.districtReq', 'Vui lòng chọn Quận/Huyện')),
+    wardId: z.string().min(1, t('address.form.validation.wardReq', 'Vui lòng chọn Phường/Xã')),
+    specificAddress: z
+      .string()
+      .min(5, t('address.form.validation.specificReq', 'Vui lòng nhập địa chỉ cụ thể')),
+    addressType: z.enum(['HOME', 'OFFICE']),
+    isDefault: z.boolean()
+  })
 
-type AddressFormValues = z.infer<typeof addressSchema>
+type AddressFormValues = z.infer<ReturnType<typeof getAddressSchema>>
 
 interface AddressFormSheetProps {
   isOpen: boolean
@@ -51,15 +68,18 @@ export function AddressFormSheet({
   editingAddress,
   onSuccess
 }: AddressFormSheetProps) {
+  const { t } = useTranslation('profile')
   const [provinces, setProvinces] = useState<LocationData[]>([])
   const [districts, setDistricts] = useState<LocationData[]>([])
   const [wards, setWards] = useState<LocationData[]>([])
 
-  // Trạng thái chờ load dữ liệu khi vào Mode Edit để giấu form đi tránh giật UI
   const [isInitializing, setIsInitializing] = useState(false)
 
   const isMounted = useRef(false)
   const isEditMode = !!editingAddress
+
+  // Tạo schema bên trong Component để ăn theo i18n
+  const addressSchema = useMemo(() => getAddressSchema(t), [t])
 
   const {
     register,
@@ -87,13 +107,12 @@ export function AddressFormSheet({
     isMounted.current = true
   }, [])
 
-  // 2. EFFECT DUY NHẤT XỬ LÝ KHỞI TẠO FORM VÀ LOAD LOCATION
+  // 2. EFFECT KHỞI TẠO FORM VÀ LOAD LOCATION
   useEffect(() => {
-    let isCancelled = false // Kỹ thuật dọn dẹp effect để tránh gọi API dư thừa khi user tắt form vội
+    let isCancelled = false
 
     const initForm = async () => {
       if (!isOpen) {
-        // Đóng form: Xóa dữ liệu sau 300ms (chờ animation tắt)
         const timer = setTimeout(() => {
           reset()
           setDistricts([])
@@ -105,14 +124,11 @@ export function AddressFormSheet({
 
       try {
         setIsInitializing(true)
-
-        // Luôn fetch list Tỉnh
         const provRes = await fetch(`${API_URL}/1/0.htm`).then((r) => r.json())
         if (isCancelled) return
         if (provRes.error === 0) setProvinces(provRes.data)
 
         if (editingAddress) {
-          // NẠP DỮ LIỆU CŨ LÊN FORM TRƯỚC
           reset({
             recipientName: editingAddress.recipientName,
             phone: editingAddress.phone,
@@ -124,7 +140,6 @@ export function AddressFormSheet({
             isDefault: editingAddress.isDefault
           })
 
-          // FETCH DANH SÁCH HUYỆN & XÃ CHO TỈNH CŨ SONG SONG
           const [distRes, wardRes] = await Promise.all([
             fetch(`${API_URL}/2/${editingAddress.provinceId}.htm`).then((r) => r.json()),
             fetch(`${API_URL}/3/${editingAddress.districtId}.htm`).then((r) => r.json())
@@ -134,7 +149,6 @@ export function AddressFormSheet({
           if (distRes.error === 0) setDistricts(distRes.data)
           if (wardRes.error === 0) setWards(wardRes.data)
         } else {
-          // TẠO MỚI: Chỉ cần reset trắng Form
           reset({
             recipientName: '',
             phone: '',
@@ -149,7 +163,7 @@ export function AddressFormSheet({
           setWards([])
         }
       } catch {
-        // console.error('Lỗi nạp dữ liệu Tỉnh thành', error)
+        // Handle error
       } finally {
         if (!isCancelled) setIsInitializing(false)
       }
@@ -162,10 +176,8 @@ export function AddressFormSheet({
     }
   }, [isOpen, editingAddress, reset])
 
-  // --- XỬ LÝ SỰ KIỆN KHI USER CHỌN TỈNH/HUYỆN MỚI ---
   const handleProvinceChange = async (provinceId: string, onChangeForm: (val: string) => void) => {
     onChangeForm(provinceId)
-    // Clear Huyện Xã
     setValue('districtId', '')
     setValue('wardId', '')
     setWards([])
@@ -178,7 +190,6 @@ export function AddressFormSheet({
 
   const handleDistrictChange = async (districtId: string, onChangeForm: (val: string) => void) => {
     onChangeForm(districtId)
-    // Clear Xã
     setValue('wardId', '')
 
     if (!districtId) return setWards([])
@@ -187,7 +198,6 @@ export function AddressFormSheet({
     if (res.error === 0) setWards(res.data)
   }
 
-  // --- NỘP FORM ---
   const onSubmit = async (data: AddressFormValues) => {
     try {
       const provinceName =
@@ -215,22 +225,21 @@ export function AddressFormSheet({
 
       if (isEditMode && editingAddress) {
         result = await updateAddressApi(editingAddress.id, payload)
-        toast.success('Cập nhật địa chỉ thành công!')
+        toast.success(t('address.messages.updateSuccess', 'Cập nhật địa chỉ thành công!'))
       } else {
         result = await createAddressApi(payload)
-        toast.success('Đã thêm địa chỉ mới thành công!')
+        toast.success(t('address.messages.addSuccess', 'Đã thêm địa chỉ mới thành công!'))
       }
 
       onSuccess?.(result)
       onClose()
     } catch {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!')
+      toast.error(t('address.messages.generalError', 'Có lỗi xảy ra, vui lòng thử lại!'))
     }
   }
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className={cn(
           'fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300',
@@ -239,7 +248,6 @@ export function AddressFormSheet({
         onClick={onClose}
       />
 
-      {/* Sheet */}
       <div
         className={cn(
           'fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-2xl flex flex-col',
@@ -247,11 +255,12 @@ export function AddressFormSheet({
           isOpen ? 'translate-x-0 visible' : 'translate-x-full invisible'
         )}
       >
-        {/* Header */}
         <div className='flex items-center justify-between px-6 py-4 border-b'>
           <div className='flex items-center gap-2 font-bold text-lg text-slate-800'>
             <MapPin className='h-5 w-5 text-red-600' />
-            {isEditMode ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ mới'}
+            {isEditMode
+              ? t('address.form.titleEdit', 'Cập nhật địa chỉ')
+              : t('address.form.titleAdd', 'Thêm địa chỉ mới')}
           </div>
           <button
             onClick={onClose}
@@ -261,21 +270,24 @@ export function AddressFormSheet({
           </button>
         </div>
 
-        {/* Loading Spinner khi đang nạp data cũ */}
         {isInitializing ? (
           <div className='flex-1 flex flex-col items-center justify-center text-slate-400'>
             <Loader2 className='h-8 w-8 animate-spin mb-4 text-slate-300' />
-            <p className='text-sm font-medium'>Đang tải thông tin...</p>
+            <p className='text-sm font-medium'>
+              {t('address.form.loading', 'Đang tải thông tin...')}
+            </p>
           </div>
         ) : (
-          /* Form body */
           <div className='flex-1 overflow-y-auto p-6 scrollbar-thin'>
             <form id='address-form' onSubmit={handleSubmit(onSubmit)} className='space-y-5'>
               {/* Họ tên */}
               <div className='space-y-2'>
-                <Label>Họ và tên</Label>
+                <Label>{t('address.form.fields.name.label', 'Họ và tên')}</Label>
                 <Input
-                  placeholder='Nhập họ và tên người nhận'
+                  placeholder={t(
+                    'address.form.fields.name.placeholder',
+                    'Nhập họ và tên người nhận'
+                  )}
                   {...register('recipientName')}
                   className={errors.recipientName ? 'border-red-500' : ''}
                 />
@@ -286,9 +298,9 @@ export function AddressFormSheet({
 
               {/* SĐT */}
               <div className='space-y-2'>
-                <Label>Số điện thoại</Label>
+                <Label>{t('address.form.fields.phone.label', 'Số điện thoại')}</Label>
                 <Input
-                  placeholder='Nhập số điện thoại'
+                  placeholder={t('address.form.fields.phone.placeholder', 'Nhập số điện thoại')}
                   {...register('phone')}
                   className={errors.phone ? 'border-red-500' : ''}
                 />
@@ -297,7 +309,7 @@ export function AddressFormSheet({
 
               {/* Tỉnh/Thành phố */}
               <div className='space-y-2'>
-                <Label>Tỉnh/Thành phố</Label>
+                <Label>{t('address.form.fields.province.label', 'Tỉnh/Thành phố')}</Label>
                 <Controller
                   control={control}
                   name='provinceId'
@@ -307,7 +319,12 @@ export function AddressFormSheet({
                       onValueChange={(val) => handleProvinceChange(val, field.onChange)}
                     >
                       <SelectTrigger className={errors.provinceId ? 'border-red-500' : ''}>
-                        <SelectValue placeholder='Chọn Tỉnh/Thành phố' />
+                        <SelectValue
+                          placeholder={t(
+                            'address.form.fields.province.placeholder',
+                            'Chọn Tỉnh/Thành phố'
+                          )}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {provinces.map((p) => (
@@ -326,7 +343,7 @@ export function AddressFormSheet({
 
               {/* Quận/Huyện */}
               <div className='space-y-2'>
-                <Label>Quận/Huyện</Label>
+                <Label>{t('address.form.fields.district.label', 'Quận/Huyện')}</Label>
                 <Controller
                   control={control}
                   name='districtId'
@@ -337,7 +354,12 @@ export function AddressFormSheet({
                       disabled={!districts.length}
                     >
                       <SelectTrigger className={errors.districtId ? 'border-red-500' : ''}>
-                        <SelectValue placeholder='Chọn Quận/Huyện' />
+                        <SelectValue
+                          placeholder={t(
+                            'address.form.fields.district.placeholder',
+                            'Chọn Quận/Huyện'
+                          )}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {districts.map((d) => (
@@ -356,7 +378,7 @@ export function AddressFormSheet({
 
               {/* Phường/Xã */}
               <div className='space-y-2'>
-                <Label>Phường/Xã</Label>
+                <Label>{t('address.form.fields.ward.label', 'Phường/Xã')}</Label>
                 <Controller
                   control={control}
                   name='wardId'
@@ -367,7 +389,9 @@ export function AddressFormSheet({
                       disabled={!wards.length}
                     >
                       <SelectTrigger className={errors.wardId ? 'border-red-500' : ''}>
-                        <SelectValue placeholder='Chọn Phường/Xã' />
+                        <SelectValue
+                          placeholder={t('address.form.fields.ward.placeholder', 'Chọn Phường/Xã')}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {wards.map((w) => (
@@ -384,9 +408,12 @@ export function AddressFormSheet({
 
               {/* Địa chỉ cụ thể */}
               <div className='space-y-2'>
-                <Label>Địa chỉ cụ thể</Label>
+                <Label>{t('address.form.fields.specific.label', 'Địa chỉ cụ thể')}</Label>
                 <Input
-                  placeholder='Số nhà, Tên tòa nhà, Tên đường...'
+                  placeholder={t(
+                    'address.form.fields.specific.placeholder',
+                    'Số nhà, Tên tòa nhà, Tên đường...'
+                  )}
                   {...register('specificAddress')}
                   className={errors.specificAddress ? 'border-red-500' : ''}
                 />
@@ -397,7 +424,7 @@ export function AddressFormSheet({
 
               {/* Loại địa chỉ */}
               <div className='space-y-2'>
-                <Label>Loại địa chỉ</Label>
+                <Label>{t('address.form.fields.type.label', 'Loại địa chỉ')}</Label>
                 <Controller
                   control={control}
                   name='addressType'
@@ -419,7 +446,7 @@ export function AddressFormSheet({
                             field.value === 'HOME' ? 'text-red-500' : 'text-slate-400'
                           )}
                         />
-                        Nhà riêng
+                        {t('address.form.fields.type.home', 'Nhà riêng')}
                       </button>
 
                       <button
@@ -438,7 +465,7 @@ export function AddressFormSheet({
                             field.value === 'OFFICE' ? 'text-red-500' : 'text-slate-400'
                           )}
                         />
-                        Văn phòng
+                        {t('address.form.fields.type.office', 'Văn phòng')}
                       </button>
                     </div>
                   )}
@@ -454,7 +481,7 @@ export function AddressFormSheet({
                   {...register('isDefault')}
                 />
                 <Label htmlFor='isDefault' className='font-normal cursor-pointer text-slate-600'>
-                  Đặt làm địa chỉ mặc định
+                  {t('address.form.fields.isDefault', 'Đặt làm địa chỉ mặc định')}
                 </Label>
               </div>
             </form>
@@ -464,7 +491,7 @@ export function AddressFormSheet({
         {/* Footer */}
         <div className='p-6 border-t bg-slate-50 flex gap-3'>
           <Button type='button' variant='outline' className='flex-1' onClick={onClose}>
-            Hủy
+            {t('address.form.buttons.cancel', 'Hủy')}
           </Button>
           <Button
             type='submit'
@@ -475,12 +502,12 @@ export function AddressFormSheet({
             {isSubmitting ? (
               <>
                 <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                Đang lưu...
+                {t('address.form.buttons.saving', 'Đang lưu...')}
               </>
             ) : isEditMode ? (
-              'Cập nhật'
+              t('address.form.buttons.update', 'Cập nhật')
             ) : (
-              'Lưu địa chỉ'
+              t('address.form.buttons.save', 'Lưu địa chỉ')
             )}
           </Button>
         </div>

@@ -1,8 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Plus, Edit, Trash2, Star, Home, Briefcase, Loader2 } from 'lucide-react'
+import { Plus, Edit, Trash2, Star, Home, Briefcase, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog' // <-- Import AlertDialog
 import { AddressFormSheet } from '@/pages/user/profile/AddressFormSheet'
 import {
   getMyAddressesApi,
@@ -10,14 +20,21 @@ import {
   deleteAddressApi
 } from '@/services/address/address.api'
 import type { AddressResponse } from '@/services/address/address.type'
+import { useTranslation } from 'react-i18next'
 
 export default function AddressesPage() {
+  const { t } = useTranslation('profile')
   const [addresses, setAddresses] = useState<AddressResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [editingAddress, setEditingAddress] = useState<AddressResponse | null>(null)
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  // States quản lý Loading UI
   const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  // State quản lý Popup Xóa
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null)
 
   // ---------- Fetch danh sách ----------
   const fetchAddresses = async () => {
@@ -26,7 +43,9 @@ export default function AddressesPage() {
       const data = await getMyAddressesApi()
       setAddresses(data)
     } catch {
-      toast.error('Không thể tải danh sách địa chỉ, vui lòng thử lại!')
+      toast.error(
+        t('address.messages.fetchError', 'Không thể tải danh sách địa chỉ, vui lòng thử lại!')
+      )
     } finally {
       setIsLoading(false)
     }
@@ -51,15 +70,12 @@ export default function AddressesPage() {
   // ---------- Đóng sheet ----------
   const handleCloseSheet = () => {
     setIsSheetOpen(false)
-    // editingAddress sẽ được reset sau animation (xử lý trong sheet)
   }
 
   // ---------- Callback sau khi lưu thành công ----------
   const handleSuccess = (saved: AddressResponse) => {
     setAddresses((prev) => {
-      // Nếu địa chỉ mới/vừa sửa là default → bỏ default các cái khác
       const updated = saved.isDefault ? prev.map((a) => ({ ...a, isDefault: false })) : [...prev]
-
       const existingIndex = updated.findIndex((a) => a.id === saved.id)
       if (existingIndex >= 0) {
         updated[existingIndex] = saved
@@ -75,25 +91,32 @@ export default function AddressesPage() {
       setSettingDefaultId(id)
       await setDefaultAddressApi(id)
       setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })))
-      toast.success('Đã đặt làm địa chỉ mặc định!')
+      toast.success(t('address.messages.setDefaultSuccess', 'Đã đặt làm địa chỉ mặc định!'))
     } catch {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!')
+      toast.error(t('address.messages.generalError', 'Có lỗi xảy ra, vui lòng thử lại!'))
     } finally {
       setSettingDefaultId(null)
     }
   }
 
-  // ---------- Xoá ----------
-  const handleDelete = async (id: string) => {
+  // ---------- Xóa (Đã thêm popup xác nhận) ----------
+  const confirmDelete = (id: string) => {
+    setAddressToDelete(id) // Mở popup
+  }
+
+  const handleDelete = async () => {
+    if (!addressToDelete) return
+
     try {
-      setDeletingId(id)
-      await deleteAddressApi(id)
-      setAddresses((prev) => prev.filter((a) => a.id !== id))
-      toast.success('Đã xoá địa chỉ!')
+      setDeletingId(addressToDelete) // Hiện loading ở nút bấm
+      await deleteAddressApi(addressToDelete)
+      setAddresses((prev) => prev.filter((a) => a.id !== addressToDelete))
+      toast.success(t('address.messages.deleteSuccess', 'Đã xoá địa chỉ!'))
     } catch {
-      toast.error('Có lỗi xảy ra, vui lòng thử lại!')
+      toast.error(t('address.messages.generalError', 'Có lỗi xảy ra, vui lòng thử lại!'))
     } finally {
       setDeletingId(null)
+      setAddressToDelete(null) // Đóng popup
     }
   }
 
@@ -103,13 +126,15 @@ export default function AddressesPage() {
       {/* Header */}
       <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-5 rounded-xl border border-border/50 shadow-sm gap-4'>
         <div>
-          <h2 className='text-lg font-bold text-slate-800'>Sổ địa chỉ nhận hàng</h2>
+          <h2 className='text-lg font-bold text-slate-800'>
+            {t('address.title', 'Sổ địa chỉ nhận hàng')}
+          </h2>
           <p className='text-sm text-muted-foreground mt-1'>
-            Quản lý thông tin địa chỉ giao hàng của bạn
+            {t('address.subtitle', 'Quản lý thông tin địa chỉ giao hàng của bạn')}
           </p>
         </div>
         <Button className='gap-2 shrink-0' onClick={handleOpenCreate}>
-          <Plus className='h-4 w-4' /> Thêm địa chỉ mới
+          <Plus className='h-4 w-4' /> {t('address.addBtn', 'Thêm địa chỉ mới')}
         </Button>
       </div>
 
@@ -117,7 +142,7 @@ export default function AddressesPage() {
       {isLoading && (
         <div className='flex items-center justify-center py-16 text-slate-400'>
           <Loader2 className='h-6 w-6 animate-spin mr-2' />
-          <span className='text-sm'>Đang tải địa chỉ...</span>
+          <span className='text-sm'>{t('address.loading', 'Đang tải địa chỉ...')}</span>
         </div>
       )}
 
@@ -127,10 +152,14 @@ export default function AddressesPage() {
           <div className='w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mb-3'>
             <Home className='h-6 w-6 text-slate-400' />
           </div>
-          <p className='font-medium text-slate-600'>Bạn chưa có địa chỉ nào</p>
-          <p className='text-sm mt-1 mb-4'>Thêm địa chỉ để đặt hàng nhanh hơn</p>
+          <p className='font-medium text-slate-600'>
+            {t('address.empty.title', 'Bạn chưa có địa chỉ nào')}
+          </p>
+          <p className='text-sm mt-1 mb-4'>
+            {t('address.empty.subtitle', 'Thêm địa chỉ để đặt hàng nhanh hơn')}
+          </p>
           <Button size='sm' className='gap-2' onClick={handleOpenCreate}>
-            <Plus className='h-4 w-4' /> Thêm ngay
+            <Plus className='h-4 w-4' /> {t('address.addNowBtn', 'Thêm ngay')}
           </Button>
         </div>
       )}
@@ -148,7 +177,7 @@ export default function AddressesPage() {
               {/* Badge mặc định */}
               {addr.isDefault && (
                 <Badge className='absolute top-4 right-4 bg-red-50 text-red-600 border border-red-200 hover:bg-red-50'>
-                  Mặc định
+                  {t('address.badge.default', 'Mặc định')}
                 </Badge>
               )}
 
@@ -163,11 +192,11 @@ export default function AddressesPage() {
               <div className='mb-3'>
                 {addr.addressType === 'HOME' ? (
                   <span className='inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2.5 py-0.5'>
-                    <Home className='h-3 w-3' /> Nhà riêng
+                    <Home className='h-3 w-3' /> {t('address.badge.home', 'Nhà riêng')}
                   </span>
                 ) : (
                   <span className='inline-flex items-center gap-1.5 text-xs font-medium text-violet-600 bg-violet-50 border border-violet-100 rounded-full px-2.5 py-0.5'>
-                    <Briefcase className='h-3 w-3' /> Văn phòng
+                    <Briefcase className='h-3 w-3' /> {t('address.badge.office', 'Văn phòng')}
                   </span>
                 )}
               </div>
@@ -189,10 +218,10 @@ export default function AddressesPage() {
                   className='flex-1 gap-1.5'
                   onClick={() => handleOpenEdit(addr)}
                 >
-                  <Edit className='h-3.5 w-3.5' /> Cập nhật
+                  <Edit className='h-3.5 w-3.5' /> {t('address.action.update', 'Cập nhật')}
                 </Button>
 
-                {/* Đặt mặc định — chỉ hiện khi chưa mặc định */}
+                {/* Đặt mặc định */}
                 {!addr.isDefault && (
                   <Button
                     variant='outline'
@@ -206,25 +235,25 @@ export default function AddressesPage() {
                     ) : (
                       <Star className='h-3.5 w-3.5' />
                     )}
-                    Mặc định
+                    {t('address.action.setDefault', 'Mặc định')}
                   </Button>
                 )}
 
-                {/* Xoá — chỉ hiện khi chưa mặc định */}
+                {/* Xoá */}
                 {!addr.isDefault && (
                   <Button
                     variant='outline'
                     size='sm'
                     className='flex-1 gap-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-100'
                     disabled={deletingId === addr.id}
-                    onClick={() => handleDelete(addr.id)}
+                    onClick={() => confirmDelete(addr.id)}
                   >
                     {deletingId === addr.id ? (
                       <Loader2 className='h-3.5 w-3.5 animate-spin' />
                     ) : (
                       <Trash2 className='h-3.5 w-3.5' />
                     )}
-                    Xoá
+                    {t('address.action.delete', 'Xoá')}
                   </Button>
                 )}
               </div>
@@ -233,13 +262,47 @@ export default function AddressesPage() {
         </div>
       )}
 
-      {/* Sheet form dùng chung */}
+      {/* Form Dialog Cập nhật / Thêm mới */}
       <AddressFormSheet
         isOpen={isSheetOpen}
         onClose={handleCloseSheet}
         editingAddress={editingAddress}
         onSuccess={handleSuccess}
       />
+
+      {/* POPUP XÁC NHẬN XÓA ĐỊA CHỈ */}
+      <AlertDialog
+        open={!!addressToDelete}
+        onOpenChange={(open) => !open && setAddressToDelete(null)}
+      >
+        <AlertDialogContent className='sm:max-w-[425px]'>
+          <AlertDialogHeader>
+            <AlertDialogTitle className='flex items-center gap-2 text-red-600'>
+              <div className='bg-red-100 p-1.5 rounded-full'>
+                <AlertCircle className='h-5 w-5' />
+              </div>
+              {t('address.deleteConfirm.title', 'Xác nhận xóa địa chỉ')}
+            </AlertDialogTitle>
+            <AlertDialogDescription className='text-slate-600'>
+              {t(
+                'address.deleteConfirm.description',
+                'Bạn có chắc chắn muốn xóa địa chỉ giao hàng này không? Hành động này không thể hoàn tác.'
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className='gap-2 sm:gap-0'>
+            <AlertDialogCancel className='font-medium'>
+              {t('address.deleteConfirm.cancel', 'Hủy')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className='bg-red-600 hover:bg-red-700 text-white font-medium'
+            >
+              {t('address.deleteConfirm.confirm', 'Xóa địa chỉ')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

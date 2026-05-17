@@ -148,6 +148,10 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, id));
 
+        if (product.getVariants() != null && !product.getVariants().isEmpty()) {
+            throw new AppException(ErrorCode.PRODUCT_HAS_VARIANTS, product.getProductName());
+        }
+
         if (product.getImages() != null && !product.getImages().isEmpty()) {
             product.getImages().forEach(image -> {
                 s3Service.deleteImage(image.getImageUrl());
@@ -163,6 +167,10 @@ public class ProductServiceImpl implements ProductService {
     public String deleteSoft(String id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, id));
+
+        if (product.getVariants() != null && !product.getVariants().isEmpty()) {
+            throw new AppException(ErrorCode.PRODUCT_HAS_VARIANTS, product.getProductName());
+        }
 
         int affectedRows = productRepository.softDelete(id, LocalDateTime.now());
 
@@ -303,6 +311,7 @@ public class ProductServiceImpl implements ProductService {
         return ClientProductDetailResponse.builder()
                 .id(product.getId())
                 .name(product.getProductName())
+                .slug(product.getSlug())
                 .category(product.getCategory() != null ? product.getCategory().getCategoryName() : "Sản phẩm")
                 .description(product.getProductDesc())
                 .price(minPrice != null ? minPrice : BigDecimal.ZERO)
@@ -318,8 +327,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, BigDecimal minPrice, BigDecimal maxPrice, String sort) {
-        List<ProductEntity> products = productRepository.searchClientProducts(categorySlug, brandSlug, tagId, minPrice, maxPrice);
+    public List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, String keyword, BigDecimal minPrice, BigDecimal maxPrice, String sort) {
+        List<ProductEntity> products = productRepository.searchClientProducts(categorySlug, brandSlug, tagId, keyword, minPrice, maxPrice);
 
         List<ClientProductResponse> responseList = products.stream()
                 .map(productMapper::toClientResponse)
@@ -351,6 +360,13 @@ public class ProductServiceImpl implements ProductService {
         List<ProductEntity> products = productRepository.findProductsByPromotionId(promotionId);
         return products.stream()
                 .map(productMapper::toClientResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClientProductDetailResponse> getCompareProducts(List<String> slugs) {
+        return slugs.stream()
+                .map(this::getClientProductDetail)
                 .collect(Collectors.toList());
     }
 

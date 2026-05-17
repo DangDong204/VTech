@@ -33,6 +33,7 @@ export interface ClientProductResponse {
 export interface ClientProductDetailResponse {
   id: string
   name: string
+  slug: string // <--- BỔ SUNG DÒNG NÀY
   category: string
   description: string
   price: number

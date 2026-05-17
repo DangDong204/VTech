@@ -16,7 +16,7 @@ public class SpecificationController {
     private final SpecificationService specificationService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<SpecificationResponse> createSpec(
             @PathVariable String productId,
             @RequestBody SpecificationRequest request) {
@@ -34,7 +34,7 @@ public class SpecificationController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<SpecificationResponse> updateSpec(
             @PathVariable String productId,
             @RequestBody SpecificationRequest request) {

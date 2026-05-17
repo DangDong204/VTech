@@ -27,48 +27,27 @@ import { useCart } from '@/contexts/CartContext'
 import { CreateReviewModal } from '@/pages/user/product-detail/CreateReviewModal'
 import type { AxiosError } from 'axios'
 import type { ApiErrorResponse } from '@/defines/error.type'
+import { useTranslation } from 'react-i18next'
 
-const ORDER_TABS = [
-  'Tất cả',
-  'Chờ xác nhận',
-  'Đã xác nhận',
-  'Đang đóng gói',
-  'Đang giao',
-  'Hoàn thành',
-  'Đã hủy',
-  'Hoàn trả'
+// Dùng KEY để quản lý state thay vì text cứng
+type TabKey = 'ALL' | OrderStatus
+const ORDER_TABS: TabKey[] = [
+  'ALL',
+  'PENDING',
+  'CONFIRMED',
+  'PROCESSING',
+  'SHIPPING',
+  'DELIVERED',
+  'CANCELLED',
+  'RETURNED'
 ]
 
-const STATUS_MAP: Record<OrderStatus, string> = {
-  PENDING: 'Chờ xác nhận',
-  CONFIRMED: 'Đã xác nhận',
-  PROCESSING: 'Đang đóng gói',
-  SHIPPING: 'Đang giao',
-  DELIVERED: 'Hoàn thành',
-  CANCELLED: 'Đã hủy',
-  RETURNED: 'Hoàn trả'
-}
-
 // Các tab sẽ được hiển thị số lượng (badge)
-const PROCESSING_TABS = ['Chờ xác nhận', 'Đã xác nhận', 'Đang đóng gói', 'Đang giao']
-
-function formatVnd(n: number) {
-  return new Intl.NumberFormat('vi-VN').format(n) + '₫'
-}
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date)
-}
+const PROCESSING_TABS: TabKey[] = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPING']
 
 export default function OrdersPage() {
-  const [activeTab, setActiveTab] = useState('Tất cả')
+  const { t, i18n } = useTranslation('profile')
+  const [activeTab, setActiveTab] = useState<TabKey>('ALL')
   const [orders, setOrders] = useState<OrderResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -92,6 +71,37 @@ export default function OrdersPage() {
 
   const [selectedOrder, setSelectedOrder] = useState<OrderResponse | null>(null)
 
+  // Map động trạng thái ra i18n
+  const STATUS_MAP = useMemo(() => {
+    return {
+      PENDING: t('orders.tabs.PENDING', 'Chờ xác nhận'),
+      CONFIRMED: t('orders.tabs.CONFIRMED', 'Đã xác nhận'),
+      PROCESSING: t('orders.tabs.PROCESSING', 'Đang đóng gói'),
+      SHIPPING: t('orders.tabs.SHIPPING', 'Đang giao'),
+      DELIVERED: t('orders.tabs.DELIVERED', 'Hoàn thành'),
+      CANCELLED: t('orders.tabs.CANCELLED', 'Đã hủy'),
+      RETURNED: t('orders.tabs.RETURNED', 'Hoàn trả')
+    } as Record<OrderStatus, string>
+  }, [t])
+
+  const formatVnd = (n: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(n)
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-US' : 'vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date)
+  }
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -99,24 +109,23 @@ export default function OrdersPage() {
         const data = await getMyOrdersApi()
         setOrders(data)
       } catch {
-        toast.error('Không thể tải lịch sử đơn hàng.')
+        toast.error(t('orders.messages.fetchError', 'Không thể tải lịch sử đơn hàng.'))
       } finally {
         setIsLoading(false)
       }
     }
     fetchOrders()
-  }, [])
+  }, [t])
 
   // Đếm số lượng đơn hàng cho mỗi tab
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     ORDER_TABS.forEach((tab) => (counts[tab] = 0))
-    counts['Tất cả'] = orders.length
+    counts['ALL'] = orders.length
 
     orders.forEach((order) => {
-      const mappedStatus = STATUS_MAP[order.orderStatus]
-      if (counts[mappedStatus] !== undefined) {
-        counts[mappedStatus]++
+      if (counts[order.orderStatus] !== undefined) {
+        counts[order.orderStatus]++
       }
     })
     return counts
@@ -124,8 +133,7 @@ export default function OrdersPage() {
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
-      const mappedStatus = STATUS_MAP[order.orderStatus]
-      const passTab = activeTab === 'Tất cả' || mappedStatus === activeTab
+      const passTab = activeTab === 'ALL' || order.orderStatus === activeTab
 
       const keyword = searchTerm.toLowerCase()
       const passSearch =
@@ -171,29 +179,39 @@ export default function OrdersPage() {
   }
 
   const handleCancelOrder = async (orderId: string) => {
-    const reason = window.prompt('Vui lòng nhập lý do hủy đơn (không bắt buộc):')
+    const reason = window.prompt(
+      t('orders.prompts.cancelReason', 'Vui lòng nhập lý do hủy đơn (không bắt buộc):')
+    )
     if (reason === null) return
     try {
       setCancellingId(orderId)
       const updatedOrder = await cancelOrderApi(orderId, reason)
-      toast.success('Hủy đơn hàng thành công!')
+      toast.success(t('orders.messages.cancelSuccess', 'Hủy đơn hàng thành công!'))
       setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)))
     } catch {
-      toast.error('Có lỗi xảy ra khi hủy đơn!')
+      toast.error(t('orders.messages.cancelError', 'Có lỗi xảy ra khi hủy đơn!'))
     } finally {
       setCancellingId(null)
     }
   }
 
   const handleConfirmReceipt = async (orderId: string) => {
-    if (!window.confirm('Bạn xác nhận đã nhận được hàng và sản phẩm không có vấn đề gì?')) return
+    if (
+      !window.confirm(
+        t(
+          'orders.prompts.receiveConfirm',
+          'Bạn xác nhận đã nhận được hàng và sản phẩm không có vấn đề gì?'
+        )
+      )
+    )
+      return
     try {
       setConfirmingId(orderId)
       const updatedOrder = await confirmReceiptApi(orderId)
-      toast.success('Cảm ơn bạn đã mua sắm tại VTech!')
+      toast.success(t('orders.messages.receiveSuccess', 'Cảm ơn bạn đã mua sắm tại VTech!'))
       setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)))
     } catch {
-      toast.error('Có lỗi xảy ra!')
+      toast.error(t('orders.messages.generalError', 'Có lỗi xảy ra!'))
     } finally {
       setConfirmingId(null)
     }
@@ -201,22 +219,28 @@ export default function OrdersPage() {
 
   const handleReturnOrder = async (orderId: string) => {
     const reason = window.prompt(
-      'Vui lòng nhập lý do hoàn trả (Ví dụ: Hàng lỗi, không đúng mô tả...):'
+      t(
+        'orders.prompts.returnReason',
+        'Vui lòng nhập lý do hoàn trả (Ví dụ: Hàng lỗi, không đúng mô tả...):'
+      )
     )
     if (reason === null) return
     if (reason.trim() === '') {
-      toast.error('Bạn cần nhập lý do hoàn trả để admin xử lý.')
+      toast.error(
+        t('orders.messages.returnReasonReq', 'Bạn cần nhập lý do hoàn trả để admin xử lý.')
+      )
       return
     }
     try {
       setReturningId(orderId)
       const updatedOrder = await returnOrderApi(orderId, reason)
-      toast.success('Đã gửi yêu cầu hoàn trả thành công!')
+      toast.success(t('orders.messages.returnSuccess', 'Đã gửi yêu cầu hoàn trả thành công!'))
       setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)))
     } catch (error: unknown) {
       const axiosError = error as AxiosError<ApiErrorResponse>
-
-      const message = axiosError.response?.data?.message || 'Có lỗi xảy ra khi hủy đơn!'
+      const message =
+        axiosError.response?.data?.message ||
+        t('orders.messages.cancelError', 'Có lỗi xảy ra khi hủy đơn!')
       toast.error(message)
     } finally {
       setReturningId(null)
@@ -226,11 +250,13 @@ export default function OrdersPage() {
   const handleContinuePayment = async (orderId: string) => {
     try {
       setPayingId(orderId)
-      toast.loading('Đang kết nối tới VNPAY...', { id: 'payment' })
+      toast.loading(t('orders.messages.paymentConnect', 'Đang kết nối tới VNPAY...'), {
+        id: 'payment'
+      })
       const res = await api.get(`/client/orders/${orderId}/payment-url`)
       window.location.href = res.data.data
     } catch {
-      toast.error('Có lỗi xảy ra khi tạo link thanh toán!', {
+      toast.error(t('orders.messages.paymentError', 'Có lỗi xảy ra khi tạo link thanh toán!'), {
         id: 'payment'
       })
       setPayingId(null)
@@ -240,17 +266,23 @@ export default function OrdersPage() {
   const handleRepurchase = async (order: OrderResponse) => {
     try {
       setRepurchasingId(order.id)
-      toast.loading('Đang chuẩn bị giỏ hàng...', { id: 'repurchase' })
+      toast.loading(t('orders.messages.cartLoading', 'Đang chuẩn bị giỏ hàng...'), {
+        id: 'repurchase'
+      })
 
       for (const item of order.orderDetails) {
         await addItem(item.variantId, item.quantity, false)
       }
 
-      toast.success('Đã đưa sản phẩm vào giỏ hàng!', { id: 'repurchase' })
+      toast.success(t('orders.messages.cartSuccess', 'Đã đưa sản phẩm vào giỏ hàng!'), {
+        id: 'repurchase'
+      })
       const variantIds = order.orderDetails.map((d) => d.variantId)
       navigate('/cart', { state: { repurchaseVariantIds: variantIds } })
     } catch {
-      toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng.', { id: 'repurchase' })
+      toast.error(t('orders.messages.cartError', 'Có lỗi xảy ra khi thêm vào giỏ hàng.'), {
+        id: 'repurchase'
+      })
     } finally {
       setRepurchasingId(null)
     }
@@ -275,7 +307,7 @@ export default function OrdersPage() {
                     : 'border-transparent text-slate-600 hover:text-red-500 hover:bg-slate-50'
                 }`}
               >
-                {tab}
+                {t(`orders.tabs.${tab}`)}
                 {showBadge && (
                   <span
                     className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none ${
@@ -296,7 +328,7 @@ export default function OrdersPage() {
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder='Tìm theo mã đơn hàng, tên sản phẩm...'
+              placeholder={t('orders.search.placeholder', 'Tìm theo mã đơn hàng, tên sản phẩm...')}
               className='pl-9 bg-white border-slate-200'
             />
           </div>
@@ -305,7 +337,7 @@ export default function OrdersPage() {
         {isLoading ? (
           <div className='flex-1 flex flex-col items-center justify-center text-slate-400 py-12'>
             <Loader2 className='h-8 w-8 animate-spin mb-4 text-slate-300' />
-            <p className='text-sm'>Đang tải lịch sử đơn hàng...</p>
+            <p className='text-sm'>{t('orders.search.loading', 'Đang tải lịch sử đơn hàng...')}</p>
           </div>
         ) : (
           <div className='flex flex-col gap-4 p-4 bg-slate-50/50 flex-1'>
@@ -318,10 +350,10 @@ export default function OrdersPage() {
                   <div className='flex items-center justify-between p-4 border-b bg-slate-50/50'>
                     <div className='flex items-center gap-4 text-sm'>
                       <span className='font-bold text-slate-800 uppercase'>
-                        Mã ĐH: {order.orderCode}
+                        {t('orders.card.orderCode', 'Mã ĐH:')} {order.orderCode}
                       </span>
                       <span className='text-slate-500 hidden sm:inline'>
-                        Ngày đặt: {formatDate(order.createdAt)}
+                        {t('orders.card.orderDate', 'Ngày đặt:')} {formatDate(order.createdAt)}
                       </span>
                     </div>
                     <Badge
@@ -347,7 +379,7 @@ export default function OrdersPage() {
                             {item.productName} {item.variantName}
                           </h4>
                           <div className='flex items-center gap-1.5 text-xs text-slate-500 mt-1'>
-                            <span>Màu:</span>
+                            <span>{t('orders.card.color', 'Màu:')}</span>
                             <span className='font-medium'>{item.colorName}</span>
                           </div>
                           <p className='text-sm font-medium mt-1'>x{item.quantity}</p>
@@ -372,13 +404,13 @@ export default function OrdersPage() {
                               }
                             >
                               <MessageSquarePlus className='h-3 w-3 mr-1.5' />
-                              Đánh giá
+                              {t('orders.actions.review', 'Đánh giá')}
                             </Button>
                           )}
 
                           {order.orderStatus === 'DELIVERED' && item.reviewed && (
                             <span className='mt-2 text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100'>
-                              Đã đánh giá
+                              {t('orders.actions.reviewed', 'Đã đánh giá')}
                             </span>
                           )}
                         </div>
@@ -390,7 +422,9 @@ export default function OrdersPage() {
                     <div className='flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2'>
                       <div className='flex items-center gap-2'>
                         <Store className='h-4 w-4 text-slate-400' />
-                        <span className='text-sm text-slate-600'>Thành tiền:</span>
+                        <span className='text-sm text-slate-600'>
+                          {t('orders.card.total', 'Thành tiền:')}
+                        </span>
                       </div>
                       <span className='text-lg font-bold text-red-600'>
                         {formatVnd(order.finalPrice)}
@@ -411,7 +445,7 @@ export default function OrdersPage() {
                           ) : (
                             <Wallet className='mr-1.5 h-3.5 w-3.5' />
                           )}{' '}
-                          Thanh toán
+                          {t('orders.actions.pay', 'Thanh toán')}
                         </Button>
                       )}
 
@@ -426,7 +460,7 @@ export default function OrdersPage() {
                           {cancellingId === order.id && (
                             <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
                           )}{' '}
-                          Hủy đơn
+                          {t('orders.actions.cancel', 'Hủy đơn')}
                         </Button>
                       )}
 
@@ -443,7 +477,7 @@ export default function OrdersPage() {
                           ) : (
                             <CheckCircle2 className='mr-1.5 h-3.5 w-3.5' />
                           )}{' '}
-                          Đã nhận hàng
+                          {t('orders.actions.receive', 'Đã nhận hàng')}
                         </Button>
                       )}
 
@@ -461,7 +495,7 @@ export default function OrdersPage() {
                             ) : (
                               <RefreshCcw className='mr-1.5 h-3.5 w-3.5' />
                             )}{' '}
-                            Hoàn trả
+                            {t('orders.actions.return', 'Hoàn trả')}
                           </Button>
                         )}
 
@@ -471,7 +505,7 @@ export default function OrdersPage() {
                         className='flex-1 sm:flex-none'
                         onClick={() => setSelectedOrder(order)}
                       >
-                        Xem chi tiết
+                        {t('orders.actions.viewDetail', 'Xem chi tiết')}
                       </Button>
 
                       {['DELIVERED', 'CANCELLED', 'RETURNED'].includes(order.orderStatus) && (
@@ -484,7 +518,7 @@ export default function OrdersPage() {
                           {repurchasingId === order.id && (
                             <Loader2 className='mr-1.5 h-3.5 w-3.5 animate-spin' />
                           )}
-                          Mua lại
+                          {t('orders.actions.repurchase', 'Mua lại')}
                         </Button>
                       )}
                     </div>
@@ -496,11 +530,13 @@ export default function OrdersPage() {
                 <div className='h-20 w-20 bg-slate-100 rounded-full flex items-center justify-center mb-4'>
                   <PackageX className='h-10 w-10 text-slate-300' />
                 </div>
-                <h3 className='text-lg font-bold text-slate-700'>Không tìm thấy đơn hàng</h3>
+                <h3 className='text-lg font-bold text-slate-700'>
+                  {t('orders.empty.title', 'Không tìm thấy đơn hàng')}
+                </h3>
                 <p className='text-slate-500 text-sm mt-1'>
                   {searchTerm
-                    ? 'Không có đơn hàng nào khớp với tìm kiếm.'
-                    : 'Bạn chưa có đơn hàng nào trong trạng thái này.'}
+                    ? t('orders.empty.searchMatch', 'Không có đơn hàng nào khớp với tìm kiếm.')
+                    : t('orders.empty.tabMatch', 'Bạn chưa có đơn hàng nào trong trạng thái này.')}
                 </p>
               </div>
             )}

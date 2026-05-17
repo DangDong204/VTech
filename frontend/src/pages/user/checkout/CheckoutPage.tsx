@@ -74,35 +74,30 @@ export default function CheckoutPage() {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        // GỌI SONG SONG 2 API: Lấy mã Public hệ thống & Lấy mã Private trong ví
         const [publicData, walletData] = await Promise.all([getAllVoucherApi(), getMyVouchersApi()])
 
-        // Lọc các mã Public (Không yêu cầu điểm) và đang ACTIVE
         const publicVouchers = publicData.filter(
           (v) =>
             (v.status === 'ACTIVE' || !v.status) && (!v.requiredPoints || v.requiredPoints === 0)
         )
 
-        // Gộp 2 mảng lại với nhau
         const allAvailable = [...publicVouchers, ...walletData]
-
-        // Loại bỏ trùng lặp (Phòng trường hợp Backend trả về lỗi data)
         const uniqueVouchers = Array.from(new Map(allAvailable.map((v) => [v.id, v])).values())
 
         setAvailableVouchers(uniqueVouchers)
       } catch {
-        toast.error('Lỗi tải voucher')
+        toast.error(t('checkout.messages.loadVoucherError'))
       }
     }
     fetchVouchers()
-  }, [])
+  }, [t])
 
   useEffect(() => {
     if (selectedItems.length === 0) {
-      toast.warning('Vui lòng chọn sản phẩm trước khi thanh toán.')
+      toast.warning(t('checkout.messages.selectItemsFirst'))
       navigate('/cart', { replace: true })
     }
-  }, [selectedItems, navigate])
+  }, [selectedItems, navigate, t])
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -112,13 +107,13 @@ export default function CheckoutPage() {
         const defaultAddr = data.find((a) => a.isDefault) || data[0]
         if (defaultAddr) setSelectedAddressId(defaultAddr.id)
       } catch {
-        toast.error('Không thể tải sổ địa chỉ.')
+        toast.error(t('checkout.messages.loadAddressError'))
       } finally {
         setIsLoadingAddresses(false)
       }
     }
     fetchAddresses()
-  }, [])
+  }, [t])
 
   const subtotal = useMemo(() => {
     return selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -168,9 +163,9 @@ export default function CheckoutPage() {
         }))
       )
       setIsVoucherModalOpen(false)
-      if (results.length > 0) toast.success('Đã áp dụng mã ưu đãi thành công!')
+      if (results.length > 0) toast.success(t('checkout.messages.applyVoucherSuccess'))
     } catch {
-      toast.error('Một số mã không hợp lệ hoặc đã hết hạn!')
+      toast.error(t('checkout.messages.applyVoucherError'))
     } finally {
       setIsCheckingVoucher(false)
     }
@@ -191,7 +186,7 @@ export default function CheckoutPage() {
             {
               id: data.voucherId,
               voucherCode: data.voucherCode,
-              voucherName: 'Mã ưu đãi đặc quyền',
+              voucherName: t('checkout.labels.exclusiveVoucher'),
               type: data.type,
               discountValue: data.discountAmount,
               minOrderValue: 0,
@@ -204,9 +199,9 @@ export default function CheckoutPage() {
       })
       toggleVoucher(data.voucherCode, data.type)
       setVoucherInput('')
-      toast.success('Đã tìm thấy và chọn mã ưu đãi!')
+      toast.success(t('checkout.messages.findVoucherSuccess'))
     } catch {
-      toast.error('Mã ưu đãi không hợp lệ.')
+      toast.error(t('checkout.messages.findVoucherError'))
     } finally {
       setIsCheckingVoucher(false)
     }
@@ -220,7 +215,7 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (!selectedAddressId) {
-      toast.error('Vui lòng chọn địa chỉ giao hàng!')
+      toast.error(t('checkout.messages.selectAddressReq'))
       return
     }
     const selectedAddress = addresses.find((a) => a.id === selectedAddressId)
@@ -245,15 +240,15 @@ export default function CheckoutPage() {
       await fetchCart()
 
       if (paymentMethod === 'VNPAY') {
-        toast.loading('Đang kết nối tới cổng thanh toán VNPAY...')
+        toast.loading(t('checkout.messages.connectingVnpay'))
         const res = await api.get(`/client/orders/${newOrder.id}/payment-url`)
         window.location.href = res.data.data
       } else {
-        toast.success('Đặt hàng thành công!')
+        toast.success(t('checkout.orderSuccess'))
         navigate('/orders', { replace: true })
       }
     } catch {
-      toast.error('Có lỗi xảy ra khi đặt hàng!')
+      toast.error(t('checkout.messages.orderError'))
       setIsSubmitting(false)
     }
   }
@@ -261,17 +256,17 @@ export default function CheckoutPage() {
   const paymentMethodsList = [
     {
       id: 'COD' as PaymentMethodType,
-      name: 'Thanh toán tiền mặt (COD)',
+      name: t('checkout.cod'),
       icon: <Banknote className='w-6 h-6 text-emerald-600' />
     },
     {
       id: 'VNPAY' as PaymentMethodType,
-      name: 'Thanh toán qua VNPAY',
+      name: t('checkout.vnpay'),
       icon: <Wallet className='w-6 h-6 text-blue-600' />
     },
     {
       id: 'BANK_TRANSFER' as PaymentMethodType,
-      name: 'Chuyển khoản ngân hàng',
+      name: t('checkout.transfer'),
       icon: <CreditCard className='w-6 h-6 text-violet-600' />
     }
   ]
@@ -314,7 +309,9 @@ export default function CheckoutPage() {
                   className={`w-24 shrink-0 flex flex-col items-center justify-center p-2 text-white border-r border-dashed border-white/40 ${bgClass}`}
                 >
                   <span className='text-[10px] font-medium uppercase mb-1 text-center leading-tight'>
-                    {v.type === 'FREE_SHIP' ? 'Vận chuyển' : 'Giảm giá'}
+                    {v.type === 'FREE_SHIP'
+                      ? t('cart.modal.shippingType')
+                      : t('cart.modal.discountType')}
                   </span>
                   <span className='text-lg font-extrabold text-center leading-tight'>
                     {v.type === 'PERCENTAGE' ? `${v.discountValue}%` : formatVnd(v.discountValue)}
@@ -326,16 +323,18 @@ export default function CheckoutPage() {
                     {v.voucherName}
                   </h5>
                   <p className='text-xs text-slate-500 mb-2'>
-                    Đơn tối thiểu {formatVnd(v.minOrderValue)}
+                    {t('cart.modal.minOrder')} {formatVnd(v.minOrderValue)}
                   </p>
 
                   {v.usageLimit ? (
                     <div className='mb-2'>
                       <div className='flex justify-between items-center text-[10px] font-medium text-slate-500 mb-1'>
                         <span>
-                          Đã dùng {v.usedCount || 0}/{v.usageLimit}
+                          {t('cart.modal.used')} {v.usedCount || 0}/{v.usageLimit}
                         </span>
-                        {isOutOfUsage && <span className='text-red-500'>Hết mã</span>}
+                        {isOutOfUsage && (
+                          <span className='text-red-500'>{t('cart.modal.outOfStock')}</span>
+                        )}
                       </div>
                       <div className='w-full h-1.5 bg-slate-200 rounded-full overflow-hidden'>
                         <div
@@ -346,7 +345,7 @@ export default function CheckoutPage() {
                     </div>
                   ) : (
                     <div className='mb-2 text-[10px] text-slate-500 font-medium'>
-                      Số lượng: Không giới hạn
+                      {t('cart.modal.unlimited')}
                     </div>
                   )}
 
@@ -379,7 +378,7 @@ export default function CheckoutPage() {
             to='/cart'
             className='inline-flex items-center text-sm font-medium text-slate-500 hover:text-red-600 mb-6 transition-colors'
           >
-            <ChevronLeft className='w-4 h-4 mr-1' /> Quay lại giỏ hàng
+            <ChevronLeft className='w-4 h-4 mr-1' /> {t('checkout.labels.backToCart')}
           </Link>
 
           <div className='grid grid-cols-1 lg:grid-cols-12 gap-8'>
@@ -387,19 +386,20 @@ export default function CheckoutPage() {
               <Card className='border-slate-200 shadow-sm'>
                 <CardHeader className='pb-3'>
                   <CardTitle className='text-lg flex items-center gap-2 text-slate-800'>
-                    <MapPin className='h-5 w-5 text-red-600' /> Địa chỉ nhận hàng
+                    <MapPin className='h-5 w-5 text-red-600' />{' '}
+                    {t('checkout.labels.shippingAddress')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {isLoadingAddresses ? (
                     <div className='flex items-center gap-2 text-slate-500'>
-                      <Loader2 className='h-4 w-4 animate-spin' /> Đang tải địa chỉ...
+                      <Loader2 className='h-4 w-4 animate-spin' /> {t('common.loading')}
                     </div>
                   ) : addresses.length === 0 ? (
                     <div className='text-slate-500 text-sm'>
-                      Bạn chưa có địa chỉ nào.{' '}
+                      {t('checkout.labels.noAddress')}{' '}
                       <Link to='/addresses' className='text-blue-600 hover:underline'>
-                        Thêm địa chỉ mới
+                        {t('checkout.labels.addNewAddress')}
                       </Link>
                     </div>
                   ) : (
@@ -428,7 +428,7 @@ export default function CheckoutPage() {
                               <span className='font-medium text-slate-700'>{addr.phone}</span>
                               {addr.isDefault && (
                                 <span className='text-[10px] uppercase font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded ml-2'>
-                                  Mặc định
+                                  {t('checkout.labels.default')}
                                 </span>
                               )}
                             </div>
@@ -446,9 +446,11 @@ export default function CheckoutPage() {
 
               <Card className='border-slate-200 shadow-sm'>
                 <CardContent className='pt-6'>
-                  <h3 className='font-bold text-slate-800 mb-3'>Ghi chú cho đơn hàng</h3>
+                  <h3 className='font-bold text-slate-800 mb-3'>
+                    {t('checkout.labels.orderNote')}
+                  </h3>
                   <Textarea
-                    placeholder='Nhập ghi chú (VD: Giao giờ hành chính...)'
+                    placeholder={t('checkout.labels.notePlaceholder')}
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     className='resize-none border-slate-200 focus-visible:ring-red-500'
@@ -459,7 +461,9 @@ export default function CheckoutPage() {
 
               <Card className='border-slate-200 shadow-sm'>
                 <CardHeader className='pb-3'>
-                  <CardTitle className='text-lg text-slate-800'>Phương thức thanh toán</CardTitle>
+                  <CardTitle className='text-lg text-slate-800'>
+                    {t('checkout.labels.paymentMethod')}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-3'>
@@ -499,7 +503,7 @@ export default function CheckoutPage() {
               <Card className='lg:sticky lg:top-24 border-slate-200 shadow-sm'>
                 <CardHeader className='pb-4 border-b border-slate-100 bg-slate-50/50'>
                   <CardTitle className='text-lg font-bold text-slate-800'>
-                    Đơn hàng của bạn
+                    {t('checkout.labels.yourOrder')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='pt-5'>
@@ -521,7 +525,7 @@ export default function CheckoutPage() {
                             {item.productName} {item.versionName}
                           </p>
                           <p className='text-slate-500 text-xs mt-0.5 truncate'>
-                            Màu: {item.colorName}
+                            {t('checkout.labels.color')}: {item.colorName}
                           </p>
                           <p className='font-bold text-red-600 mt-1'>{formatVnd(item.price)}</p>
                         </div>
@@ -534,13 +538,13 @@ export default function CheckoutPage() {
                   <div className='space-y-3'>
                     <div className='flex items-center justify-between'>
                       <label className='text-sm font-medium text-slate-700 flex items-center gap-1.5'>
-                        <Tag className='h-4 w-4 text-red-500' /> Khuyến mãi
+                        <Tag className='h-4 w-4 text-red-500' /> {t('checkout.labels.promotions')}
                       </label>
                       <button
                         onClick={openVoucherModal}
                         className='text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors'
                       >
-                        Chọn hoặc nhập mã
+                        {t('checkout.labels.selectOrEnterCode')}
                       </button>
                     </div>
 
@@ -554,7 +558,9 @@ export default function CheckoutPage() {
                             <div className='flex flex-col'>
                               <span className='font-bold uppercase'>{v.code}</span>
                               <span className='text-[11px] opacity-80'>
-                                Giảm {v.type === 'FREE_SHIP' ? 'phí vận chuyển' : 'tiền hàng'}
+                                {v.type === 'FREE_SHIP'
+                                  ? t('checkout.labels.discountShipping')
+                                  : t('checkout.labels.discountProduct')}
                               </span>
                             </div>
                             <button
@@ -573,23 +579,27 @@ export default function CheckoutPage() {
 
                   <div className='space-y-3 text-sm'>
                     <div className='flex justify-between'>
-                      <span className='text-slate-500 font-medium'>Tạm tính</span>
+                      <span className='text-slate-500 font-medium'>
+                        {t('checkout.labels.subtotal')}
+                      </span>
                       <span className='font-bold text-slate-800'>{formatVnd(subtotal)}</span>
                     </div>
                     <div className='flex justify-between'>
-                      <span className='text-slate-500 font-medium'>Phí vận chuyển</span>
+                      <span className='text-slate-500 font-medium'>
+                        {t('checkout.labels.shippingFee')}
+                      </span>
                       <span className='font-bold text-slate-800'>{formatVnd(shippingFee)}</span>
                     </div>
 
                     {productDiscount > 0 && (
                       <div className='flex justify-between text-red-600'>
-                        <span className='font-medium'>Giảm giá sản phẩm</span>
+                        <span className='font-medium'>{t('checkout.labels.discountProduct')}</span>
                         <span className='font-bold'>-{formatVnd(productDiscount)}</span>
                       </div>
                     )}
                     {shippingDiscount > 0 && (
                       <div className='flex justify-between text-emerald-600'>
-                        <span className='font-medium'>Giảm giá vận chuyển</span>
+                        <span className='font-medium'>{t('checkout.labels.discountShipping')}</span>
                         <span className='font-bold'>-{formatVnd(shippingDiscount)}</span>
                       </div>
                     )}
@@ -598,7 +608,9 @@ export default function CheckoutPage() {
                   <Separator className='my-4 bg-slate-200' />
 
                   <div className='flex justify-between items-end pb-2'>
-                    <span className='font-bold text-slate-800'>Tổng thanh toán</span>
+                    <span className='font-bold text-slate-800'>
+                      {t('checkout.labels.totalPayment')}
+                    </span>
                     <span className='text-2xl sm:text-3xl font-extrabold text-red-600'>
                       {formatVnd(total)}
                     </span>
@@ -613,10 +625,12 @@ export default function CheckoutPage() {
                     {isSubmitting ? (
                       <>
                         <Loader2 className='mr-2 h-5 w-5 animate-spin' />{' '}
-                        {paymentMethod === 'VNPAY' ? 'Đang chuyển hướng...' : 'Đang xử lý...'}
+                        {paymentMethod === 'VNPAY'
+                          ? t('checkout.labels.redirecting')
+                          : t('checkout.labels.processing')}
                       </>
                     ) : (
-                      'ĐẶT HÀNG NGAY'
+                      t('checkout.labels.placeOrderNow')
                     )}
                   </Button>
                 </CardContent>
@@ -631,7 +645,7 @@ export default function CheckoutPage() {
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity duration-300'>
           <div className='bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]'>
             <div className='flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 shrink-0'>
-              <h3 className='font-bold text-lg text-slate-800'>Chọn Voucher của VTech</h3>
+              <h3 className='font-bold text-lg text-slate-800'>{t('cart.modal.title')}</h3>
               <button
                 onClick={() => setIsVoucherModalOpen(false)}
                 className='p-1.5 hover:bg-slate-200 rounded-full text-slate-500 transition-colors'
@@ -645,7 +659,7 @@ export default function CheckoutPage() {
                 <Input
                   value={voucherInput}
                   onChange={(e) => setVoucherInput(e.target.value)}
-                  placeholder='Mã voucher (nếu có)'
+                  placeholder={t('cart.modal.inputPlaceholder')}
                   className='uppercase h-11 border-slate-300 focus-visible:ring-red-500'
                 />
                 <Button
@@ -653,26 +667,26 @@ export default function CheckoutPage() {
                   disabled={isCheckingVoucher || !voucherInput.trim()}
                   className='h-11 bg-slate-800 hover:bg-slate-900 w-24 font-bold'
                 >
-                  Tìm mã
+                  {t('cart.modal.findCode')}
                 </Button>
               </div>
 
               {availableVouchers.length === 0 ? (
                 <div className='text-center py-6 text-slate-500 text-sm'>
-                  Hiện tại chưa có mã giảm giá nào.
+                  {t('cart.modal.noVouchers')}
                 </div>
               ) : (
                 <>
                   {renderVoucherGroup(
                     shippingVouchers,
-                    'Mã Miễn Phí Vận Chuyển',
+                    t('cart.modal.shippingVouchers'),
                     Truck,
                     'text-emerald-600',
                     'bg-emerald-500'
                   )}
                   {renderVoucherGroup(
                     discountVouchers,
-                    'Mã Giảm Giá Sản Phẩm',
+                    t('cart.modal.discountVouchers'),
                     Ticket,
                     'text-red-600',
                     'bg-red-500'
@@ -683,7 +697,7 @@ export default function CheckoutPage() {
 
             <div className='p-4 border-t border-slate-100 bg-white flex justify-between items-center shrink-0'>
               <div className='text-sm text-slate-600'>
-                Đã chọn:{' '}
+                {t('cart.modal.selected')}{' '}
                 <span className='font-bold text-red-600'>{selectedVouchersInModal.length}/2</span>
               </div>
               <div className='flex gap-3'>
@@ -692,14 +706,14 @@ export default function CheckoutPage() {
                   className='font-semibold'
                   onClick={() => setIsVoucherModalOpen(false)}
                 >
-                  Hủy
+                  {t('cart.modal.cancel')}
                 </Button>
                 <Button
                   onClick={handleConfirmVouchers}
                   disabled={isCheckingVoucher}
                   className='bg-red-600 hover:bg-red-700 font-bold px-6'
                 >
-                  {isCheckingVoucher ? <Loader2 className='w-4 h-4 animate-spin' /> : 'Xác nhận'}
+                  {t('cart.modal.confirm')}
                 </Button>
               </div>
             </div>

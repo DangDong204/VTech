@@ -17,4 +17,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, String> {
 
     // 2. DÀNH CHO CLIENT: Lấy review của 1 sản phẩm cụ thể theo trạng thái, mới nhất lên đầu
     List<ReviewEntity> findByProductIdAndStatusOrderByIdDesc(String productId, ReviewStatus status);
+
+    // Kiểm tra xem user có đánh giá nào không (phục vụ việc xóa user)
+    boolean existsByUserId(String userId);
 }

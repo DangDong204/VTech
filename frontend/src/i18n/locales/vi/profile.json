@@ -84,5 +84,248 @@
         "error": "Cập nhật thất bại!"
       }
     }
+  },
+  "offers": {
+    "messages": {
+      "redeemSuccess": "Đổi voucher thành công!",
+      "redeemError": "Có lỗi xảy ra khi đổi điểm"
+    },
+    "card": {
+      "minOrder": "Đơn tối thiểu",
+      "expiry": "Hạn dùng:",
+      "readyToUse": "SẴN SÀNG SỬ DỤNG",
+      "useNow": "Dùng ngay",
+      "redeemed": "Đã đổi",
+      "redeeming": "Đang đổi...",
+      "redeemNow": "Đổi ngay"
+    },
+    "header": {
+      "title": "Quản lý Voucher",
+      "subtitle": "Sử dụng V-Point tích lũy để đổi mã giảm giá hoặc xem ví của bạn",
+      "currentPoints": "Điểm hiện có"
+    },
+    "tabs": {
+      "wallet": "Ví Của Tôi",
+      "redeem": "Đổi Điểm Nhận Mã"
+    },
+    "emptyWallet": {
+      "title": "Ví của bạn đang trống",
+      "subtitle": "Hãy sang tab \"Đổi Điểm Nhận Mã\" để sưu tầm ngay các ưu đãi hấp dẫn nhé!",
+      "button": "Tìm mã giảm giá"
+    },
+    "emptyRedeem": "Hiện chưa có ưu đãi nào khả dụng để đổi."
+  },
+  "rewards": {
+    "loading": "Đang tải thông tin...",
+    "card": {
+      "title": "V-Point Card",
+      "balance": "Số dư V-Point",
+      "points": "điểm",
+      "totalAccumulated": "Tổng tích lũy:",
+      "progressToNext": "Tiến trình lên hạng",
+      "needMore": "Cần thêm",
+      "toUpgrade": "điểm để thăng hạng",
+      "maxTier": "Bạn đang ở hạng cao nhất — Chúc mừng!"
+    },
+    "rule": {
+      "title": "Quy tắc nhân điểm:",
+      "desc1": "Điểm cơ bản được tính là",
+      "desc2": "10.000đ = 1 điểm",
+      "desc3": ". Điểm thực nhận của bạn sẽ được nhân với",
+      "desc4": "Hệ số hạng",
+      "desc5": "tương ứng bên dưới!"
+    },
+    "tiers": {
+      "MEMBER": { "label": "Thành viên", "sublabel": "Thành viên mới" },
+      "SILVER": { "label": "Bạc", "sublabel": "Thành viên Bạc" },
+      "GOLD": { "label": "Vàng", "sublabel": "Thành viên Vàng" },
+      "DIAMOND": { "label": "Kim Cương", "sublabel": "Thành viên Kim Cương" }
+    },
+    "tierCard": {
+      "current": "Hiện tại",
+      "requirement": "Yêu cầu:",
+      "points": "điểm"
+    },
+    "history": {
+      "title": "Lịch sử giao dịch V-Point",
+      "transactions": "giao dịch",
+      "points": "điểm",
+      "empty": {
+        "title": "Chưa có lịch sử tích điểm",
+        "desc": "Mua sắm và đánh giá sản phẩm để tích lũy V-Point và nhận nhiều ưu đãi hấp dẫn!",
+        "btn": "Khám phá ưu đãi"
+      }
+    },
+    "transactions": {
+      "EARN_ORDER": { "label": "Tích điểm đơn hàng", "category": "Mua sắm" },
+      "EARN_REVIEW_TEXT": { "label": "Đánh giá sản phẩm", "category": "Đánh giá" },
+      "EARN_REVIEW_MEDIA": { "label": "Đánh giá chi tiết (Ảnh/Video)", "category": "Đánh giá" },
+      "EARN_BIRTHDAY": { "label": "Quà tặng sinh nhật", "category": "Ưu đãi" },
+      "EARN_ADMIN_GIFT": { "label": "Hệ thống tặng điểm", "category": "Ưu đãi" },
+      "SPEND_ORDER": { "label": "Thanh toán đơn hàng", "category": "Sử dụng" },
+      "REDEEM_VOUCHER": { "label": "Đổi điểm lấy Voucher", "category": "Ưu đãi" },
+      "REFUND_ORDER": { "label": "Hoàn điểm hủy đơn", "category": "Hoàn tiền" },
+      "DEDUCT_RETURN": { "label": "Thu hồi do trả hàng", "category": "Thu hồi" }
+    }
+  },
+  "address": {
+    "title": "Sổ địa chỉ nhận hàng",
+    "subtitle": "Quản lý thông tin địa chỉ giao hàng của bạn",
+    "addBtn": "Thêm địa chỉ mới",
+    "addNowBtn": "Thêm ngay",
+    "loading": "Đang tải địa chỉ...",
+    "empty": {
+      "title": "Bạn chưa có địa chỉ nào",
+      "subtitle": "Thêm địa chỉ để đặt hàng nhanh hơn"
+    },
+    "badge": {
+      "default": "Mặc định",
+      "home": "Nhà riêng",
+      "office": "Văn phòng"
+    },
+    "action": {
+      "update": "Cập nhật",
+      "setDefault": "Mặc định",
+      "delete": "Xoá"
+    },
+    "messages": {
+      "fetchError": "Không thể tải danh sách địa chỉ, vui lòng thử lại!",
+      "setDefaultSuccess": "Đã đặt làm địa chỉ mặc định!",
+      "deleteSuccess": "Đã xoá địa chỉ!",
+      "generalError": "Có lỗi xảy ra, vui lòng thử lại!",
+      "updateSuccess": "Cập nhật địa chỉ thành công!",
+      "addSuccess": "Đã thêm địa chỉ mới thành công!"
+    },
+    "deleteConfirm": {
+      "title": "Xác nhận xóa địa chỉ",
+      "description": "Bạn có chắc chắn muốn xóa địa chỉ giao hàng này không? Hành động này không thể hoàn tác.",
+      "cancel": "Hủy",
+      "confirm": "Xóa địa chỉ"
+    },
+    "form": {
+      "titleEdit": "Cập nhật địa chỉ",
+      "titleAdd": "Thêm địa chỉ mới",
+      "loading": "Đang tải thông tin...",
+      "fields": {
+        "name": {
+          "label": "Họ và tên",
+          "placeholder": "Nhập họ và tên người nhận"
+        },
+        "phone": {
+          "label": "Số điện thoại",
+          "placeholder": "Nhập số điện thoại"
+        },
+        "province": {
+          "label": "Tỉnh/Thành phố",
+          "placeholder": "Chọn Tỉnh/Thành phố"
+        },
+        "district": {
+          "label": "Quận/Huyện",
+          "placeholder": "Chọn Quận/Huyện"
+        },
+        "ward": {
+          "label": "Phường/Xã",
+          "placeholder": "Chọn Phường/Xã"
+        },
+        "specific": {
+          "label": "Địa chỉ cụ thể",
+          "placeholder": "Số nhà, Tên tòa nhà, Tên đường..."
+        },
+        "type": {
+          "label": "Loại địa chỉ",
+          "home": "Nhà riêng",
+          "office": "Văn phòng"
+        },
+        "isDefault": "Đặt làm địa chỉ mặc định"
+      },
+      "validation": {
+        "nameReq": "Vui lòng nhập họ và tên",
+        "phoneInv": "Số điện thoại không hợp lệ",
+        "provinceReq": "Vui lòng chọn Tỉnh/Thành phố",
+        "districtReq": "Vui lòng chọn Quận/Huyện",
+        "wardReq": "Vui lòng chọn Phường/Xã",
+        "specificReq": "Vui lòng nhập địa chỉ cụ thể (số nhà, tên đường)"
+      },
+      "buttons": {
+        "cancel": "Hủy",
+        "saving": "Đang lưu...",
+        "update": "Cập nhật",
+        "save": "Lưu địa chỉ"
+      }
+    }
+  },
+  "orders": {
+    "tabs": {
+      "ALL": "Tất cả",
+      "PENDING": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "PROCESSING": "Đang đóng gói",
+      "SHIPPING": "Đang giao",
+      "DELIVERED": "Hoàn thành",
+      "CANCELLED": "Đã hủy",
+      "RETURNED": "Hoàn trả"
+    },
+    "search": {
+      "placeholder": "Tìm theo mã đơn hàng, tên sản phẩm...",
+      "loading": "Đang tải lịch sử đơn hàng..."
+    },
+    "card": {
+      "orderCode": "Mã ĐH:",
+      "orderDate": "Ngày đặt:",
+      "color": "Màu:",
+      "total": "Thành tiền:"
+    },
+    "actions": {
+      "pay": "Thanh toán",
+      "cancel": "Hủy đơn",
+      "receive": "Đã nhận hàng",
+      "return": "Hoàn trả",
+      "viewDetail": "Xem chi tiết",
+      "repurchase": "Mua lại",
+      "review": "Đánh giá",
+      "reviewed": "Đã đánh giá"
+    },
+    "empty": {
+      "title": "Không tìm thấy đơn hàng",
+      "searchMatch": "Không có đơn hàng nào khớp với tìm kiếm.",
+      "tabMatch": "Bạn chưa có đơn hàng nào trong trạng thái này."
+    },
+    "prompts": {
+      "cancelReason": "Vui lòng nhập lý do hủy đơn (không bắt buộc):",
+      "receiveConfirm": "Bạn xác nhận đã nhận được hàng và sản phẩm không có vấn đề gì?",
+      "returnReason": "Vui lòng nhập lý do hoàn trả (Ví dụ: Hàng lỗi, không đúng mô tả...):"
+    },
+    "messages": {
+      "fetchError": "Không thể tải lịch sử đơn hàng.",
+      "cancelSuccess": "Hủy đơn hàng thành công!",
+      "cancelError": "Có lỗi xảy ra khi hủy đơn!",
+      "receiveSuccess": "Cảm ơn bạn đã mua sắm tại VTech!",
+      "generalError": "Có lỗi xảy ra!",
+      "returnReasonReq": "Bạn cần nhập lý do hoàn trả để admin xử lý.",
+      "returnSuccess": "Đã gửi yêu cầu hoàn trả thành công!",
+      "paymentConnect": "Đang kết nối tới VNPAY...",
+      "paymentError": "Có lỗi xảy ra khi tạo link thanh toán!",
+      "cartLoading": "Đang chuẩn bị giỏ hàng...",
+      "cartSuccess": "Đã đưa sản phẩm vào giỏ hàng!",
+      "cartError": "Có lỗi xảy ra khi thêm vào giỏ hàng."
+    }
+  },
+  "orderDetail": {
+    "title": "Chi tiết đơn hàng",
+    "orderTime": "Đặt lúc:",
+    "historyTitle": "Lịch sử đơn hàng",
+    "shippingInfoTitle": "Thông tin nhận hàng",
+    "note": "Ghi chú:",
+    "productsTitle": "Sản phẩm đã đặt",
+    "color": "Màu:",
+    "quantity": "SL: x",
+    "paymentTitle": "Thanh toán",
+    "subTotal": "Tạm tính",
+    "shippingFee": "Phí vận chuyển",
+    "productDiscount": "Giảm giá sản phẩm",
+    "shippingDiscount": "Giảm giá phí vận chuyển",
+    "total": "Tổng cộng",
+    "paymentMethod": "Phương thức:",
+    "cod": "Tiền mặt (COD)"
   }
 }

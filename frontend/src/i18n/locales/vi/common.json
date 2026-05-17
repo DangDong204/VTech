@@ -86,6 +86,28 @@
     "viewAll": "Xem tất cả",
     "sold": "đã bán"
   },
+  "flashSale": {
+    "upcoming": "CHƯƠNG TRÌNH SẮP TỚI",
+    "hotPromo": "KHUYẾN MÃI HOT",
+    "startsIn": "Bắt đầu sau:",
+    "endsIn": "Kết thúc trong:",
+    "statusUpcoming": "Sắp mở bán",
+    "statusOngoing": "Đang diễn ra",
+    "days": "Ngày",
+    "emptyProduct": "Đang tải dữ liệu sản phẩm của chương trình...",
+    "prevAria": "Sản phẩm trước",
+    "nextAria": "Sản phẩm tiếp theo"
+  },
+  "articlesList": {
+    "breadcrumb": "Tin tức công nghệ",
+    "title": "Tin tức công nghệ",
+    "subtitle": "Cập nhật những thông tin mới nhất về công nghệ, đánh giá sản phẩm và các mẹo hay dành cho bạn.",
+    "empty": {
+      "title": "Chưa có bài viết nào",
+      "desc": "Chúng tôi đang cập nhật thêm nội dung. Vui lòng quay lại sau!"
+    },
+    "noSummary": "Không có mô tả cho bài viết này."
+  },
   "product": {
     "addToCart": "Thêm vào giỏ",
     "off": "GIẢM"
@@ -95,10 +117,24 @@
     "color": "Màu sắc:",
     "quantity": "Số lượng:",
     "buyNow": "Mua ngay",
+    "compare": "So sánh",
     "features": "Đặc điểm nổi bật",
     "specs": "Thông số kỹ thuật",
     "warranty": "Bảo hành chính hãng 12 tháng",
-    "exchange": "1 đổi 1 trong 30 ngày",
+    "exchange": "1 đổi 1 miễn phí trong 30 ngày nếu có lỗi từ nhà sản xuất.",
+    "support": "Kỹ thuật viên hỗ trợ trực tuyến, giải đáp mọi thắc mắc về sản phẩm.",
+    "fetchError": "Không tìm thấy sản phẩm hoặc đã xảy ra lỗi.",
+    "productNotFound": "Sản phẩm không tồn tại.",
+    "loginRequired": "Vui lòng đăng nhập để mua hàng!",
+    "backToHome": "Quay về trang chủ",
+    "clickToReview": "Bấm để xem đánh giá chi tiết",
+    "promoTitle": "Khuyến mãi - Ưu đãi",
+    "promo1": "Giảm thêm 500.000đ khi thanh toán qua thẻ tín dụng VNPAY",
+    "promo2": "Tặng Balo Laptop VTech cao cấp trị giá 300.000đ",
+    "promo3": "Cơ hội trúng giải đặc biệt cuối tháng",
+    "buyNowSub": "Giao hàng miễn phí hoặc nhận tại shop",
+    "addCart": "THÊM GIỎ HÀNG",
+    "installment": "TRẢ GÓP 0%",
     "addedToCart": "Đã thêm sản phẩm vào giỏ hàng!",
     "reviews_one": "{{count}} đánh giá",
     "reviews_other": "{{count}} đánh giá",
@@ -140,6 +176,70 @@
       "excerpt": "Xây dựng ngôi nhà kết nối đầu tiên với 5 thiết bị tiết kiệm."
     }
   },
+  "productList": {
+    "breadcrumb": "Tìm kiếm sản phẩm",
+    "filters": {
+      "brand": "Thương hiệu",
+      "showLess": "Thu gọn",
+      "showMoreBrands": "Xem thêm {{count}} hãng",
+      "tags": "Nhu cầu",
+      "category": "Danh mục",
+      "allProducts": "Tất cả sản phẩm",
+      "showMoreCategories": "Xem thêm {{count}} danh mục",
+      "price": "Mức giá",
+      "from": "Từ",
+      "to": "Đến",
+      "apply": "Áp dụng"
+    },
+    "priceRanges": {
+      "under2m": "Dưới 2 triệu",
+      "from2to4m": "Từ 2 - 4 triệu",
+      "from4to7m": "Từ 4 - 7 triệu",
+      "from7to13m": "Từ 7 - 13 triệu",
+      "from13to20m": "Từ 13 - 20 triệu",
+      "above20m": "Trên 20 triệu"
+    },
+    "sort": {
+      "label": "Sắp xếp theo:",
+      "newest": "Mới nhất",
+      "priceDesc": "Giá cao - thấp",
+      "priceAsc": "Giá thấp - cao",
+      "found": "Tìm thấy",
+      "products": "sản phẩm"
+    },
+    "activeFilters": {
+      "filteringBy": "Đang lọc theo:",
+      "category": "Danh mục:",
+      "brand": "Hãng:",
+      "tag": "Nhu cầu:",
+      "keyword": "Từ khoá:",
+      "price": "Giá:",
+      "priceFromTo": "Từ {{min}} - {{max}}",
+      "priceAbove": "Trên {{min}}",
+      "priceBelow": "Dưới {{max}}",
+      "clearAll": "Xóa tất cả"
+    },
+    "empty": {
+      "title": "Không tìm thấy sản phẩm nào!",
+      "desc": "Vui lòng thử bỏ bớt tiêu chí lọc để có thêm kết quả.",
+      "clearBtn": "Xóa bộ lọc"
+    }
+  },
+  "compare": {
+    "title": "So sánh sản phẩm",
+    "emptyTitle": "Bạn chưa chọn sản phẩm nào để so sánh",
+    "continueShopping": "Tiếp tục mua sắm",
+    "basicInfo": "Thông tin cơ bản",
+    "rating": "Đánh giá",
+    "reviewsCount": "({{count}} đánh giá)",
+    "tray": {
+      "title": "So sánh sản phẩm",
+      "addMore": "Thêm SP",
+      "clearAll": "Xóa",
+      "compareNow": "SO SÁNH NGAY",
+      "needMore": "CHỌN THÊM ĐỂ SO SÁNH"
+    }
+  },
   "cart": {
     "title": "Giỏ hàng",
     "itemCount_one": "{{count}} sản phẩm",
@@ -169,7 +269,68 @@
       "title": "Giỏ hàng trống",
       "sub": "Bạn chưa thêm sản phẩm nào. Khám phá ưu đãi mới nhất của chúng tôi.",
       "cta": "Tiếp tục mua sắm"
+    },
+    "stockLimit": "Sản phẩm này chỉ còn {{stock}} cái trong kho.",
+    "selectAll": "Chọn tất cả",
+    "headers": {
+      "price": "Đơn giá",
+      "quantity": "Số lượng",
+      "total": "Thành tiền"
+    },
+    "clearConfirm": "Bạn có chắc chắn muốn xóa toàn bộ giỏ hàng không?",
+    "clearSuccess": "Đã xóa toàn bộ giỏ hàng",
+    "selectRequired": "Vui lòng chọn sản phẩm để thanh toán!",
+    "promotions": "Khuyến mãi",
+    "selectOrEnterCode": "Chọn hoặc nhập mã",
+    "shippingFee": "Phí vận chuyển",
+    "productDiscount": "Giảm giá sản phẩm",
+    "shippingDiscount": "Giảm giá vận chuyển",
+    "discountOffShipping": "phí vận chuyển",
+    "discountOffProduct": "tiền hàng",
+    "cartChanged": "Giỏ hàng đã thay đổi, vui lòng áp dụng lại mã giảm giá.",
+    "modal": {
+      "title": "Chọn Voucher của VTech",
+      "inputPlaceholder": "Mã voucher (nếu có)",
+      "findCode": "Tìm mã",
+      "noVouchers": "Hiện tại chưa có mã giảm giá nào.",
+      "shippingVouchers": "Mã Miễn Phí Vận Chuyển",
+      "discountVouchers": "Mã Giảm Giá Sản Phẩm",
+      "selected": "Đã chọn:",
+      "cancel": "Hủy",
+      "confirm": "Xác nhận",
+      "shippingType": "Vận chuyển",
+      "discountType": "Giảm giá",
+      "minOrder": "Đơn tối thiểu",
+      "used": "Đã dùng",
+      "outOfStock": "Hết mã",
+      "unlimited": "Số lượng: Không giới hạn"
+    },
+    "messages": {
+      "selectOneVoucher": "Vui lòng chọn ít nhất 1 sản phẩm trước khi áp dụng mã.",
+      "applyVoucherSuccess": "Đã áp dụng mã ưu đãi thành công!",
+      "applyVoucherError": "Một số mã không hợp lệ hoặc đã hết hạn!",
+      "findVoucherSuccess": "Đã tìm thấy và chọn mã ưu đãi!",
+      "findVoucherError": "Mã ưu đãi không hợp lệ.",
+      "fetchVoucherError": "Không thể tải danh sách voucher"
     }
+  },
+  "loginDialog": {
+    "title": "VTech",
+    "description": "Vui lòng đăng nhập tài khoản để sử dụng tính năng giỏ hàng và thanh toán dễ dàng hơn.",
+    "loginBtn": "Đăng nhập ngay",
+    "signupBtn": "Đăng ký mới"
+  },
+  "profile": {
+    "title": "Tài khoản của tôi",
+    "greeting": "Xin chào",
+    "customer": "Khách hàng",
+    "overview": "Tổng quan",
+    "orders": "Đơn hàng của tôi",
+    "offers": "Ưu đãi của tôi",
+    "rewards": "Lịch sử điểm thưởng",
+    "warranty": "Thông tin bảo hành",
+    "addresses": "Sổ địa chỉ nhận hàng",
+    "changePassword": "Đổi mật khẩu"
   },
   "checkout": {
     "emptyCartError": "Giỏ hàng của bạn đang trống!",
@@ -192,7 +353,43 @@
     "transfer": "Chuyển khoản ngân hàng",
     "shippingFee": "Phí vận chuyển",
     "placeOrder": "Hoàn tất đặt hàng",
-    "secureInfo": "Mọi thông tin của bạn được bảo mật an toàn"
+    "secureInfo": "Mọi thông tin của bạn được bảo mật an toàn",
+    "messages": {
+      "selectItemsFirst": "Vui lòng chọn sản phẩm trước khi thanh toán.",
+      "loadVoucherError": "Lỗi tải voucher",
+      "loadAddressError": "Không thể tải sổ địa chỉ.",
+      "applyVoucherSuccess": "Đã áp dụng mã ưu đãi thành công!",
+      "applyVoucherError": "Một số mã không hợp lệ hoặc đã hết hạn!",
+      "findVoucherSuccess": "Đã tìm thấy và chọn mã ưu đãi!",
+      "findVoucherError": "Mã ưu đãi không hợp lệ.",
+      "selectAddressReq": "Vui lòng chọn địa chỉ giao hàng!",
+      "connectingVnpay": "Đang kết nối tới cổng thanh toán VNPAY...",
+      "orderError": "Có lỗi xảy ra khi đặt hàng!"
+    },
+    "labels": {
+      "exclusiveVoucher": "Mã ưu đãi đặc quyền",
+      "shippingAddress": "Địa chỉ nhận hàng",
+      "noAddress": "Bạn chưa có địa chỉ nào.",
+      "addNewAddress": "Thêm địa chỉ mới",
+      "default": "Mặc định",
+      "orderNote": "Ghi chú cho đơn hàng",
+      "notePlaceholder": "Nhập ghi chú (VD: Giao giờ hành chính...)",
+      "paymentMethod": "Phương thức thanh toán",
+      "yourOrder": "Đơn hàng của bạn",
+      "color": "Màu",
+      "qty": "SL",
+      "promotions": "Khuyến mãi",
+      "selectOrEnterCode": "Chọn hoặc nhập mã",
+      "discountShipping": "Giảm phí vận chuyển",
+      "discountProduct": "Giảm tiền hàng",
+      "subtotal": "Tạm tính",
+      "shippingFee": "Phí vận chuyển",
+      "totalPayment": "Tổng thanh toán",
+      "placeOrderNow": "ĐẶT HÀNG NGAY",
+      "redirecting": "Đang chuyển hướng...",
+      "processing": "Đang xử lý...",
+      "backToCart": "Quay lại giỏ hàng"
+    }
   },
   "footer": {
     "about": {

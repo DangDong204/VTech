@@ -21,7 +21,7 @@ public class VoucherController {
     private final MessageUtil messageUtil;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<VoucherResponse> createVoucher(
             @Valid @RequestBody VoucherRequest request
     ) {
@@ -33,6 +33,7 @@ public class VoucherController {
     }
 
     @GetMapping
+
     public ApiResponse<List<VoucherResponse>> getAll() {
         return ApiResponse.<List<VoucherResponse>>builder()
                 .data(voucherService.getAllVouchers())
@@ -40,6 +41,7 @@ public class VoucherController {
     }
 
     @GetMapping("/{voucherId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<VoucherResponse> getById(@PathVariable String voucherId) {
         return ApiResponse.<VoucherResponse>builder()
                 .data(voucherService.getById(voucherId))
@@ -47,7 +49,7 @@ public class VoucherController {
     }
 
     @PutMapping("/{voucherId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<VoucherResponse> updateVoucher(
             @PathVariable String voucherId,
             @Valid @RequestBody VoucherRequest request
@@ -60,7 +62,7 @@ public class VoucherController {
     }
 
     @DeleteMapping("/trash/{voucherId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteVoucher(@PathVariable String voucherId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("voucher.deleted.success", voucherService.deleteHard(voucherId)))
@@ -68,7 +70,7 @@ public class VoucherController {
     }
 
     @DeleteMapping("/{voucherId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteSoftVoucher(@PathVariable String voucherId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("voucher.deleted.soft.success", voucherService.deleteSoft(voucherId)))
@@ -76,6 +78,7 @@ public class VoucherController {
     }
 
     @GetMapping("/trash")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<VoucherResponse>> getAllInTrash() {
         return ApiResponse.<List<VoucherResponse>>builder()
                 .data(voucherService.getAllInTrash())
@@ -83,7 +86,7 @@ public class VoucherController {
     }
 
     @PatchMapping("/trash/{voucherId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> restoreVoucher(@PathVariable String voucherId) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("voucher.restored.success", voucherService.restore(voucherId)))

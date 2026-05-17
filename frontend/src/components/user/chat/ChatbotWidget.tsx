@@ -14,6 +14,8 @@ import {
 import { sendChatMessageApi } from '@/services/chatbot/chat.api'
 import { useCart } from '@/contexts/CartContext'
 import { Link } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 interface MessageItem {
   id: string
@@ -35,7 +37,6 @@ export default function ChatbotWidget() {
     return sessionStorage.getItem('vtech_chat_is_open') === 'true'
   })
 
-  // State cho chế độ mở rộng
   const [isExpanded, setIsExpanded] = useState(() => {
     return sessionStorage.getItem('vtech_chat_is_expanded') === 'true'
   })
@@ -147,50 +148,64 @@ export default function ChatbotWidget() {
   }
 
   const renderMessageContent = (content: string, role: 'bot' | 'user') => {
-    const urlRegex = /(https?:\/\/[^\s)]+|\/product\/[a-zA-Z0-9-_]+)/g
-    const parts = content.split(urlRegex)
+    if (role === 'user') {
+      return <span className='whitespace-pre-wrap'>{content}</span>
+    }
 
-    const btnClass =
-      role === 'user'
-        ? 'inline-flex items-center gap-1.5 px-3 py-1.5 mx-1 my-1 bg-white text-red-600 hover:bg-slate-100 rounded-lg text-[13px] font-bold transition-colors shadow-sm'
-        : 'inline-flex items-center gap-1.5 px-3 py-1.5 mx-1 my-1 bg-red-600 text-white hover:bg-red-700 rounded-lg text-[13px] font-bold transition-colors shadow-sm'
+    // ĐÃ FIX: Không cần dùng Regex phức tạp nữa vì Backend đã trả về Markdown chuẩn
+    return (
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          // Tách chính xác { children } ra để TypeScript không còn báo lỗi node/props unused
+          table: ({ children }) => (
+            <div className='overflow-x-auto my-3 rounded-lg border border-slate-200'>
+              <table className='w-full text-left border-collapse text-sm bg-white text-slate-800'>
+                {children}
+              </table>
+            </div>
+          ),
+          thead: ({ children }) => (
+            <thead className='bg-red-50 text-red-700 font-bold'>{children}</thead>
+          ),
+          th: ({ children }) => <th className='border-b border-slate-200 px-3 py-2'>{children}</th>,
+          td: ({ children }) => <td className='border-b border-slate-200 px-3 py-2'>{children}</td>,
 
-    return parts.map((part, index) => {
-      if (part.match(urlRegex)) {
-        const isInternal = part.startsWith('/product/')
-        const buttonText = isInternal ? 'Xem chi tiết' : 'Mở liên kết'
+          ul: ({ children }) => <ul className='list-disc pl-5 my-2 space-y-1'>{children}</ul>,
+          ol: ({ children }) => <ol className='list-decimal pl-5 my-2 space-y-1'>{children}</ol>,
+          li: ({ children }) => <li className='leading-relaxed'>{children}</li>,
 
-        const ButtonContent = (
-          <>
-            {buttonText} <ArrowRight className='h-3.5 w-3.5' />
-          </>
-        )
+          p: ({ children }) => <p className='mb-2 last:mb-0 leading-relaxed'>{children}</p>,
+          strong: ({ children }) => (
+            <strong className='font-bold text-slate-900'>{children}</strong>
+          ),
 
-        if (part.startsWith('http')) {
-          return (
-            <a
-              key={index}
-              href={part}
-              target='_blank'
-              rel='noopener noreferrer'
-              className={btnClass}
-            >
-              {ButtonContent}
-            </a>
-          )
-        }
+          // Tự động rẽ nhánh Link điều hướng nội bộ hoặc mở Tab mới
+          a: ({ href, children }) => {
+            const isInternal = href?.startsWith('/')
+            const btnClass =
+              'inline-flex items-center gap-1.5 px-3 py-1.5 my-1 bg-red-600 text-white hover:bg-red-700 rounded-lg text-[13px] font-bold transition-colors shadow-sm no-underline'
 
-        return (
-          <Link key={index} to={part} className={btnClass}>
-            {ButtonContent}
-          </Link>
-        )
-      }
-      return <span key={index}>{part}</span>
-    })
+            if (!isInternal) {
+              return (
+                <a href={href} target='_blank' rel='noopener noreferrer' className={btnClass}>
+                  {children} <ArrowRight className='h-3.5 w-3.5' />
+                </a>
+              )
+            }
+            return (
+              <Link to={href || '#'} className={btnClass}>
+                {children} <ArrowRight className='h-3.5 w-3.5' />
+              </Link>
+            )
+          }
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    )
   }
 
-  // Kích thước động dựa theo trạng thái expanded
   const chatWidth = isExpanded ? 'w-[480px] sm:w-[560px]' : 'w-80 sm:w-96'
   const chatHeight = isExpanded ? 'h-[680px]' : 'h-[500px]'
 
@@ -221,7 +236,6 @@ export default function ChatbotWidget() {
                 <RefreshCw className='h-4 w-4' />
               </button>
 
-              {/* Nút Expand / Collapse */}
               <button
                 onClick={() => setIsExpanded((prev) => !prev)}
                 title={isExpanded ? 'Thu nhỏ' : 'Mở rộng'}
@@ -245,7 +259,7 @@ export default function ChatbotWidget() {
             {messages.map((msg, index) => (
               <div key={msg.id} className='flex flex-col'>
                 <div
-                  className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
+                  className={`flex gap-2 max-w-[90%] ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
                 >
                   <div
                     className={`h-7 w-7 shrink-0 rounded-full flex items-center justify-center mt-1 ${msg.role === 'user' ? 'bg-slate-200' : 'bg-red-100 text-red-600'}`}
@@ -258,7 +272,7 @@ export default function ChatbotWidget() {
                   </div>
 
                   <div
-                    className={`p-3 rounded-2xl text-sm whitespace-pre-wrap leading-relaxed ${msg.role === 'user' ? 'bg-red-600 text-white rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm'}`}
+                    className={`p-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-red-600 text-white rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm'}`}
                   >
                     {renderMessageContent(msg.content, msg.role)}
                   </div>

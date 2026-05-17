@@ -84,5 +84,248 @@
         "error": "Update failed!"
       }
     }
+  },
+  "offers": {
+    "messages": {
+      "redeemSuccess": "Voucher redeemed successfully!",
+      "redeemError": "An error occurred while redeeming points"
+    },
+    "card": {
+      "minOrder": "Min order",
+      "expiry": "Expires:",
+      "readyToUse": "READY TO USE",
+      "useNow": "Use now",
+      "redeemed": "Redeemed",
+      "redeeming": "Redeeming...",
+      "redeemNow": "Redeem now"
+    },
+    "header": {
+      "title": "Voucher Management",
+      "subtitle": "Use your accumulated V-Points to redeem discount codes or view your wallet",
+      "currentPoints": "Current Points"
+    },
+    "tabs": {
+      "wallet": "My Wallet",
+      "redeem": "Redeem Points"
+    },
+    "emptyWallet": {
+      "title": "Your wallet is empty",
+      "subtitle": "Go to the \"Redeem Points\" tab to collect exciting offers now!",
+      "button": "Find vouchers"
+    },
+    "emptyRedeem": "There are currently no available offers to redeem."
+  },
+  "rewards": {
+    "loading": "Loading information...",
+    "card": {
+      "title": "V-Point Card",
+      "balance": "V-Point Balance",
+      "points": "points",
+      "totalAccumulated": "Total accumulated:",
+      "progressToNext": "Progress to",
+      "needMore": "Need",
+      "toUpgrade": "more points to upgrade",
+      "maxTier": "You are at the highest tier — Congratulations!"
+    },
+    "rule": {
+      "title": "Point Multiplier Rule:",
+      "desc1": "Base points are calculated as",
+      "desc2": "10,000₫ = 1 point",
+      "desc3": ". Your actual received points will be multiplied by the corresponding",
+      "desc4": "Tier Multiplier",
+      "desc5": "below!"
+    },
+    "tiers": {
+      "MEMBER": { "label": "Member", "sublabel": "New Member" },
+      "SILVER": { "label": "Silver", "sublabel": "Silver Member" },
+      "GOLD": { "label": "Gold", "sublabel": "Gold Member" },
+      "DIAMOND": { "label": "Diamond", "sublabel": "Diamond Member" }
+    },
+    "tierCard": {
+      "current": "Current",
+      "requirement": "Requires:",
+      "points": "points"
+    },
+    "history": {
+      "title": "V-Point Transaction History",
+      "transactions": "transactions",
+      "points": "points",
+      "empty": {
+        "title": "No point history yet",
+        "desc": "Shop and review products to accumulate V-Points and receive many attractive offers!",
+        "btn": "Explore offers"
+      }
+    },
+    "transactions": {
+      "EARN_ORDER": { "label": "Order points earned", "category": "Shopping" },
+      "EARN_REVIEW_TEXT": { "label": "Product review", "category": "Review" },
+      "EARN_REVIEW_MEDIA": { "label": "Detailed review (Photo/Video)", "category": "Review" },
+      "EARN_BIRTHDAY": { "label": "Birthday gift", "category": "Offer" },
+      "EARN_ADMIN_GIFT": { "label": "System gift", "category": "Offer" },
+      "SPEND_ORDER": { "label": "Order payment", "category": "Usage" },
+      "REDEEM_VOUCHER": { "label": "Redeem for Voucher", "category": "Offer" },
+      "REFUND_ORDER": { "label": "Refund canceled order points", "category": "Refund" },
+      "DEDUCT_RETURN": { "label": "Deduct for returned items", "category": "Deduction" }
+    }
+  },
+  "address": {
+    "title": "Address Book",
+    "subtitle": "Manage your shipping addresses",
+    "addBtn": "Add new address",
+    "addNowBtn": "Add now",
+    "loading": "Loading addresses...",
+    "empty": {
+      "title": "You have no addresses yet",
+      "subtitle": "Add an address for faster checkout"
+    },
+    "badge": {
+      "default": "Default",
+      "home": "Home",
+      "office": "Office"
+    },
+    "action": {
+      "update": "Update",
+      "setDefault": "Set Default",
+      "delete": "Delete"
+    },
+    "messages": {
+      "fetchError": "Could not load address list, please try again!",
+      "setDefaultSuccess": "Set as default address!",
+      "deleteSuccess": "Address deleted!",
+      "generalError": "An error occurred, please try again!",
+      "updateSuccess": "Address updated successfully!",
+      "addSuccess": "New address added successfully!"
+    },
+    "deleteConfirm": {
+      "title": "Confirm address deletion",
+      "description": "Are you sure you want to delete this shipping address? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete address"
+    },
+    "form": {
+      "titleEdit": "Update Address",
+      "titleAdd": "Add New Address",
+      "loading": "Loading information...",
+      "fields": {
+        "name": {
+          "label": "Full name",
+          "placeholder": "Enter recipient's full name"
+        },
+        "phone": {
+          "label": "Phone number",
+          "placeholder": "Enter phone number"
+        },
+        "province": {
+          "label": "Province/City",
+          "placeholder": "Select Province/City"
+        },
+        "district": {
+          "label": "District",
+          "placeholder": "Select District"
+        },
+        "ward": {
+          "label": "Ward/Commune",
+          "placeholder": "Select Ward/Commune"
+        },
+        "specific": {
+          "label": "Specific address",
+          "placeholder": "House number, Building name, Street name..."
+        },
+        "type": {
+          "label": "Address type",
+          "home": "Home",
+          "office": "Office"
+        },
+        "isDefault": "Set as default address"
+      },
+      "validation": {
+        "nameReq": "Please enter full name",
+        "phoneInv": "Invalid phone number",
+        "provinceReq": "Please select Province/City",
+        "districtReq": "Please select District",
+        "wardReq": "Please select Ward/Commune",
+        "specificReq": "Please enter specific address (house number, street name)"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "update": "Update",
+        "save": "Save address"
+      }
+    }
+  },
+  "orders": {
+    "tabs": {
+      "ALL": "All",
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "PROCESSING": "Processing",
+      "SHIPPING": "Shipping",
+      "DELIVERED": "Completed",
+      "CANCELLED": "Cancelled",
+      "RETURNED": "Returned"
+    },
+    "search": {
+      "placeholder": "Search by order code, product name...",
+      "loading": "Loading order history..."
+    },
+    "card": {
+      "orderCode": "Order ID:",
+      "orderDate": "Date:",
+      "color": "Color:",
+      "total": "Total:"
+    },
+    "actions": {
+      "pay": "Pay now",
+      "cancel": "Cancel",
+      "receive": "Received",
+      "return": "Return",
+      "viewDetail": "View details",
+      "repurchase": "Buy again",
+      "review": "Review",
+      "reviewed": "Reviewed"
+    },
+    "empty": {
+      "title": "No orders found",
+      "searchMatch": "No orders match your search.",
+      "tabMatch": "You have no orders in this status."
+    },
+    "prompts": {
+      "cancelReason": "Please enter cancellation reason (optional):",
+      "receiveConfirm": "Do you confirm receiving the order in good condition?",
+      "returnReason": "Please enter return reason (e.g. Defective, not as described...):"
+    },
+    "messages": {
+      "fetchError": "Could not load order history.",
+      "cancelSuccess": "Order cancelled successfully!",
+      "cancelError": "An error occurred while cancelling!",
+      "receiveSuccess": "Thank you for shopping at VTech!",
+      "generalError": "An error occurred!",
+      "returnReasonReq": "Return reason is required for admin processing.",
+      "returnSuccess": "Return request submitted successfully!",
+      "paymentConnect": "Connecting to VNPAY...",
+      "paymentError": "Failed to create payment link!",
+      "cartLoading": "Preparing cart...",
+      "cartSuccess": "Products added to cart!",
+      "cartError": "Failed to add products to cart."
+    }
+  },
+  "orderDetail": {
+    "title": "Order Details",
+    "orderTime": "Ordered at:",
+    "historyTitle": "Order History",
+    "shippingInfoTitle": "Shipping Information",
+    "note": "Note:",
+    "productsTitle": "Ordered Products",
+    "color": "Color:",
+    "quantity": "Qty: x",
+    "paymentTitle": "Payment",
+    "subTotal": "Subtotal",
+    "shippingFee": "Shipping Fee",
+    "productDiscount": "Product Discount",
+    "shippingDiscount": "Shipping Discount",
+    "total": "Total",
+    "paymentMethod": "Method:",
+    "cod": "Cash on Delivery (COD)"
   }
 }

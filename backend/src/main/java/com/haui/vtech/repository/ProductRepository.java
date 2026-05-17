@@ -33,16 +33,18 @@ public interface ProductRepository extends JpaRepository<ProductEntity, String> 
 
     @Query("SELECT DISTINCT p FROM ProductEntity p " +
             "LEFT JOIN p.variants v " +
-            "LEFT JOIN p.tags t " + // THÊM DÒNG NÀY ĐỂ JOIN BẢNG TAG
+            "LEFT JOIN p.tags t " +
             "WHERE p.status = 'ACTIVE' " +
             "AND (:categorySlug IS NULL OR p.category.slug = :categorySlug) " +
             "AND (:brandSlug IS NULL OR p.brand.slug = :brandSlug) " +
-            "AND (:tagId IS NULL OR t.id = :tagId) " + // THÊM DÒNG NÀY LỌC TAG
+            "AND (:tagId IS NULL OR t.id = :tagId) " +
+            "AND (:keyword IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))) " + // THÊM DÒNG NÀY
             "AND (:minPrice IS NULL OR v.salePrice >= :minPrice) " +
             "AND (:maxPrice IS NULL OR v.salePrice <= :maxPrice)")
     List<ProductEntity> searchClientProducts(@Param("categorySlug") String categorySlug,
                                              @Param("brandSlug") String brandSlug,
-                                             @Param("tagId") String tagId, // THÊM THAM SỐ NÀY
+                                             @Param("tagId") String tagId,
+                                             @Param("keyword") String keyword, // THÊM THAM SỐ NÀY
                                              @Param("minPrice") BigDecimal minPrice,
                                              @Param("maxPrice") BigDecimal maxPrice);
 

@@ -86,6 +86,28 @@
     "viewAll": "View all",
     "sold": "sold"
   },
+  "flashSale": {
+    "upcoming": "UPCOMING EVENT",
+    "hotPromo": "HOT PROMOTION",
+    "startsIn": "Starts in:",
+    "endsIn": "Ends in:",
+    "statusUpcoming": "Coming Soon",
+    "statusOngoing": "Ongoing",
+    "days": "Days",
+    "emptyProduct": "Loading program product data...",
+    "prevAria": "Previous product",
+    "nextAria": "Next product"
+  },
+  "articlesList": {
+    "breadcrumb": "Tech News",
+    "title": "Tech News",
+    "subtitle": "Stay updated with the latest tech news, product reviews, and useful tips for you.",
+    "empty": {
+      "title": "No articles yet",
+      "desc": "We are currently adding more content. Please check back later!"
+    },
+    "noSummary": "No description available for this article."
+  },
   "product": {
     "addToCart": "Add to cart",
     "off": "OFF"
@@ -95,10 +117,24 @@
     "color": "Color:",
     "quantity": "Quantity:",
     "buyNow": "Buy now",
+    "compare": "Compare",
     "features": "Key features",
     "specs": "Specifications",
     "warranty": "Official 12-month warranty",
-    "exchange": "1-for-1 exchange within 30 days",
+    "exchange": "Free 1-for-1 exchange within 30 days for manufacturer defects.",
+    "support": "Online technical support staff available to answer all product-related questions.",
+    "fetchError": "Product not found or an error occurred.",
+    "productNotFound": "Product does not exist.",
+    "loginRequired": "Please log in to purchase!",
+    "backToHome": "Back to home",
+    "clickToReview": "Click to view detailed reviews",
+    "promoTitle": "Promotions - Offers",
+    "promo1": "Extra 500,000₫ off when paying with VNPAY credit card",
+    "promo2": "Free premium VTech Laptop Backpack worth 300,000₫",
+    "promo3": "Chance to win the grand prize at the end of the month",
+    "buyNowSub": "Free delivery or pick up at store",
+    "addCart": "ADD TO CART",
+    "installment": "0% INSTALLMENT",
     "addedToCart": "Product added to cart!",
     "reviews_one": "{{count}} review",
     "reviews_other": "{{count}} reviews",
@@ -140,6 +176,70 @@
       "excerpt": "Build your first connected home with these 5 affordable devices."
     }
   },
+  "productList": {
+    "breadcrumb": "Search Products",
+    "filters": {
+      "brand": "Brands",
+      "showLess": "Show less",
+      "showMoreBrands": "Show {{count}} more brands",
+      "tags": "Needs",
+      "category": "Categories",
+      "allProducts": "All products",
+      "showMoreCategories": "Show {{count}} more categories",
+      "price": "Price Range",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply"
+    },
+    "priceRanges": {
+      "under2m": "Under 2 million",
+      "from2to4m": "2 - 4 million",
+      "from4to7m": "4 - 7 million",
+      "from7to13m": "7 - 13 million",
+      "from13to20m": "13 - 20 million",
+      "above20m": "Above 20 million"
+    },
+    "sort": {
+      "label": "Sort by:",
+      "newest": "Newest",
+      "priceDesc": "Price: High to Low",
+      "priceAsc": "Price: Low to High",
+      "found": "Found",
+      "products": "products"
+    },
+    "activeFilters": {
+      "filteringBy": "Filtering by:",
+      "category": "Category:",
+      "brand": "Brand:",
+      "tag": "Need:",
+      "keyword": "Keyword:",
+      "price": "Price:",
+      "priceFromTo": "From {{min}} - {{max}}",
+      "priceAbove": "Above {{min}}",
+      "priceBelow": "Below {{max}}",
+      "clearAll": "Clear all"
+    },
+    "empty": {
+      "title": "No products found!",
+      "desc": "Please try removing some filter criteria to get more results.",
+      "clearBtn": "Clear filters"
+    }
+  },
+  "compare": {
+    "title": "Product Comparison",
+    "emptyTitle": "You haven't selected any products to compare",
+    "continueShopping": "Continue Shopping",
+    "basicInfo": "Basic Information",
+    "rating": "Rating",
+    "reviewsCount": "({{count}} reviews)",
+    "tray": {
+      "title": "Compare Products",
+      "addMore": "Add",
+      "clearAll": "Clear",
+      "compareNow": "COMPARE NOW",
+      "needMore": "SELECT MORE TO COMPARE"
+    }
+  },
   "cart": {
     "title": "Shopping Cart",
     "itemCount_one": "{{count}} item",
@@ -169,7 +269,68 @@
       "title": "Your cart is empty",
       "sub": "Looks like you haven't added anything yet. Discover our latest deals.",
       "cta": "Continue Shopping"
+    },
+    "stockLimit": "Only {{stock}} item(s) left in stock.",
+    "selectAll": "Select all",
+    "headers": {
+      "price": "Unit Price",
+      "quantity": "Quantity",
+      "total": "Subtotal"
+    },
+    "clearConfirm": "Are you sure you want to clear your entire cart?",
+    "clearSuccess": "Cart cleared successfully",
+    "selectRequired": "Please select products to checkout!",
+    "promotions": "Promotions",
+    "selectOrEnterCode": "Select or enter code",
+    "shippingFee": "Shipping fee",
+    "productDiscount": "Product discount",
+    "shippingDiscount": "Shipping discount",
+    "discountOffShipping": "shipping",
+    "discountOffProduct": "products",
+    "cartChanged": "Cart has changed, please re-apply your discount codes.",
+    "modal": {
+      "title": "Select VTech Voucher",
+      "inputPlaceholder": "Voucher code (optional)",
+      "findCode": "Find",
+      "noVouchers": "No vouchers available at the moment.",
+      "shippingVouchers": "Free Shipping Vouchers",
+      "discountVouchers": "Discount Vouchers",
+      "selected": "Selected:",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "shippingType": "Shipping",
+      "discountType": "Discount",
+      "minOrder": "Min. order",
+      "used": "Used",
+      "outOfStock": "Out of stock",
+      "unlimited": "Quantity: Unlimited"
+    },
+    "messages": {
+      "selectOneVoucher": "Please select at least 1 product before applying code.",
+      "applyVoucherSuccess": "Voucher applied successfully!",
+      "applyVoucherError": "Some codes are invalid or expired!",
+      "findVoucherSuccess": "Voucher found and selected!",
+      "findVoucherError": "Invalid voucher code.",
+      "fetchVoucherError": "Failed to load vouchers"
     }
+  },
+  "loginDialog": {
+    "title": "VTech",
+    "description": "Please log in to your account to use the shopping cart and checkout features more easily.",
+    "loginBtn": "Login now",
+    "signupBtn": "Sign up"
+  },
+  "profile": {
+    "title": "My Account",
+    "greeting": "Hello",
+    "customer": "Customer",
+    "overview": "Overview",
+    "orders": "My Orders",
+    "offers": "My Offers",
+    "rewards": "Reward History",
+    "warranty": "Warranty Info",
+    "addresses": "Address Book",
+    "changePassword": "Change Password"
   },
   "checkout": {
     "emptyCartError": "Your cart is empty!",
@@ -192,7 +353,43 @@
     "transfer": "Bank transfer",
     "shippingFee": "Shipping fee",
     "placeOrder": "Place order",
-    "secureInfo": "All your information is securely protected"
+    "secureInfo": "All your information is securely protected",
+    "messages": {
+      "selectItemsFirst": "Please select products before checking out.",
+      "loadVoucherError": "Error loading vouchers",
+      "loadAddressError": "Could not load address book.",
+      "applyVoucherSuccess": "Discount code applied successfully!",
+      "applyVoucherError": "Some codes are invalid or expired!",
+      "findVoucherSuccess": "Voucher found and selected!",
+      "findVoucherError": "Invalid voucher code.",
+      "selectAddressReq": "Please select a shipping address!",
+      "connectingVnpay": "Connecting to VNPAY payment gateway...",
+      "orderError": "An error occurred while placing your order!"
+    },
+    "labels": {
+      "exclusiveVoucher": "Exclusive voucher",
+      "shippingAddress": "Shipping Address",
+      "noAddress": "You don't have any address.",
+      "addNewAddress": "Add new address",
+      "default": "Default",
+      "orderNote": "Order Note",
+      "notePlaceholder": "Enter note (e.g., Deliver during office hours...)",
+      "paymentMethod": "Payment Method",
+      "yourOrder": "Your Order",
+      "color": "Color",
+      "qty": "Qty",
+      "promotions": "Promotions",
+      "selectOrEnterCode": "Select or enter code",
+      "discountShipping": "Shipping discount",
+      "discountProduct": "Product discount",
+      "subtotal": "Subtotal",
+      "shippingFee": "Shipping Fee",
+      "totalPayment": "Total Payment",
+      "placeOrderNow": "PLACE ORDER NOW",
+      "redirecting": "Redirecting...",
+      "processing": "Processing...",
+      "backToCart": "Back to cart"
+    }
   },
   "footer": {
     "about": {

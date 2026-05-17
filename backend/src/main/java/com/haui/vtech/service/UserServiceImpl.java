@@ -10,10 +10,13 @@ import com.haui.vtech.enums.UserStatus;
 import com.haui.vtech.exception.AppException;
 import com.haui.vtech.exception.ErrorCode;
 import com.haui.vtech.mapper.UserMapper;
+import com.haui.vtech.repository.OrderRepository;
+import com.haui.vtech.repository.ReviewRepository;
 import com.haui.vtech.repository.RoleRepository;
 import com.haui.vtech.repository.UserRepository;
 import com.haui.vtech.util.OtpUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,8 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final OtpUtil otpUtil;
     private final EmailService emailService;
+    private final OrderRepository orderRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -102,6 +108,15 @@ public class UserServiceImpl implements UserService{
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
+        // 1. Lấy email của người đang thao tác (Admin đang đăng nhập)
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        boolean isSelf = userEntity.getEmail().equals(currentUserEmail);
+
+        // 2. Chặn tự khóa tài khoản của chính mình
+        if (isSelf && request.getStatus() != null && !userEntity.getStatus().equals(request.getStatus())) {
+            throw new AppException(ErrorCode.CANNOT_CHANGE_OWN_STATUS);
+        }
+
         userMapper.updateUser(userEntity, request);
 
         if (file != null && !file.isEmpty()) {
@@ -109,16 +124,31 @@ public class UserServiceImpl implements UserService{
             userEntity.setAvatar(imageUrl);
         }
 
+        // 3. Xử lý cập nhật quyền
         if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            Set<String> newRoles = request.getRoles();
 
-            Set<String> roleNames = request.getRoles();
-            List<RoleEntity> roleEntities = roleRepository.findByNameIn(roleNames);
+            // Lấy danh sách quyền hiện tại của user đang bị sửa
+            Set<String> currentRoles = userEntity.getRoles().stream()
+                    .map(RoleEntity::getName)
+                    .collect(Collectors.toSet());
 
-            if (roleEntities.size() != roleNames.size()) {
-                throw new AppException(ErrorCode.ROLE_NOT_FOUND);
+            // Nếu Quyền có sự thay đổi
+            if (!currentRoles.equals(newRoles)) {
+                // CHẶN: Nếu tự sửa quyền của chính mình
+                if (isSelf) {
+                    throw new AppException(ErrorCode.CANNOT_CHANGE_OWN_ROLE);
+                }
+
+                // HỢP LỆ: Cập nhật quyền cho người khác
+                List<RoleEntity> roleEntities = roleRepository.findByNameIn(newRoles);
+
+                if (roleEntities.size() != newRoles.size()) {
+                    throw new AppException(ErrorCode.ROLE_NOT_FOUND);
+                }
+
+                userEntity.setRoles(new HashSet<>(roleEntities));
             }
-
-            userEntity.setRoles(new HashSet<>(roleEntities));
         }
 
 
@@ -131,10 +161,7 @@ public class UserServiceImpl implements UserService{
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // TODO: Kiểm tra nếu user đang xóa là chính mình thì không cho xóa
-//        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-//        if (user.getEmail().equals(currentUserEmail)) {
-//            throw new AppException(ErrorCode.CANNOT_DELETE_SELF);
-//        }
+        checkIfUserIsDeletable(user);
 
         userRepository.deleteById(id);
     }
@@ -142,6 +169,11 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public void deleteSoft(String id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        checkIfUserIsDeletable(user);
+
         int affectedRows  = userRepository.softDelete(id, LocalDateTime.now());
 
         if (affectedRows  == 0) {
@@ -324,4 +356,21 @@ public class UserServiceImpl implements UserService{
         return userMapper.toProfileUpdateResponse(userRepository.save(user));
     }
 
+    private void checkIfUserIsDeletable(UserEntity user) {
+        // 1. Kiểm tra nếu user đang xóa là chính mình thì không cho xóa
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (user.getEmail().equals(currentUserEmail)) {
+            throw new AppException(ErrorCode.CANNOT_DELETE_SELF);
+        }
+
+        // 2. Chặn xóa nếu có Đơn hàng
+        if (orderRepository.existsByUserId(user.getId())) {
+            throw new AppException(ErrorCode.USER_HAS_ORDERS, user.getEmail());
+        }
+
+        // 3. Chặn xóa nếu có Đánh giá
+        if (reviewRepository.existsByUserId(user.getId())) {
+            throw new AppException(ErrorCode.USER_HAS_REVIEWS, user.getEmail());
+        }
+    }
 }

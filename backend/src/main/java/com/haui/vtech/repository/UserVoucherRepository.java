@@ -17,4 +17,6 @@ public interface UserVoucherRepository extends JpaRepository<UserVoucherEntity, 
 
     // Tìm voucher trong ví để gạch thẻ lúc thanh toán
     Optional<UserVoucherEntity> findByUserIdAndVoucherIdAndIsUsedFalse(String userId, String voucherId);
+
+    boolean existsByVoucherId(String voucherId);
 }

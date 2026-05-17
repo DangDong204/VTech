@@ -21,7 +21,7 @@ public class PromotionController {
     private final MessageUtil messageUtil;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<PromotionResponse> createPromotion(@Valid @RequestBody PromotionRequest request) {
         PromotionResponse response = promotionService.create(request);
         return ApiResponse.<PromotionResponse>builder()
@@ -31,6 +31,7 @@ public class PromotionController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<PromotionResponse>> getAll() {
         return ApiResponse.<List<PromotionResponse>>builder()
                 .data(promotionService.getAllPromotions())
@@ -38,13 +39,14 @@ public class PromotionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<PromotionResponse> getById(@PathVariable String id) {
         return ApiResponse.<PromotionResponse>builder()
                 .data(promotionService.getById(id))
                 .build();
     }
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<PromotionResponse> updatePromotion(
             @PathVariable String id,
             @Valid @RequestBody PromotionRequest request
@@ -57,7 +59,7 @@ public class PromotionController {
     }
 
     @DeleteMapping("/trash/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deletePromotion(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("promotion.deleted.success", promotionService.deleteHard(id)))
@@ -65,7 +67,7 @@ public class PromotionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> deleteSoftPromotion(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("promotion.deleted.soft.success", promotionService.deleteSoft(id)))
@@ -73,6 +75,7 @@ public class PromotionController {
     }
 
     @GetMapping("/trash")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<PromotionResponse>> getAllInTrash() {
         return ApiResponse.<List<PromotionResponse>>builder()
                 .data(promotionService.getAllInTrash())
@@ -80,7 +83,7 @@ public class PromotionController {
     }
 
     @PatchMapping("/trash/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> restorePromotion(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("promotion.restored.success", promotionService.restore(id)))

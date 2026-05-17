@@ -36,8 +36,10 @@ public interface ProductService {
 
     ClientProductDetailResponse getClientProductDetail(String slug);
 
-    List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, BigDecimal minPrice, BigDecimal maxPrice, String sort);
+    List<ClientProductResponse> searchClientProducts(String categorySlug, String brandSlug, String tagId, String keyword, BigDecimal minPrice, BigDecimal maxPrice, String sort);
 
     List<ClientProductResponse> getProductsByPromotion(String promotionId);
+
+    List<ClientProductDetailResponse> getCompareProducts(List<String> slugs);
 
 }

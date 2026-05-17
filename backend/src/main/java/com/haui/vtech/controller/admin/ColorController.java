@@ -28,7 +28,7 @@ public class ColorController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ColorResponse> create(
             @RequestBody @Valid ColorRequest request) {
         return ApiResponse.<ColorResponse>builder()
@@ -38,7 +38,7 @@ public class ColorController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ColorResponse> update(
             @PathVariable String id,
             @RequestBody @Valid ColorRequest request) {
@@ -49,7 +49,7 @@ public class ColorController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Void> delete(@PathVariable String id) {
         return ApiResponse.<Void>builder()
                 .message(messageUtil.getMessage("color.deleted.success",
